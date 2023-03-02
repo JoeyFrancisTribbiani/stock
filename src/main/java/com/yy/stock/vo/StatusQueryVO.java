@@ -4,7 +4,7 @@ package com.yy.stock.vo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class StatusQueryVO implements Serializable {
@@ -12,20 +12,18 @@ public class StatusQueryVO implements Serializable {
 
     private String id;
 
-    private Long orderItemId;
+    private String marketplaceId;
+
+    private String amazonOrderId;
 
     private Long supplierId;
 
-    private LocalDateTime stockTime;
+    private Long buyerId;
+
+    private Date stockTime;
 
     private Integer status;
 
     private String shipment;
-
-    private String amazonOrderId;
-
-    private String marketplaceId;
-
-    private String amazonauthId;
 
 }

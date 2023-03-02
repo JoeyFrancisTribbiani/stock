@@ -46,4 +46,9 @@ public class BuyerAccount implements Serializable {
     @Column(name = "order_count")
     private int orderCount;
 
+    @Column(name = "verify_email")
+    private String verifyEmail;
+
+    @Column(name = "verify_email_password")
+    private String verifyEmailPassword;
 }

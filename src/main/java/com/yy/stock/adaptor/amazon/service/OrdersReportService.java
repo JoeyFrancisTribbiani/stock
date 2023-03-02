@@ -6,6 +6,7 @@ import com.yy.stock.adaptor.amazon.repository.OrdersReportRepository;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportQueryVO;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportUpdateVO;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportVO;
+import com.yy.stock.config.AmazonOrderStatusEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,9 +28,9 @@ public class OrdersReportService {
         return bean.getId();
     }
 
-    public List<OrdersReportDTO> getUnshiped() {
+    public List<OrdersReport> getUnshiped() {
         return ordersReportRepository
-                .findAmzOrderMainsByOrderStatusIs("Unshipped");
+                .findAllByOrderStatus(AmazonOrderStatusEnum.Unshipped.name());
     }
 
     public void delete(String id) {

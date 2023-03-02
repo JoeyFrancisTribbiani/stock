@@ -1,11 +1,11 @@
 package com.yy.stock.service;
 
+import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.StatusDTO;
 import com.yy.stock.entity.Status;
 import com.yy.stock.repository.StatusRepository;
 import com.yy.stock.vo.StatusQueryVO;
 import com.yy.stock.vo.StatusUpdateVO;
-import com.yy.stock.vo.StatusVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,15 +19,27 @@ public class StatusService {
     @Autowired
     private StatusRepository statusRepository;
 
-    public String save(StatusVO vO) {
-        Status bean = new Status();
-        BeanUtils.copyProperties(vO, bean);
-        bean = statusRepository.save(bean);
-        return bean.getId();
+    public String save(Status s) {
+        statusRepository.save(s);
+        return s.getId();
     }
 
     public void delete(String id) {
         statusRepository.deleteById(id);
+    }
+
+    public Status getOrCreate(String marketplaceId, String amazonOrderId) {
+        Status status = statusRepository.findFirstBymarketplaceIdAndAmazonOrderId(marketplaceId, amazonOrderId);
+        if (status == null) {
+            Status toCreate = new Status();
+            toCreate.setMarketplaceId(marketplaceId);
+            toCreate.setAmazonOrderId(amazonOrderId);
+            toCreate.setStatus(StatusEnum.unstocked.ordinal());
+            statusRepository.save(toCreate);
+
+            status = toCreate;
+        }
+        return status;
     }
 
     public void update(String id, StatusUpdateVO vO) {
@@ -54,5 +66,15 @@ public class StatusService {
     private Status requireOne(String id) {
         return statusRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+    }
+
+    public boolean setStockingStatus(Status status) {
+        try {
+            status.setStatus(StatusEnum.stocking.ordinal());
+            statusRepository.save(status);
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
     }
 }

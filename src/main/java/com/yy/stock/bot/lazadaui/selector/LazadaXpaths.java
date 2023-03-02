@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 //@EnableConfigurationProperties(LazadaXpaths.class)        // 开启对应配置类的属性注入功能
 @ConfigurationProperties(prefix = "xpaths")        // 指定配置文件注入属性前缀
 public class LazadaXpaths {
+    private String loginTopButton;
     private String accountInput;
+    private String accountTopButtonSpan;
     private String passwordInput;
     private String loginButton;
     private String accountVerifyButton;

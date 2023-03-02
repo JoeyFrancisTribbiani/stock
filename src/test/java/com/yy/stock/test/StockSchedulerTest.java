@@ -24,7 +24,7 @@ class StockSchedulerTest {
     private VisibleThreadPoolTaskExecutor executor;
 
     @Test
-    void autoStock() {
+    void testSchedule() throws InterruptedException {
         if (buyerAccountService.count() == 0) {
             for (int i = 0; i < 8; i++) {
                 BuyerAccountVO vo = new BuyerAccountVO();
@@ -37,7 +37,10 @@ class StockSchedulerTest {
                 buyerAccountService.save(vo);
             }
         }
-        stockScheduler.autoStock();
+        stockScheduler.schedule();
+        while (!executor.isEmpty()) {
+            Thread.sleep(1);
+        }
     }
 
     @Test

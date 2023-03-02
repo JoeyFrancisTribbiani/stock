@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Data
@@ -14,25 +14,23 @@ public class StatusVO implements Serializable {
     @NotNull(message = "id can not null")
     private String id;
 
-    @NotNull(message = "orderItemId can not null")
-    private Long orderItemId;
+    @NotNull(message = "marketplaceId can not null")
+    private String marketplaceId;
+
+    @NotNull(message = "amazonOrderId can not null")
+    private String amazonOrderId;
 
     @NotNull(message = "supplierId can not null")
     private Long supplierId;
 
-    @NotNull(message = "stockTime can not null")
-    private LocalDateTime stockTime;
+    @NotNull(message = "buyerId can not null")
+    private Long buyerId;
+
+    private Date stockTime;
 
     @NotNull(message = "status can not null")
     private Integer status;
 
     private String shipment;
-
-    @NotNull(message = "amazonOrderId can not null")
-    private String amazonOrderId;
-
-    private String marketplaceId;
-
-    private String amazonauthId;
 
 }

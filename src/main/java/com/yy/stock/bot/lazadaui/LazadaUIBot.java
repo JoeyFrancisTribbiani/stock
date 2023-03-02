@@ -1,5 +1,7 @@
 package com.yy.stock.bot.lazadaui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.yy.stock.bot.Bot;
 import com.yy.stock.bot.base.LoginRequest;
@@ -14,9 +16,12 @@ import com.yy.stock.bot.lazadaui.model.cart.CartCountRspModel;
 import com.yy.stock.bot.lazadaui.selector.LazadaUrls;
 import com.yy.stock.bot.lazadaui.selector.LazadaXpaths;
 import com.yy.stock.common.email.EmailService;
+import com.yy.stock.dto.StockRequest;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -35,6 +40,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -43,9 +50,11 @@ import java.util.logging.Level;
 
 @Data
 @Component
+@Slf4j
 public class LazadaUIBot implements Bot {
     private final LazadaXpaths xpaths;
     private final LazadaUrls urls;
+    public StockRequest stockRequest;
     private ChromeDriver _driver;
     private RestTemplate restTemplate;
     private HttpHeaders savedHeaders;
@@ -234,55 +243,28 @@ public class LazadaUIBot implements Bot {
     }
 
     public boolean login(LoginRequest loginRequest) {
+        if (loginWithCookie(loginRequest)) {
+            return true;
+        }
 
-//        getDriver().get("https://www.lazada.sg/");
-//        Cookie[] mycookies = new ObjectMapper().readValue(mycookie, Cookie[].class);
-//        System.out.println("value==: " + mycookies);
-//        for (Cookie cookie : mycookies) {
-//            getDriver().manage().addCookie(cookie);
-//        }
-//        getDriver().get("https://www.lazada.sg/");
+        getDriver().get(urls.homePage);
 
-        getDriver().get(urls.loginPage);
         try {
-            WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
-            SeleniumHelper.clearAndType(email_input, "willowwu123@gmail.com");
+            WebElement loginTopButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginTopButton());
+            loginTopButton.click();
             Thread.sleep((long) (Math.random() * 3000));
 
-            WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
-            SeleniumHelper.clearAndType(password_input, "Fadacai88888");
-            Thread.sleep((long) (Math.random() * 3000));
-
-            WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
-            login_button.click();
-            Thread.sleep(8888);
-
-            try {
-                new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
-            } catch (Exception ex) {
-
+            while (getDriver().getCurrentUrl().equals(urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
+                // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
             }
 
-            List<WebElement> verify_buttons = SeleniumHelper.getByClassName(getDriver(), "verify-item");
-            WebElement email_verify_button = verify_buttons.stream().filter(b -> b.getText().equals("Email Verification")).findFirst().orElse(null);
-//             SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountVerifyButton());
-            email_verify_button.click();
+            final String loginOrVerifyUrl = getDriver().getCurrentUrl();// 获取跳转后的url地址
 
-            WebElement email_send_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailSendButton());
-            email_send_button.click();
-
-            Thread.sleep(18000);
-            String code = emailService.getEmailVerifyCode("willowwu123@gmail.com", "nvqwbcmkgcsmlcog");
-
-            if (code != "") {
-                WebElement email_code_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailCodeInput());
-                SeleniumHelper.clearAndType(email_code_input, code);
-
-                Thread.sleep((long) (Math.random() * 3000));
-
-                WebElement verifySubmitButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifySubmitButton());
-                verifySubmitButton.click();
+//            new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
+            if (loginOrVerifyUrl.contains("member.lazada.sg/user/verification-pc")) {
+                verifyLoginByEmail(loginRequest);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
@@ -297,12 +279,91 @@ public class LazadaUIBot implements Bot {
         return true;
     }
 
+    private void verifyLoginByEmail(LoginRequest loginRequest) throws InterruptedException, MessagingException, IOException {
+        WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
+        SeleniumHelper.clearAndType(email_input, loginRequest.getAccount());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
+        SeleniumHelper.clearAndType(password_input, loginRequest.getPassword());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
+        login_button.click();
+        Thread.sleep(8888);
+
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
+        } catch (Exception ex) {
+
+        }
+
+        List<WebElement> verify_buttons = SeleniumHelper.getByClassName(getDriver(), "verify-item");
+        WebElement email_verify_button = verify_buttons.stream().filter(b -> b.getText().equals("Email Verification")).findFirst().orElse(null);
+//             SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountVerifyButton());
+        email_verify_button.click();
+
+        WebElement email_send_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailSendButton());
+        email_send_button.click();
+
+        Thread.sleep(18000);
+
+        String accountVerifyEmailAddress = stockRequest.getBuyerAccount().getVerifyEmail();
+        String accountVerifyEmailPassword = stockRequest.getBuyerAccount().getVerifyEmailPassword();
+        String code = emailService.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
+
+        if (code != "") {
+            WebElement email_code_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailCodeInput());
+            SeleniumHelper.clearAndType(email_code_input, code);
+
+            Thread.sleep((long) (Math.random() * 3000));
+
+            WebElement verifySubmitButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifySubmitButton());
+            verifySubmitButton.click();
+        }
+    }
+
+    public boolean loginWithCookie(LoginRequest loginRequest) {
+        getDriver().get(urls.homePage);
+        String cookiesStr = loginRequest.getCookies();
+        Cookie[] mycookies;
+        try {
+            mycookies = new ObjectMapper().readValue(cookiesStr, Cookie[].class);
+            log.debug("value==: " + mycookies);
+            for (Cookie cookie : mycookies) {
+                getDriver().manage().addCookie(cookie);
+            }
+            getDriver().get(urls.homePage);
+
+            WebElement accountTopButtonSpan = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountTopButtonSpan());
+            String spanText = accountTopButtonSpan.getText();
+            if (spanText.contains("ACCOUNT")) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (JsonProcessingException e) {
+            log.debug("存储的cookie string解析失败，请检查！" + loginRequest);
+            return false;
+        } catch (TimeoutException e) {
+            log.debug("selenium超时错误,将重试...", e);
+            return false;
+        }
+    }
+
     /**
-     * @param productList
+     * @param request
      * @return
      */
     @Override
-    public boolean placeOrder(List<Product> productList) {
+    public boolean doStock(StockRequest request) {
+        log.info("bot start to do stock...");
+        this.stockRequest = request;
+        LoginRequest loginRequest = LoginRequest.builder()
+                .account(request.getBuyerAccount().getEmail())
+                .password(request.getBuyerAccount().getPassword())
+                .build();
+        login(loginRequest);
         return false;
     }
 

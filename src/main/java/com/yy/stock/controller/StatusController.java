@@ -1,10 +1,10 @@
 package com.yy.stock.controller;
 
 import com.yy.stock.dto.StatusDTO;
+import com.yy.stock.entity.Status;
 import com.yy.stock.service.StatusService;
 import com.yy.stock.vo.StatusQueryVO;
 import com.yy.stock.vo.StatusUpdateVO;
-import com.yy.stock.vo.StatusVO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class StatusController {
     private StatusService statusService;
 
     @PostMapping
-    public String save(@Valid @RequestBody StatusVO vO) {
+    public String save(@Valid @RequestBody Status vO) {
         return statusService.save(vO).toString();
     }
 

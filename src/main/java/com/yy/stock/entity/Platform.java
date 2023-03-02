@@ -28,6 +28,9 @@ public class Platform implements Serializable {
     @Column(name = "country", nullable = false)
     private String country;
 
+    @Column(name = "bot_bean")
+    private String botBean;
+
     @Column(name = "login_url", nullable = false)
     private String loginUrl;
 

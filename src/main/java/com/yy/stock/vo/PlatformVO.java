@@ -19,6 +19,8 @@ public class PlatformVO implements Serializable {
     @NotNull(message = "country can not null")
     private String country;
 
+    private String botBean;
+
     @NotNull(message = "loginUrl can not null")
     private String loginUrl;
 

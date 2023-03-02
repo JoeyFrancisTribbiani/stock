@@ -1,5 +1,7 @@
 xpaths:
   accountInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[1]/input"
+  loginTopButton: "//*[@id=\"anonLogin\"]"
+  accountTopButtonSpan: "//*[@id=\"myAccountTrigger\"]"
   passwordInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[2]/input"
   loginButton: "/html/body/div[2]/div/div[2]/div/div[2]/form/div/div[2]/div[1]/button"
   accountVerifyButton: "/html/body/div[2]/div/div[2]/div/div[2]/ul/li"
@@ -13,6 +15,7 @@ xpaths:
   totalPriceDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/div/div[2]"
   checkoutButton: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/button"
 urls:
+  homePage: "https://www.lazada.sg"
   loginPage: "https://member.lazada.sg/user/login"
   addToCartApi: "https://cart.lazada.sg/cart/api/add"
   cartPage: "https://cart.lazada.sg/cart"

@@ -15,6 +15,8 @@ public class PlatformQueryVO implements Serializable {
 
     private String country;
 
+    private String botBean;
+
     private String loginUrl;
 
     private String msgUrl;

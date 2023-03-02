@@ -8,4 +8,5 @@ import lombok.Data;
 public class LoginRequest {
     public String account;
     public String password;
+    public String cookies;
 }

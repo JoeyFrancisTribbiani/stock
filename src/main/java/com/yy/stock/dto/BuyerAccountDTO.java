@@ -26,5 +26,7 @@ public class BuyerAccountDTO implements Serializable {
 
     private String loginCookie;
     private int orderCount;
+    private String verifyEmail;
 
+    private String verifyEmailPassword;
 }
