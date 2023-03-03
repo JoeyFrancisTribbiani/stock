@@ -41,9 +41,9 @@ public class BuyerAccountService {
         return toDTO(original);
     }
 
-    public BuyerAccountDTO getNewestBuyer() {
+    public BuyerAccount getNewestBuyer() {
         BuyerAccount original = buyerAccountRepository.findBuyerAccountByMinOrderCount();
-        return toDTO(original);
+        return original;
     }
 
     public Page<BuyerAccountDTO> query(BuyerAccountQueryVO vO) {

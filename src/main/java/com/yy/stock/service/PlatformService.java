@@ -36,9 +36,9 @@ public class PlatformService {
         platformRepository.save(bean);
     }
 
-    public PlatformDTO getById(Long id) {
+    public Platform getById(Long id) {
         Platform original = requireOne(id);
-        return toDTO(original);
+        return original;
     }
 
     public Page<PlatformDTO> query(PlatformQueryVO vO) {

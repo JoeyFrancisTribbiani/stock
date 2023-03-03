@@ -31,6 +31,8 @@ public class OrderItemStatus implements Serializable {
 
     @Column(name = "status", nullable = false)
     private Integer status;
+    @Column(name = "platform_order_id")
+    private Integer platformOrderId;
 
     @Column(name = "shipment")
     private String shipment;
