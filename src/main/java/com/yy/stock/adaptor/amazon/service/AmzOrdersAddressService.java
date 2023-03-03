@@ -6,12 +6,12 @@ import com.yy.stock.adaptor.amazon.repository.AmzOrdersAddressRepository;
 import com.yy.stock.adaptor.amazon.vo.AmzOrdersAddressQueryVO;
 import com.yy.stock.adaptor.amazon.vo.AmzOrdersAddressUpdateVO;
 import com.yy.stock.adaptor.amazon.vo.AmzOrdersAddressVO;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.NoSuchElementException;
 
 @Service
@@ -42,9 +42,9 @@ public class AmzOrdersAddressService {
         return toDTO(original);
     }
 
-    public AmzOrdersAddressDTO getByOrderIdAndAuthId(String orderId, BigInteger authId) {
-        AmzOrdersAddress ordersAddress = amzOrdersAddressRepository.findByAmazonOrderIdAndAmazonAuthId(orderId, authId);
-        return toDTO(ordersAddress);
+    public AmzOrdersAddress getByOrderInfo(OrderItemAdaptorInfoDTO orderToStock) {
+        AmzOrdersAddress ordersAddress = amzOrdersAddressRepository.findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderToStock.getMarketplaceId(), orderToStock.getAuthid(), orderToStock.getOrderid());
+        return ordersAddress;
     }
 
     public Page<AmzOrdersAddressDTO> query(AmzOrdersAddressQueryVO vO) {

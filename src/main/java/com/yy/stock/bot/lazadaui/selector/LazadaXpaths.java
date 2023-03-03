@@ -24,6 +24,9 @@ public class LazadaXpaths {
     private String verifySubmitButton;
     private String selectAllCartItemsDiv;
     private String selectAllCartItemsButton;
+    private String deleteAllCartItemsButton;
+    private String deleteCartItemsConfirmButton;
+    private String cartEmptyTipsDiv;
     private String subtotalDiv;
     private String shippingFeeDiv;
     private String totalPriceDiv;

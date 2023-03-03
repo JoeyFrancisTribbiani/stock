@@ -45,7 +45,7 @@ class LazadaUIBotTest {
             model.setItemId("2199811436");
             List<AddCartRequestModel> list = Collections.singletonList(model);
             LoginRequest loginRequest = LoginRequest.builder().account("").password("").build();
-            lazadaUIBot.loginAndPlaceOrder(loginRequest, list);
+            lazadaUIBot.loginAndPlaceOrder();
         } catch (Exception ex) {
             lazadaUIBot.get_driver().quit();
         } finally {

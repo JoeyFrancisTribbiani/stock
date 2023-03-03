@@ -39,6 +39,11 @@ public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
         return threadPoolExecutor.getActiveCount() == threadPoolExecutor.getCorePoolSize();
     }
 
+    public int getIdleCount() {
+        ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
+        return threadPoolExecutor.getCorePoolSize() - threadPoolExecutor.getActiveCount();
+    }
+
     public boolean isEmpty() {
         ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
         return threadPoolExecutor.getActiveCount() == 0;

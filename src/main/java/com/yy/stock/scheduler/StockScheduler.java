@@ -1,14 +1,15 @@
 package com.yy.stock.scheduler;
 
 import com.xxl.job.core.handler.annotation.XxlJob;
-import com.yy.stock.adaptor.amazon.entity.OrdersReport;
-import com.yy.stock.adaptor.amazon.service.AmzOrderMainService;
+import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
 import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.common.util.VisibleThreadPoolTaskExecutor;
 import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.config.StatusEnum;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
+import com.yy.stock.dto.StockInfoDTO;
 import com.yy.stock.entity.Status;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.StatusService;
@@ -16,6 +17,7 @@ import com.yy.stock.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 ;
@@ -27,7 +29,7 @@ public class StockScheduler {
     @Autowired
     protected VisibleThreadPoolTaskExecutor executor;
     @Autowired
-    private AmzOrderMainService amzOrderMainService;
+    private AmzOrderItemService amzOrderItemService;
     @Autowired
     private OrdersReportService ordersReportService;
     @Autowired
@@ -46,29 +48,62 @@ public class StockScheduler {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         System.out.println("本线程 加锁成功，开始选择订单");
 
-        schedule();
+        List<StockInfoDTO> toStock = filterUnstockedOrderItems();
 
         distributedLocker.unlock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         System.out.println("本线程 解锁");
+
+        schedule(toStock);
     }
 
-    public void schedule() {
-        List<OrdersReport> amazonUnshiped = ordersReportService.getUnshiped();
-        for (OrdersReport order :
-                amazonUnshiped) {
-            if (isBusy()) {
-                return;
-            }
-            Status status = statusService.getOrCreate(order.getMarketplaceId(), order.getAmazonOrderId());
-            if (status.getStatus() == StatusEnum.unstocked.ordinal()) {
-                stockAsyncExecutor.startStockAsync(order, status);
-            }
+
+    public List<StockInfoDTO> filterUnstockedOrderItems() {
+        List<StockInfoDTO> toStock = new ArrayList<>();
+
+        if (isBusy()) {
+            return toStock;
         }
 
+        List<OrderItemAdaptorInfoDTO> unshippedIn3Days = amzOrderItemService.get3DaysUnshipped();
+        List<OrderItemAdaptorInfoDTO> unshippedIn9To3Days = ordersReportService.get9To3DaysUnshippedOrders();
+        unshippedIn9To3Days.addAll(unshippedIn3Days);
+
+
+        int count = 0;
+        for (OrderItemAdaptorInfoDTO order :
+                unshippedIn9To3Days) {
+            Status status = statusService.getOrCreateByOrderItemInfo(order);
+            if (status.getStatus() == StatusEnum.unstocked.ordinal()) {
+                count++;
+                if (count > capacity()) {
+                    break;
+                }
+
+                status.setStatus(StatusEnum.stocking.ordinal());
+                statusService.save(status);
+
+                StockInfoDTO stockInfo = new StockInfoDTO();
+                stockInfo.setOrderItemAdaptorInfo(order);
+                stockInfo.setStatus(status);
+
+                toStock.add(stockInfo);
+            }
+        }
+        return toStock;
+    }
+
+    public void schedule(List<StockInfoDTO> toStock) {
+        for (StockInfoDTO stockInfo : toStock) {
+            stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfo(), stockInfo.getStatus());
+        }
     }
 
     public boolean isBusy() {
         return executor.isFull();
+    }
+
+    public int capacity() {
+        return executor.getIdleCount();
     }
 
 //    public void autoStock() {

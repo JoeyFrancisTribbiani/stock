@@ -24,6 +24,17 @@ public class Supplier implements Serializable {
     private Long id;
 
     /**
+     * 市场ID
+     */
+    @Column(name = "marketplace_id", nullable = false)
+    private String marketplaceId;
+
+    /**
+     * 亚马逊店铺ID
+     */
+    @Column(name = "amazon_auth_id", nullable = false)
+    private BigInteger amazonAuthId;
+    /**
      * 亚马逊sku
      */
     @Column(name = "amazon_sku", nullable = false)
@@ -95,16 +106,12 @@ public class Supplier implements Serializable {
     @Column(name = "price", nullable = false)
     private Float price;
 
-    /**
-     * 市场ID
-     */
-    @Column(name = "marketplace_id", nullable = false)
-    private String marketplaceId;
-
-    /**
-     * 亚马逊店铺ID
-     */
-    @Column(name = "amazon_auth_id", nullable = false)
-    private BigInteger amazonAuthId;
-
+    @Column(name = "api_shop_id")
+    private String apiShopId;
+    @Column(name = "api_sku_id")
+    private String apiSkuId;
+    @Column(name = "api_item_id")
+    private String apiItemId;
+    @Column(name = "max_ship_fee")
+    private Float maxShipFee;
 }

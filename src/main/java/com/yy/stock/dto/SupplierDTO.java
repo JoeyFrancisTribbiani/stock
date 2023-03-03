@@ -95,4 +95,8 @@ public class SupplierDTO implements Serializable {
      */
     private BigInteger amazonAuthId;
 
+    private String apiShopId;
+    private String apiSkuId;
+    private String apiItemId;
+    private Float maxShipFee;
 }

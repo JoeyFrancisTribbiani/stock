@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -25,6 +26,9 @@ public class Status implements Serializable {
 
     @Column(name = "marketplace_id", nullable = false)
     private String marketplaceId;
+    @Column(name = "amazon_auth_id", nullable = false)
+    private BigInteger AmazonAuthId;
+
 
     @Column(name = "amazon_order_id", nullable = false)
     private String amazonOrderId;

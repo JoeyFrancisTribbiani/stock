@@ -16,7 +16,13 @@ import com.yy.stock.bot.lazadaui.model.cart.CartCountRspModel;
 import com.yy.stock.bot.lazadaui.selector.LazadaUrls;
 import com.yy.stock.bot.lazadaui.selector.LazadaXpaths;
 import com.yy.stock.common.email.EmailService;
+import com.yy.stock.common.exception.OverTopShipFeeException;
+import com.yy.stock.common.exception.SupplierUnavailableException;
+import com.yy.stock.common.exception.WrongCartItemsCountAddedException;
+import com.yy.stock.common.exception.WrongStockPriceException;
 import com.yy.stock.dto.StockRequest;
+import com.yy.stock.repository.BuyerAccountRepository;
+import com.yy.stock.repository.SupplierRepository;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -52,15 +58,20 @@ import java.util.logging.Level;
 @Component
 @Slf4j
 public class LazadaUIBot implements Bot {
+    private final BuyerAccountRepository buyerAccountRepository;
+    private final SupplierRepository supplierRepository;
     private final LazadaXpaths xpaths;
     private final LazadaUrls urls;
-    public StockRequest stockRequest;
+    public LoginRequest loginRequest;
     private ChromeDriver _driver;
     private RestTemplate restTemplate;
     private HttpHeaders savedHeaders;
     private EmailService emailService;
+    private StockRequest request;
 
-    public LazadaUIBot(LazadaXpaths xpaths, LazadaUrls urls, EmailService emailService) {
+    public LazadaUIBot(LazadaXpaths xpaths, LazadaUrls urls, EmailService emailService,
+                       SupplierRepository supplierRepository,
+                       BuyerAccountRepository buyerAccountRepository) {
         System.out.println("Construct LazadaUIBot Instance...");
         this.xpaths = xpaths;
         this.urls = urls;
@@ -71,6 +82,16 @@ public class LazadaUIBot implements Bot {
         this.restTemplate = new RestTemplate(factory);
 
         initHeaders();
+        this.supplierRepository = supplierRepository;
+        this.buyerAccountRepository = buyerAccountRepository;
+    }
+
+    public LoginRequest generLoginRequest() {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .account(request.getBuyerAccount().getEmail())
+                .password(request.getBuyerAccount().getPassword())
+                .build();
+        return loginRequest;
     }
 
     private ChromeDriver getDriver() {
@@ -161,17 +182,45 @@ public class LazadaUIBot implements Bot {
         return driver;
     }
 
-    public boolean loginAndPlaceOrder(LoginRequest loginRequest, List<AddCartRequestModel> addCartRequestModels) throws InterruptedException {
+    public boolean loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
+        LoginRequest loginRequest = generLoginRequest();
         login(loginRequest);
+
         SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
         updateCookies(getDriver().manage().getCookies());
-        cartAdd(addCartRequestModels);
-        CreateAddressRequestModel address = new CreateAddressRequestModel();
-        updateSingleAddress(address);
+
+        cartAdd(generAddCartRequest());
+
+        updateSingleAddress(generCreateAddressRequest());
+
         checkout();
+
         placeOrder();
+
+        saveTrackInfo();
+
         getDriver().quit();
         return true;
+    }
+
+    private void saveTrackInfo() {
+        String platformOrderId = getPlatformOrderId();
+        var status = request.getStatus();
+    }
+
+    private String getPlatformOrderId() {
+        return null;
+    }
+
+    public CreateAddressRequestModel generCreateAddressRequest() {
+        CreateAddressRequestModel model = new CreateAddressRequestModel();
+        model.setName(request.getAddress().getName());
+        model.setPhone(request.getAddress().getPhone());
+        model.setPostCode(request.getAddress().getPostalCode());
+        model.setDetailAddress(request.getAddress().getAddressLine1());
+        model.setExtendAddress(request.getAddress().getAddressLine2());
+        model.setLoading(false);
+        return model;
     }
 
     public long updateSingleAddress(CreateAddressRequestModel address) throws InterruptedException {
@@ -226,7 +275,7 @@ public class LazadaUIBot implements Bot {
         return response.getBody().getSuccess();
     }
 
-    private void updateCookies(Set<Cookie> cookies) {
+    private void updateCookies(Set<Cookie> cookies) throws JsonProcessingException {
 //        savedCookie = cookies;
         StringBuilder builder = new StringBuilder();
         for (Cookie cookie : cookies) {
@@ -236,6 +285,14 @@ public class LazadaUIBot implements Bot {
                     .append(";");
         }
         savedHeaders.set("Cookie", builder.toString());
+        saveCookies(cookies);
+    }
+
+    private void saveCookies(Set<Cookie> cookies) throws JsonProcessingException {
+        var cookiesStr = new ObjectMapper().writeValueAsString(cookies);
+        var buyerAccount = request.getBuyerAccount();
+        buyerAccount.setLoginCookie(cookiesStr);
+        buyerAccountRepository.save(buyerAccount);
     }
 
     private void updateHeaders(String key, String value) {
@@ -263,6 +320,11 @@ public class LazadaUIBot implements Bot {
 //            new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
             if (loginOrVerifyUrl.contains("member.lazada.sg/user/verification-pc")) {
                 verifyLoginByEmail(loginRequest);
+            } else {
+                inputAccountAndPassword(loginRequest);
+                while (!getDriver().getCurrentUrl().equals(urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
+                    // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
+                }
             }
 
         } catch (Exception e) {
@@ -280,17 +342,7 @@ public class LazadaUIBot implements Bot {
     }
 
     private void verifyLoginByEmail(LoginRequest loginRequest) throws InterruptedException, MessagingException, IOException {
-        WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
-        SeleniumHelper.clearAndType(email_input, loginRequest.getAccount());
-        Thread.sleep((long) (Math.random() * 3000));
-
-        WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
-        SeleniumHelper.clearAndType(password_input, loginRequest.getPassword());
-        Thread.sleep((long) (Math.random() * 3000));
-
-        WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
-        login_button.click();
-        Thread.sleep(8888);
+        inputAccountAndPassword(loginRequest);
 
         try {
             new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
@@ -308,8 +360,8 @@ public class LazadaUIBot implements Bot {
 
         Thread.sleep(18000);
 
-        String accountVerifyEmailAddress = stockRequest.getBuyerAccount().getVerifyEmail();
-        String accountVerifyEmailPassword = stockRequest.getBuyerAccount().getVerifyEmailPassword();
+        String accountVerifyEmailAddress = request.getBuyerAccount().getVerifyEmail();
+        String accountVerifyEmailPassword = request.getBuyerAccount().getVerifyEmailPassword();
         String code = emailService.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
 
         if (code != "") {
@@ -321,6 +373,20 @@ public class LazadaUIBot implements Bot {
             WebElement verifySubmitButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifySubmitButton());
             verifySubmitButton.click();
         }
+    }
+
+    private void inputAccountAndPassword(LoginRequest loginRequest) throws InterruptedException {
+        WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
+        SeleniumHelper.clearAndType(email_input, loginRequest.getAccount());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
+        SeleniumHelper.clearAndType(password_input, loginRequest.getPassword());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
+        login_button.click();
+        Thread.sleep(8888);
     }
 
     public boolean loginWithCookie(LoginRequest loginRequest) {
@@ -356,15 +422,30 @@ public class LazadaUIBot implements Bot {
      * @return
      */
     @Override
-    public boolean doStock(StockRequest request) {
+    public boolean doStock(StockRequest request) throws InterruptedException, JsonProcessingException {
+        this.request = request;
+        log.info("bot checking available...");
+
+        var supplier = request.getSupplier();
+        if (!supplier.getAvailable()) {
+            throw new SupplierUnavailableException();
+        }
+
+
         log.info("bot start to do stock...");
-        this.stockRequest = request;
-        LoginRequest loginRequest = LoginRequest.builder()
-                .account(request.getBuyerAccount().getEmail())
-                .password(request.getBuyerAccount().getPassword())
-                .build();
-        login(loginRequest);
+        loginAndPlaceOrder();
+
         return false;
+    }
+
+    private List<AddCartRequestModel> generAddCartRequest() {
+        var supplier = request.getSupplier();
+        AddCartRequestModel addCartRequestModel = new AddCartRequestModel();
+        addCartRequestModel.setItemId(supplier.getApiItemId());
+        addCartRequestModel.setSkuId(supplier.getApiSkuId());
+        addCartRequestModel.setQuantity(request.getOrderInfo().getQuantity());
+        List<AddCartRequestModel> addCartRequest = Collections.singletonList(addCartRequestModel);
+        return addCartRequest;
     }
 
     /**
@@ -387,9 +468,7 @@ public class LazadaUIBot implements Bot {
 
     public void cartAdd(List<AddCartRequestModel> model) {
 //        String paramMap = "[{\"itemId\":\"2199811436\",\"skuId\":\"14121812860\",\"quantity\":8}]";
-        int count = cartCount();
 
-        // todo
         while (cartCount() > 0) {
             cartClear();
         }
@@ -411,23 +490,52 @@ public class LazadaUIBot implements Bot {
     }
 
     public boolean cartClear() {
-        return true;
+        getDriver().get(urls.cartPage);
+
+        WebElement selectAllButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getSelectAllCartItemsButton());
+        selectAllButton.click();
+
+        // 等待全选框被选中
+        new WebDriverWait(getDriver(), Duration.ofSeconds(6))
+                .until(ExpectedConditions.elementSelectionStateToBe(selectAllButton, true));
+
+        WebElement delteButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getDeleteAllCartItemsButton());
+        delteButton.click();
+
+        WebElement confirmDeleteButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getDeleteCartItemsConfirmButton());
+        confirmDeleteButton.click();
+
+        WebElement emptyTips = SeleniumHelper.getByXpath(getDriver(), xpaths.getCartEmptyTipsDiv());
+        if (emptyTips.getText().contains("Your cart is empty")) {
+            return true;
+        }
+        return false;
     }
 
-    public void checkout() {
+    public void checkout() throws WrongCartItemsCountAddedException, WrongStockPriceException, OverTopShipFeeException {
         getDriver().get(urls.cartPage);
         WebElement selectAllDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getSelectAllCartItemsDiv());
 
+        int quantityToBuy = request.getOrderInfo().getQuantity();
         int itemsCount = Integer.parseInt(selectAllDiv.getText().split("\\(")[1].split(" ")[0]);
+        if (itemsCount != quantityToBuy) {
+            throw new WrongCartItemsCountAddedException("expected:" + quantityToBuy + ", choosed:" + itemsCount);
+        }
 
         WebElement selectAllButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getSelectAllCartItemsButton());
         selectAllButton.click();
 
         WebElement orderSummaryPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getSubtotalDiv());
         double subTotalPrice = Double.parseDouble(orderSummaryPriceDiv.getText().substring(1));
+        if (subTotalPrice > request.getSupplier().getPrice() * quantityToBuy) {
+            throw new WrongStockPriceException("we got sub total price without ship fee:" + subTotalPrice);
+        }
 
         WebElement shippingFeeDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getShippingFeeDiv());
         double shippingFee = Double.parseDouble(shippingFeeDiv.getText().substring(1));
+        if (shippingFee > request.getSupplier().getMaxShipFee()) {
+            throw new OverTopShipFeeException("we got a ship fee:" + shippingFee);
+        }
 
         WebElement totalPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getTotalPriceDiv());
         double totalPrice = Double.parseDouble(totalPriceDiv.getText().substring(1));

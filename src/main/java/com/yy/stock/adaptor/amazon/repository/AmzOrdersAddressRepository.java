@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigInteger;
 
 public interface AmzOrdersAddressRepository extends JpaRepository<AmzOrdersAddress, String>, JpaSpecificationExecutor<AmzOrdersAddress> {
-    public AmzOrdersAddress findByAmazonOrderIdAndAmazonAuthId(@Param("amazonorderid") String amazonOrderId, @Param("amazonauthid") BigInteger amazonAuthId);
+    public AmzOrdersAddress findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(@Param("marketplaceid") String marketplaceId, @Param("amazonauthid") BigInteger amazonAuthId, @Param("amazonorderid") String amazonOrderId);
 
 }

@@ -7,11 +7,13 @@ import com.yy.stock.adaptor.amazon.repository.AmzOrderItemRepository;
 import com.yy.stock.adaptor.amazon.vo.AmzOrderItemQueryVO;
 import com.yy.stock.adaptor.amazon.vo.AmzOrderItemUpdateVO;
 import com.yy.stock.adaptor.amazon.vo.AmzOrderItemVO;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -19,6 +21,10 @@ public class AmzOrderItemService {
 
     @Autowired
     private AmzOrderItemRepository amzOrderItemRepository;
+
+    public List<OrderItemAdaptorInfoDTO> get3DaysUnshipped() {
+        return amzOrderItemRepository.find3DaysUnshippedOrders();
+    }
 
     public AmzOrderItemUPK save(AmzOrderItemVO vO) {
         AmzOrderItem bean = new AmzOrderItem();

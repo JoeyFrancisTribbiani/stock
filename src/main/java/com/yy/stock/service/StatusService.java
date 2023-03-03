@@ -1,6 +1,7 @@
 package com.yy.stock.service;
 
 import com.yy.stock.config.StatusEnum;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StatusDTO;
 import com.yy.stock.entity.Status;
 import com.yy.stock.repository.StatusRepository;
@@ -28,12 +29,13 @@ public class StatusService {
         statusRepository.deleteById(id);
     }
 
-    public Status getOrCreate(String marketplaceId, String amazonOrderId) {
-        Status status = statusRepository.findFirstBymarketplaceIdAndAmazonOrderId(marketplaceId, amazonOrderId);
+    public Status getOrCreateByOrderItemInfo(OrderItemAdaptorInfoDTO orderItemInfo) {
+        Status status = statusRepository.findFirstBymarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderItemInfo.getMarketplaceId(), orderItemInfo.getAuthid(), orderItemInfo.getOrderid());
         if (status == null) {
             Status toCreate = new Status();
-            toCreate.setMarketplaceId(marketplaceId);
-            toCreate.setAmazonOrderId(amazonOrderId);
+            toCreate.setMarketplaceId(orderItemInfo.getMarketplaceId());
+            toCreate.setAmazonOrderId(orderItemInfo.getOrderid());
+            toCreate.setAmazonAuthId(orderItemInfo.getAuthid());
             toCreate.setStatus(StatusEnum.unstocked.ordinal());
             statusRepository.save(toCreate);
 

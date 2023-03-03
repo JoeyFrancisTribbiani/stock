@@ -1,6 +1,6 @@
 package com.yy.stock.service;
 
-import com.yy.stock.adaptor.amazon.entity.OrdersReport;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.SupplierDTO;
 import com.yy.stock.entity.Supplier;
 import com.yy.stock.repository.SupplierRepository;
@@ -42,9 +42,10 @@ public class SupplierService {
         return toDTO(original);
     }
 
-    public SupplierDTO getByAmazonOrderInfo(OrdersReport order) {
+    public Supplier getByAmazonOrderInfo(OrderItemAdaptorInfoDTO order) {
         Supplier supplier = supplierRepository.findByMarketplaceIdAndAmazonSku(order.getMarketplaceId(), order.getSku());
-        return toDTO(supplier);
+        return supplier;
+
     }
 
     public Page<SupplierDTO> query(SupplierQueryVO vO) {

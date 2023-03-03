@@ -2,11 +2,12 @@ package com.yy.stock.adaptor.amazon.service;
 
 import com.yy.stock.adaptor.amazon.dto.OrdersReportDTO;
 import com.yy.stock.adaptor.amazon.entity.OrdersReport;
+import com.yy.stock.adaptor.amazon.repository.AmzOrderItemRepository;
 import com.yy.stock.adaptor.amazon.repository.OrdersReportRepository;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportQueryVO;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportUpdateVO;
 import com.yy.stock.adaptor.amazon.vo.OrdersReportVO;
-import com.yy.stock.config.AmazonOrderStatusEnum;
+import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,8 @@ public class OrdersReportService {
 
     @Autowired
     private OrdersReportRepository ordersReportRepository;
+    @Autowired
+    private AmzOrderItemRepository amzOrderItemRepository;
 
     public String save(OrdersReportVO vO) {
         OrdersReport bean = new OrdersReport();
@@ -28,10 +31,11 @@ public class OrdersReportService {
         return bean.getId();
     }
 
-    public List<OrdersReport> getUnshiped() {
+    public List<OrderItemAdaptorInfoDTO> get9To3DaysUnshippedOrders() {
         return ordersReportRepository
-                .findAllByOrderStatus(AmazonOrderStatusEnum.Unshipped.name());
+                .find9To3DaysUnshippedOrders();
     }
+
 
     public void delete(String id) {
         ordersReportRepository.deleteById(id);
