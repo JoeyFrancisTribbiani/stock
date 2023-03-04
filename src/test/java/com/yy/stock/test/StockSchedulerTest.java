@@ -6,7 +6,6 @@ import com.yy.stock.common.util.VisibleThreadPoolTaskExecutor;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.scheduler.StockScheduler;
 import com.yy.stock.service.BuyerAccountService;
-import com.yy.stock.vo.BuyerAccountVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +31,6 @@ class StockSchedulerTest {
 
     @Test
     void testSchedule() throws InterruptedException {
-        if (buyerAccountService.count() == 0) {
-            for (int i = 0; i < 8; i++) {
-                BuyerAccountVO vo = new BuyerAccountVO();
-                vo.setEmail(i + "@demo.com");
-                vo.setMobile("13432432432");
-                vo.setUsername("username" + i);
-                vo.setPlatformId(886456888L);
-                vo.setId(1L + i);
-                vo.setOrderCount(i);
-                buyerAccountService.save(vo);
-            }
-        }
         while (!executor.isEmpty()) {
             Thread.sleep(1);
         }

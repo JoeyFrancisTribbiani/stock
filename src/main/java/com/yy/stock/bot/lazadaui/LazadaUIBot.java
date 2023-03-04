@@ -21,8 +21,8 @@ import com.yy.stock.common.exception.SupplierUnavailableException;
 import com.yy.stock.common.exception.WrongCartItemsCountAddedException;
 import com.yy.stock.common.exception.WrongStockPriceException;
 import com.yy.stock.dto.StockRequest;
-import com.yy.stock.repository.BuyerAccountRepository;
-import com.yy.stock.repository.SupplierRepository;
+import com.yy.stock.service.BuyerAccountService;
+import com.yy.stock.service.StockStatusService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -58,8 +58,6 @@ import java.util.logging.Level;
 @Component
 @Slf4j
 public class LazadaUIBot implements Bot {
-    private final BuyerAccountRepository buyerAccountRepository;
-    private final SupplierRepository supplierRepository;
     private final LazadaXpaths xpaths;
     private final LazadaUrls urls;
     public LoginRequest loginRequest;
@@ -68,10 +66,14 @@ public class LazadaUIBot implements Bot {
     private HttpHeaders savedHeaders;
     private EmailService emailService;
     private StockRequest request;
+    private BuyerAccountService buyerAccountService;
+    //    private SupplierService supplierService;
+    private StockStatusService stockStatusService;
 
     public LazadaUIBot(LazadaXpaths xpaths, LazadaUrls urls, EmailService emailService,
-                       SupplierRepository supplierRepository,
-                       BuyerAccountRepository buyerAccountRepository) {
+//                       SupplierService supplierService,
+                       StockStatusService stockStatusService,
+                       BuyerAccountService buyerAccountService) {
         System.out.println("Construct LazadaUIBot Instance...");
         this.xpaths = xpaths;
         this.urls = urls;
@@ -82,8 +84,9 @@ public class LazadaUIBot implements Bot {
         this.restTemplate = new RestTemplate(factory);
 
         initHeaders();
-        this.supplierRepository = supplierRepository;
-        this.buyerAccountRepository = buyerAccountRepository;
+//        this.supplierService = supplierService;
+        this.stockStatusService = stockStatusService;
+        this.buyerAccountService = buyerAccountService;
     }
 
     public LoginRequest generLoginRequest() {
@@ -205,7 +208,17 @@ public class LazadaUIBot implements Bot {
 
     private void saveTrackInfo() {
         String platformOrderId = getPlatformOrderId();
-        var status = request.getStatus();
+        String shipTrackNumber = getShipTrackNumber();
+        var status = request.getStockStatus();
+        status.setPlatformOrderId(platformOrderId);
+        if (shipTrackNumber != null) {
+            status.setShipmentTrackNumber(shipTrackNumber);
+        }
+        stockStatusService.save(status);
+    }
+
+    private String getShipTrackNumber() {
+        return null;
     }
 
     private String getPlatformOrderId() {
@@ -292,7 +305,7 @@ public class LazadaUIBot implements Bot {
         var cookiesStr = new ObjectMapper().writeValueAsString(cookies);
         var buyerAccount = request.getBuyerAccount();
         buyerAccount.setLoginCookie(cookiesStr);
-        buyerAccountRepository.save(buyerAccount);
+        buyerAccountService.save(buyerAccount);
     }
 
     private void updateHeaders(String key, String value) {

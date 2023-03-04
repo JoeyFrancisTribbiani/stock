@@ -1,8 +1,14 @@
 package com.yy.stock.bot.aliexpressbot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.yy.stock.bot.Bot;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressUrls;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressXpaths;
+import com.yy.stock.bot.base.LoginRequest;
+import com.yy.stock.bot.base.Product;
+import com.yy.stock.bot.base.ShipmentInfo;
 import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.model.address.*;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
@@ -10,9 +16,19 @@ import com.yy.stock.bot.lazadaui.model.cart.AddCartRespModule;
 import com.yy.stock.bot.lazadaui.model.cart.CartApiResponseModel;
 import com.yy.stock.bot.lazadaui.model.cart.CartCountRspModel;
 import com.yy.stock.common.email.EmailService;
+import com.yy.stock.common.exception.OverTopShipFeeException;
+import com.yy.stock.common.exception.SupplierUnavailableException;
+import com.yy.stock.common.exception.WrongCartItemsCountAddedException;
+import com.yy.stock.common.exception.WrongStockPriceException;
+import com.yy.stock.dto.StockRequest;
+import com.yy.stock.service.BuyerAccountService;
+import com.yy.stock.service.StockStatusService;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -31,25 +47,37 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Data
 @Component
-public class AliExpressBot {
+@Slf4j
+public class AliExpressBot implements Bot {
     private final AliExpressXpaths xpaths;
     private final AliExpressUrls urls;
+    public LoginRequest loginRequest;
     private ChromeDriver _driver;
     private RestTemplate restTemplate;
     private HttpHeaders savedHeaders;
     private EmailService emailService;
+    private StockRequest request;
+    private BuyerAccountService buyerAccountService;
+    //    private SupplierService supplierService;
+    private StockStatusService stockStatusService;
 
-    //    @Autowired
-    public AliExpressBot(AliExpressXpaths xpaths, AliExpressUrls urls, EmailService emailService) {
-        System.out.println("Construct AliExpressBot Instance...");
+    public AliExpressBot(AliExpressXpaths xpaths, AliExpressUrls urls, EmailService emailService,
+//                       SupplierService supplierService,
+                         StockStatusService stockStatusService,
+                         BuyerAccountService buyerAccountService) {
+        System.out.println("Construct LazadaUIBot Instance...");
         this.xpaths = xpaths;
         this.urls = urls;
         this.emailService = emailService;
@@ -59,6 +87,17 @@ public class AliExpressBot {
         this.restTemplate = new RestTemplate(factory);
 
         initHeaders();
+//        this.supplierService = supplierService;
+        this.stockStatusService = stockStatusService;
+        this.buyerAccountService = buyerAccountService;
+    }
+
+    public LoginRequest generLoginRequest() {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .account(request.getBuyerAccount().getEmail())
+                .password(request.getBuyerAccount().getPassword())
+                .build();
+        return loginRequest;
     }
 
     private ChromeDriver getDriver() {
@@ -149,35 +188,198 @@ public class AliExpressBot {
         return driver;
     }
 
-    public boolean loginAndPlaceOrder(List<AddCartRequestModel> addCartRequestModels) throws InterruptedException {
-        login();
+    public boolean loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
+        LoginRequest loginRequest = generLoginRequest();
+        login(loginRequest);
+
         SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
         updateCookies(getDriver().manage().getCookies());
-        cartAdd(addCartRequestModels);
-        CreateAddressRequestModel address = new CreateAddressRequestModel();
-        updateSingleAddress(address);
+
+//        cartAdd(generAddCartRequest());
+
+        updateSingleAddress(generCreateAddressRequest());
+        buyNow();
         checkout();
+
         placeOrder();
+
+        saveTrackInfo();
+
         getDriver().quit();
         return true;
     }
 
-    public long updateSingleAddress(CreateAddressRequestModel address) throws InterruptedException {
-        List<ListAddressRespModel> list = listAddress();
-        System.out.println(list);
-        for (ListAddressRespModel addr : list) {
-            if (!deleteAddress(addr.getId())) {
-                throw new InterruptedException();
-            }
-            Thread.sleep(2000);
+    private void saveTrackInfo() {
+        String platformOrderId = getPlatformOrderId();
+        String shipTrackNumber = getShipTrackNumber();
+        var status = request.getStockStatus();
+        status.setPlatformOrderId(platformOrderId);
+        if (shipTrackNumber != null) {
+            status.setShipmentTrackNumber(shipTrackNumber);
         }
-        GetByPostCodeRespModel locationInfo = getAddrByPostCode(address.getPostCode());
-        address.setLocationTreeAddressName(locationInfo.getLocationTreeAddressName());
-        address.setLocationTreeAddressId(locationInfo.getLocationTreeAddressId());
+        stockStatusService.save(status);
+    }
 
-        long newAddressId = createAddress(address);
-        Thread.sleep(2000);
-        return newAddressId;
+    private String getShipTrackNumber() {
+        return null;
+    }
+
+    private String getPlatformOrderId() {
+        return null;
+    }
+
+    public CreateAddressRequestModel generCreateAddressRequest() {
+        CreateAddressRequestModel model = new CreateAddressRequestModel();
+        model.setName(request.getAddress().getName());
+        model.setPhone(request.getAddress().getPhone());
+        model.setPostCode(request.getAddress().getPostalCode());
+        model.setDetailAddress(request.getAddress().getAddressLine1());
+        model.setExtendAddress(request.getAddress().getAddressLine2());
+        model.setLoading(false);
+        return model;
+    }
+
+    public void updateSingleAddress(CreateAddressRequestModel address) throws InterruptedException {
+        getDriver().get(urls.addressListPage);
+        var deleteAddressButton = SeleniumHelper.getByXpath(getDriver(), xpaths.deleteAddressButton);
+        deleteAddressButton.click();
+        var confirmDeleteAddressButton = SeleniumHelper.getByXpath(getDriver(), xpaths.confirmDeleteAddressButton);
+        confirmDeleteAddressButton.click();
+        Thread.sleep(6666);
+        var addAddressButton = SeleniumHelper.getByXpath(getDriver(), xpaths.addAddressButton);
+        addAddressButton.click();
+        Thread.sleep(6666);
+
+
+        var nameInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressNameInput);
+        var name = cleanAddressName(request.getAddress().getName());
+        if (name.length() > 49) {
+            name = name.substring(0, 49);
+        }
+        nameInput.sendKeys(name);
+        Thread.sleep(1000);
+
+        var phoneInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressPhoneInput);
+        var phone = cleanAddressPhone(request.getAddress().getPhone());
+        phoneInput.sendKeys(phone);
+        Thread.sleep(1000);
+
+        var cepInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCepInput);
+        cepInput.sendKeys(request.getAddress().getPostalCode());
+        Thread.sleep(1000);
+        var cepSelectButton = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCepSelectButton);
+        cepSelectButton.click();
+        Thread.sleep(3000);
+
+        var bairrorInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressBairrorInput);
+        var bairror = request.getAddress().getAddressLine1();
+        if (bairror != null && bairror != "") {
+            if (bairror.length() > 49) {
+                bairror = bairror.substring(bairror.length() - 30);
+            }
+            bairror = bairror.replace(',', ' ');
+            SeleniumHelper.clearAndType(bairrorInput, bairror);
+        } else {
+            var autoText = bairrorInput.getAttribute("value");
+            if (autoText == "") {
+                SeleniumHelper.clearAndType(bairrorInput, "Casa");
+            }
+        }
+        Thread.sleep(1000);
+
+        var ruaInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressRuaInput);
+        String rua = cleanAddressRua(request.getAddress().getAddressLine2());
+        var ruaWords = rua.split(" ");
+        var ruaNum = ruaWords[ruaWords.length - 1];
+        if (rua.length() > 1) {
+            if (SeleniumHelper.isNumberString(ruaNum)) {
+                ruaWords = Arrays.copyOf(ruaWords, ruaWords.length - 1);
+            } else {
+                ruaNum = "0";
+            }
+            rua = String.join(" ", ruaWords);
+        }
+        SeleniumHelper.clearAndType(ruaInput, rua);
+        Thread.sleep(1000);
+        var ruaNumInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressRuaNumInput);
+        SeleniumHelper.clearAndType(ruaNumInput, ruaNum);
+        Thread.sleep(1000);
+
+        var noteInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressNoteInput);
+        var note = request.getAddress().getAddressLine3();
+        if (note != null && note != "") {
+            note = note.replace(',', ' ');
+        }
+        SeleniumHelper.clearAndType(noteInput, note);
+        Thread.sleep(1000);
+
+        var cpfInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCpfInput);
+        // 使用此字段存储巴西cpf
+        var cpf = request.getAddress().getMunicipality();
+        cpf = cleanAddressCpf(cpf);
+        SeleniumHelper.clearAndType(cpfInput, cpf);
+        Thread.sleep(1000);
+
+        var setDefaultButton = SeleniumHelper.getByXpath(getDriver(), xpaths.addressSetDefaultButton);
+        setDefaultButton.sendKeys(Keys.SPACE);
+        Thread.sleep(1000);
+
+        var saveButton = SeleniumHelper.getByXpath(getDriver(), xpaths.addressSaveButton);
+        setDefaultButton.click();
+        Thread.sleep(1000);
+
+        var firstAddressNameDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.addressFirstAddressNameDiv);
+        var peopleFirstName = name.split(" ")[0];
+        while (!firstAddressNameDiv.getText().contains(peopleFirstName)) {
+            firstAddressNameDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.addressFirstAddressNameDiv);
+        }
+        Thread.sleep(1000);
+    }
+
+    private String cleanAddressCpf(String cpf) {
+        String regEx = "[^0-9]";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(cpf);
+        cpf = matcher.replaceAll("");
+        return cpf;
+    }
+
+    private String cleanAddressRua(String rua) {
+        String regEx = "[%&',;=?$\\x22]+";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(rua);
+        rua = matcher.replaceAll("");
+        if (rua.length() > 49) {
+            rua = rua.substring(rua.length() - 49);
+        }
+        return rua;
+    }
+
+
+    public String cleanAddressName(String name) {
+        String regEx = "[%&',;=?$\\x22]+";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.replaceAll("");
+    }
+
+    public String cleanAddressPhone(String phone) {
+        String regEx = "[^0-9]";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(phone);
+        phone = matcher.replaceAll("");
+
+        if (phone.charAt(phone.length() - 9) != '9' && (phone.length() == 10 || phone.length() == 12)) {
+            var sb = new StringBuilder(phone);
+            phone = sb.insert(phone.length() - 8, "9").toString();
+        }
+        if (phone.startsWith("55") && phone.length() > 11) {
+            phone = phone.substring(2);
+        }
+        if (phone.startsWith("0")) {
+            phone = phone.substring(1);
+        }
+        return phone;
     }
 
     public String trackLogistic(String fulfillmentOrderId, String fulfillmentOrderPackageId) {
@@ -214,7 +416,7 @@ public class AliExpressBot {
         return response.getBody().getSuccess();
     }
 
-    private void updateCookies(Set<Cookie> cookies) {
+    private void updateCookies(Set<Cookie> cookies) throws JsonProcessingException {
 //        savedCookie = cookies;
         StringBuilder builder = new StringBuilder();
         for (Cookie cookie : cookies) {
@@ -224,62 +426,48 @@ public class AliExpressBot {
                     .append(";");
         }
         savedHeaders.set("Cookie", builder.toString());
+        saveCookies(cookies);
+    }
+
+    private void saveCookies(Set<Cookie> cookies) throws JsonProcessingException {
+        var cookiesStr = new ObjectMapper().writeValueAsString(cookies);
+        var buyerAccount = request.getBuyerAccount();
+        buyerAccount.setLoginCookie(cookiesStr);
+        buyerAccountService.save(buyerAccount);
     }
 
     private void updateHeaders(String key, String value) {
         getSavedHeaders().set(key, value);
     }
 
-    public void login() {
+    public boolean login(LoginRequest loginRequest) {
+        if (loginWithCookie(loginRequest)) {
+            return true;
+        }
 
-//        getDriver().get("https://www.lazada.sg/");
-//        Cookie[] mycookies = new ObjectMapper().readValue(mycookie, Cookie[].class);
-//        System.out.println("value==: " + mycookies);
-//        for (Cookie cookie : mycookies) {
-//            getDriver().manage().addCookie(cookie);
-//        }
-//        getDriver().get("https://www.lazada.sg/");
+        getDriver().get(urls.homePage);
 
-        getDriver().get(urls.loginPage);
         try {
-            WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
-            SeleniumHelper.clearAndType(email_input, "willowwu123@gmail.com");
+            WebElement loginTopButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginTopButton());
+            loginTopButton.click();
             Thread.sleep((long) (Math.random() * 3000));
 
-            WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
-            SeleniumHelper.clearAndType(password_input, "Fadacai88888");
-            Thread.sleep((long) (Math.random() * 3000));
-
-            WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
-            login_button.click();
-            Thread.sleep(8888);
-
-            try {
-                new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
-            } catch (Exception ex) {
-
+            while (getDriver().getCurrentUrl().equals(urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
+                // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
             }
 
-            List<WebElement> verify_buttons = SeleniumHelper.getByClassName(getDriver(), "verify-item");
-            WebElement email_verify_button = verify_buttons.stream().filter(b -> b.getText().equals("Email Verification")).findFirst().orElse(null);
-//             SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountVerifyButton());
-            email_verify_button.click();
+            final String loginOrVerifyUrl = getDriver().getCurrentUrl();// 获取跳转后的url地址
 
-            WebElement email_send_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailSendButton());
-            email_send_button.click();
-
-            Thread.sleep(18000);
-            String code = emailService.getEmailVerifyCode("willowwu123@gmail.com", "nvqwbcmkgcsmlcog");
-
-            if (code != "") {
-                WebElement email_code_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailCodeInput());
-                SeleniumHelper.clearAndType(email_code_input, code);
-
-                Thread.sleep((long) (Math.random() * 3000));
-
-                WebElement verifySubmitButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifySubmitButton());
-                verifySubmitButton.click();
+//            new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
+            if (loginOrVerifyUrl.contains("member.lazada.sg/user/verification-pc")) {
+                verifyLoginByEmail(loginRequest);
+            } else {
+                inputAccountAndPassword(loginRequest);
+                while (!getDriver().getCurrentUrl().equals(urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
+                    // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
@@ -291,13 +479,137 @@ public class AliExpressBot {
             System.out.println("登录失败!");
             getDriver().quit();
         }
+        return true;
+    }
+
+    private void verifyLoginByEmail(LoginRequest loginRequest) throws InterruptedException, MessagingException, IOException {
+        inputAccountAndPassword(loginRequest);
+
+        try {
+            new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(ExpectedConditions.urlContains("member.lazada.sg/user/verification-pc"));
+        } catch (Exception ex) {
+
+        }
+
+        List<WebElement> verify_buttons = SeleniumHelper.getByClassName(getDriver(), "verify-item");
+        WebElement email_verify_button = verify_buttons.stream().filter(b -> b.getText().equals("Email Verification")).findFirst().orElse(null);
+//             SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountVerifyButton());
+        email_verify_button.click();
+
+        WebElement email_send_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailSendButton());
+        email_send_button.click();
+
+        Thread.sleep(18000);
+
+        String accountVerifyEmailAddress = request.getBuyerAccount().getVerifyEmail();
+        String accountVerifyEmailPassword = request.getBuyerAccount().getVerifyEmailPassword();
+        String code = emailService.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
+
+        if (code != "") {
+            WebElement email_code_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifyEmailCodeInput());
+            SeleniumHelper.clearAndType(email_code_input, code);
+
+            Thread.sleep((long) (Math.random() * 3000));
+
+            WebElement verifySubmitButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getVerifySubmitButton());
+            verifySubmitButton.click();
+        }
+    }
+
+    private void inputAccountAndPassword(LoginRequest loginRequest) throws InterruptedException {
+        WebElement email_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountInput());
+        SeleniumHelper.clearAndType(email_input, loginRequest.getAccount());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement password_input = SeleniumHelper.getByXpath(getDriver(), xpaths.getPasswordInput());
+        SeleniumHelper.clearAndType(password_input, loginRequest.getPassword());
+        Thread.sleep((long) (Math.random() * 3000));
+
+        WebElement login_button = SeleniumHelper.getByXpath(getDriver(), xpaths.getLoginButton());
+        login_button.click();
+        Thread.sleep(8888);
+    }
+
+    public boolean loginWithCookie(LoginRequest loginRequest) {
+        getDriver().get(urls.homePage);
+        String cookiesStr = loginRequest.getCookies();
+        Cookie[] mycookies;
+        try {
+            mycookies = new ObjectMapper().readValue(cookiesStr, Cookie[].class);
+            log.debug("value==: " + mycookies);
+            for (Cookie cookie : mycookies) {
+                getDriver().manage().addCookie(cookie);
+            }
+            getDriver().get(urls.homePage);
+
+            WebElement accountTopButtonSpan = SeleniumHelper.getByXpath(getDriver(), xpaths.getAccountTopButtonSpan());
+            String spanText = accountTopButtonSpan.getText();
+            if (spanText.contains("ACCOUNT")) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (JsonProcessingException e) {
+            log.debug("存储的cookie string解析失败，请检查！" + loginRequest);
+            return false;
+        } catch (TimeoutException e) {
+            log.debug("selenium超时错误,将重试...", e);
+            return false;
+        }
+    }
+
+    /**
+     * @param request
+     * @return
+     */
+    @Override
+    public boolean doStock(StockRequest request) throws InterruptedException, JsonProcessingException {
+        this.request = request;
+        log.info("bot checking available...");
+
+        var supplier = request.getSupplier();
+        if (!supplier.getAvailable()) {
+            throw new SupplierUnavailableException();
+        }
+
+
+        log.info("bot start to do stock...");
+        loginAndPlaceOrder();
+
+        return false;
+    }
+
+    private List<AddCartRequestModel> generAddCartRequest() {
+        var supplier = request.getSupplier();
+        AddCartRequestModel addCartRequestModel = new AddCartRequestModel();
+        addCartRequestModel.setItemId(supplier.getApiItemId());
+        addCartRequestModel.setSkuId(supplier.getApiSkuId());
+        addCartRequestModel.setQuantity(request.getOrderInfo().getQuantity());
+        List<AddCartRequestModel> addCartRequest = Collections.singletonList(addCartRequestModel);
+        return addCartRequest;
+    }
+
+    /**
+     * @param orderId
+     * @return
+     */
+    @Override
+    public ShipmentInfo trackOrder(String orderId) {
+        return null;
+    }
+
+    /**
+     * @param product
+     * @return
+     */
+    @Override
+    public boolean returnOrder(Product product) {
+        return false;
     }
 
     public void cartAdd(List<AddCartRequestModel> model) {
 //        String paramMap = "[{\"itemId\":\"2199811436\",\"skuId\":\"14121812860\",\"quantity\":8}]";
-        int count = cartCount();
 
-        // todo
         while (cartCount() > 0) {
             cartClear();
         }
@@ -319,29 +631,98 @@ public class AliExpressBot {
     }
 
     public boolean cartClear() {
-        return true;
-    }
-
-    public void checkout() {
         getDriver().get(urls.cartPage);
-        WebElement selectAllDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getSelectAllCartItemsDiv());
-
-        int itemsCount = Integer.parseInt(selectAllDiv.getText().split("\\(")[1].split(" ")[0]);
 
         WebElement selectAllButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getSelectAllCartItemsButton());
         selectAllButton.click();
 
+        // 等待全选框被选中
+        new WebDriverWait(getDriver(), Duration.ofSeconds(6))
+                .until(ExpectedConditions.elementSelectionStateToBe(selectAllButton, true));
+
+        WebElement delteButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getDeleteAllCartItemsButton());
+        delteButton.click();
+
+        WebElement confirmDeleteButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getDeleteCartItemsConfirmButton());
+        confirmDeleteButton.click();
+
+        WebElement emptyTips = SeleniumHelper.getByXpath(getDriver(), xpaths.getCartEmptyTipsDiv());
+        if (emptyTips.getText().contains("Your cart is empty")) {
+            return true;
+        }
+        return false;
+    }
+
+    public void buyNow() throws InterruptedException {
+        var productPage = request.getSupplier().getUrl();
+        getDriver().get(productPage);
+
+        var style1SelectorXpath = request.getSupplier().getUiStyle1Xpath();
+        WebElement style1Selector = SeleniumHelper.getByXpath(getDriver(), style1SelectorXpath);
+        style1Selector.click();
+        Thread.sleep(2333);
+
+        var style2SelectorXpath = request.getSupplier().getUiStyle2Xpath();
+        if (style2SelectorXpath != null && style2SelectorXpath != "") {
+            WebElement style2Selector = SeleniumHelper.getByXpath(getDriver(), style2SelectorXpath);
+            style2Selector.click();
+        }
+        Thread.sleep(2333);
+
+        var style3SelectorXpath = request.getSupplier().getUiStyle3Xpath();
+        if (style3SelectorXpath != null && style3SelectorXpath != "") {
+            WebElement style3Selector = SeleniumHelper.getByXpath(getDriver(), style3SelectorXpath);
+            style3Selector.click();
+        }
+        Thread.sleep(2333);
+
+        var amountSelectorXpath = request.getSupplier().getUiAmountXpath();
+        WebElement amountSelector = SeleniumHelper.getByXpath(getDriver(), amountSelectorXpath);
+        SeleniumHelper.clearAndType(amountSelector, request.getOrderInfo().getQuantity().toString());
+        Thread.sleep(2333);
+
+        var buyNowButton = SeleniumHelper.getByXpath(getDriver(), xpaths.buyNowButton);
+        buyNowButton.click();
+        Thread.sleep(2333);
+
+
+    }
+
+    public void checkout() throws
+            WrongCartItemsCountAddedException, WrongStockPriceException, OverTopShipFeeException {
+
+        while (!getDriver().getCurrentUrl().contains(urls.confirmPaymentPage)) {
+            log.info("等待进入confirm页面...");
+        }
+
+        int quantityToBuy = request.getOrderInfo().getQuantity();
+
         WebElement orderSummaryPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getSubtotalDiv());
-        double subTotalPrice = Double.parseDouble(orderSummaryPriceDiv.getText().substring(1));
+        var text = orderSummaryPriceDiv.getText();
+        double subTotalPrice = parseBrazilMoney(text);
+
+        if (subTotalPrice > request.getSupplier().getPrice() * quantityToBuy) {
+            throw new WrongStockPriceException("we got sub total price without ship fee:" + subTotalPrice);
+        }
 
         WebElement shippingFeeDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getShippingFeeDiv());
-        double shippingFee = Double.parseDouble(shippingFeeDiv.getText().substring(1));
+        text = shippingFeeDiv.getText();
+        double shippingFee = parseBrazilMoney(text);
+        if (shippingFee > request.getSupplier().getMaxShipFee()) {
+            throw new OverTopShipFeeException("we got a ship fee:" + shippingFee);
+        }
 
         WebElement totalPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getTotalPriceDiv());
-        double totalPrice = Double.parseDouble(totalPriceDiv.getText().substring(1));
+        double totalPrice = parseBrazilMoney(totalPriceDiv.getText());
 
-        WebElement checkoutButton = SeleniumHelper.getByXpath(getDriver(), xpaths.getCheckoutButton());
-        checkoutButton.click();
+        WebElement payNowButton = SeleniumHelper.getByXpath(getDriver(), xpaths.payNowButton);
+        payNowButton.click();
+    }
+
+    public double parseBrazilMoney(String text) {
+        text = text.substring(3);
+        text = text.replace(',', '.');
+        return Double.parseDouble(text);
     }
 
     public void placeOrder() {
@@ -371,4 +752,6 @@ public class AliExpressBot {
         headers.add("Accept-Language", "zh-CN,zh;q=0.9");
         this.savedHeaders = headers;
     }
+
+
 }

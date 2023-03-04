@@ -1,9 +1,11 @@
 package com.yy.stock.projection;
 
+import com.yy.stock.entity.StockStatus;
+
 import java.time.Instant;
 
 /**
- * A Projection for the {@link com.yy.stock.entity.Status} entity
+ * A Projection for the {@link StockStatus} entity
  */
 public interface StatusInfo {
     Long getId();

@@ -1,26 +1,53 @@
 alixpaths:
-  accountInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[1]/input"
-  passwordInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[2]/input"
-  loginButton: "/html/body/div[2]/div/div[2]/div/div[2]/form/div/div[2]/div[1]/button"
-  accountVerifyButton: "/html/body/div[2]/div/div[2]/div/div[2]/ul/li"
-  verifyEmailSendButton: "/html/body/div[2]/div/div[2]/div/div[2]/div/div[3]/div[2]/button"
-  verifyEmailCodeInput: "/html/body/div[2]/div/div[2]/div/div[2]/div/div[3]/div[1]/input"
-  verifySubmitButton: "/html/body/div[2]/div/div[2]/div/div[2]/div/div[4]/button"
-  selectAllCartItemsDiv: "/html/body/div[2]/div/div[2]/div/div/div[1]/div[1]/div[1]/div/div/div[1]"
-  selectAllCartItemsButton: "//*[@id=\"listHeader_H\"]/div/div/div[1]/label/input"
-  subtotalDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[1]/div[1]/div/div[2]"
-  shippingFeeDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[1]/div[2]/div/div[2]"
-  totalPriceDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/div/div[2]"
-  checkoutButton: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/button"
+  loginTopButton: "//*[@id=\"anonLogin\"]"
+  accountTopButtonSpan: "//*[@id=\"nav-user-account\"]/span/a/span"
+  accountInput: "//*[@id=\"fm-login-id\"]"
+  passwordInput: "//*[@id=\"fm-login-password\"]"
+  loginButton: "//*[@id=\"root\"]/div/div/div[1]/div[2]/div/div/button[2]"
+  accountVerifyButton: ""
+  verifyEmailSendButton: ""
+  verifyEmailCodeInput: ""
+  verifySubmitButton: ""
+  selectAllCartItemsDiv: ""
+  selectAllCartItemsButton: ""
+  deleteAllCartItemsButton: ""
+  deleteCartItemsConfirmButton: ""
+  cartEmptyTipsDiv: ""
+  checkoutButton: ""
+  deleteAddressButton: "//*[@id=\"address-main\"]/div/div/div[2]/div[2]/div[5]/button[2]"
+  confirmDeleteAddressButton: "/html/body/div[11]/div[2]/div[2]/button[1]"
+  addAddressButton: "//*[@id=\"address-main\"]/div/div/div[1]/button"
+  addressNameInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[1]/div[2]/div/div[1]/div/div/span/input'
+  addressPhoneInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[1]/div[2]/div/div[2]/div/div/span/span[2]/input'
+  addressCepInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[1]/div[2]/div/div/span/span[1]/input'
+  addressCepSelectButton: '/html/body/div[10]/div/ul/li/div/span/div'
+  addressBairrorInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[2]/div[3]/div/div/span/input'
+  addressRuaInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[3]/div[1]/div/div/span/input'
+  addressRuaNumInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[3]/div[2]/div/div/span/input'
+  addressNoteInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[4]/div/div/div/span/input'
+  addressCpfInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[3]/div[3]/div/div/div/div/span/input'
+  addressSetDefaultButton: '//*[@id="halo-wrapper-root"]/div/div/form/div[4]/div/div/div/div/div/div[1]/label/span[1]/input'
+  addressSaveButton: '//*[@id="halo-wrapper-root"]/div/div/form/div[5]/div/button[1]'
+  addressFirstAddressNameDiv: 'id="address-main"]/div/div/div[2]/div/div[1]/span'
+  buyNowButton: "/html/body/div[7]/div/div[2]/div/div[2]/div[13]/span[1]/button"
+  confirmAddressNameDiv: "/html/body/div[2]/div/div/div/div/div[1]/div[1]/div/div[2]/div[1]/span[1]"
+  subtotalDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[1]/div/div/div[2]/div[2]/div"
+  shippingFeeDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[1]/div/div/div[4]/div[2]/div"
+  totalPriceDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[1]/span[2]"
+  payNowButton: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[2]/button"
+
 aliurls:
-  loginPage: "https://member.lazada.sg/user/login"
+  homePage: "https://www.aliexpress.com/"
+  loginPage: "https://login.aliexpress.com/"
   addToCartApi: "https://cart.lazada.sg/cart/api/add"
   cartPage: "https://cart.lazada.sg/cart"
   placeOrderPage: "https://checkout.lazada.sg/shipping"
+  addressListPage: "https://ilogisticsaddress.aliexpress.com/addressList.htm"
   listAddressApi: "https://member.lazada.sg/address/api/listAddress"
   getByPostCodeApi: "https://member.lazada.sg/locationtree/api/getByPostCode"
   validatePhoneApi: "https://member.lazada.sg/user/api/validatePhone"
   createAddressApi: "https://member.lazada.sg/address/api/createAddress"
   deleteAddressApi: "https://member.lazada.sg/address/api/deleteAddress"
+  confirmPaymentPage: "https://www.aliexpress.com/p/trade/confirm.html"
   logisticViewPage: "https://my.lazada.sg/customer/logisticDetail/view"
   cartCountApi: "https://cart.lazada.sg/cart/api/count"

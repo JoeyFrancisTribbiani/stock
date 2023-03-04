@@ -21,7 +21,7 @@ public class Supplier implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private BigInteger id;
 
     /**
      * 市场ID
@@ -56,7 +56,7 @@ public class Supplier implements Serializable {
      * 货源平台
      */
     @Column(name = "platform_id", nullable = false)
-    private Long platformId;
+    private BigInteger platformId;
 
     /**
      * 货源链接
@@ -114,4 +114,12 @@ public class Supplier implements Serializable {
     private String apiItemId;
     @Column(name = "max_ship_fee")
     private Float maxShipFee;
+    @Column(name = "ui_style1_xpath")
+    private String uiStyle1Xpath;
+    @Column(name = "ui_style2_xpath")
+    private String uiStyle2Xpath;
+    @Column(name = "ui_style3_xpath")
+    private String uiStyle3Xpath;
+    @Column(name = "ui_amount_xpath")
+    private String uiAmountXpath;
 }

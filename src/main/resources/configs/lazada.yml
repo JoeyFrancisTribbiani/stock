@@ -1,7 +1,7 @@
 xpaths:
-  accountInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[1]/input"
   loginTopButton: "//*[@id=\"anonLogin\"]"
   accountTopButtonSpan: "//*[@id=\"myAccountTrigger\"]"
+  accountInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[1]/input"
   passwordInput: "//*[@id=\"container\"]/div/div[2]/form/div/div[1]/div[2]/input"
   loginButton: "/html/body/div[2]/div/div[2]/div/div[2]/form/div/div[2]/div[1]/button"
   accountVerifyButton: "/html/body/div[2]/div/div[2]/div/div[2]/ul/li"
@@ -13,10 +13,13 @@ xpaths:
   deleteAllCartItemsButton: "//*[@id=\"listHeader_H\"]/div/div/div[2]/div"
   deleteCartItemsConfirmButton: "/html/body/div[9]/div/div/div[3]/div/button[2]"
   cartEmptyTipsDiv: "//*[@id=\"container\"]/div/div/div[1]/div"
+  buyNowButton: ""
+  confirmAddressNameDiv: ""
   subtotalDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[1]/div[1]/div/div[2]"
   shippingFeeDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[1]/div[2]/div/div[2]"
   totalPriceDiv: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/div/div[2]"
   checkoutButton: "//*[@id=\"rightContainer_CR\"]/div/div[2]/div/div[3]/button"
+  payNowButton: ""
 urls:
   homePage: "https://www.lazada.sg"
   loginPage: "https://member.lazada.sg/user/login"

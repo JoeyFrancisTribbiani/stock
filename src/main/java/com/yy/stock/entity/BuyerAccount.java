@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * stock record from supplier
@@ -18,10 +19,10 @@ public class BuyerAccount implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private BigInteger id;
 
     @Column(name = "platform_id", nullable = false)
-    private Long platformId;
+    private BigInteger platformId;
 
     @Column(name = "email")
     private String email;

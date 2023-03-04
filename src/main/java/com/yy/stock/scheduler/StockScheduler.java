@@ -10,9 +10,9 @@ import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockInfoDTO;
-import com.yy.stock.entity.Status;
+import com.yy.stock.entity.StockStatus;
 import com.yy.stock.service.BuyerAccountService;
-import com.yy.stock.service.StatusService;
+import com.yy.stock.service.StockStatusService;
 import com.yy.stock.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class StockScheduler {
     @Autowired
     private OrdersReportService ordersReportService;
     @Autowired
-    private StatusService statusService;
+    private StockStatusService stockStatusService;
     @Autowired
     private BuyerAccountService buyerAccountService;
     @Autowired
@@ -72,19 +72,19 @@ public class StockScheduler {
         int count = 0;
         for (OrderItemAdaptorInfoDTO order :
                 unshippedIn9To3Days) {
-            Status status = statusService.getOrCreateByOrderItemInfo(order);
-            if (status.getStatus() == StatusEnum.unstocked.ordinal()) {
+            StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemInfo(order);
+            if (stockStatus.getStatus() == StatusEnum.unstocked.ordinal()) {
                 count++;
                 if (count > capacity()) {
                     break;
                 }
 
-                status.setStatus(StatusEnum.stocking.ordinal());
-                statusService.save(status);
+                stockStatus.setStatus(StatusEnum.stocking.ordinal());
+                stockStatusService.save(stockStatus);
 
                 StockInfoDTO stockInfo = new StockInfoDTO();
                 stockInfo.setOrderItemAdaptorInfo(order);
-                stockInfo.setStatus(status);
+                stockInfo.setStockStatus(stockStatus);
 
                 toStock.add(stockInfo);
             }
@@ -94,7 +94,7 @@ public class StockScheduler {
 
     public void schedule(List<StockInfoDTO> toStock) {
         for (StockInfoDTO stockInfo : toStock) {
-            stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfo(), stockInfo.getStatus());
+            stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfo(), stockInfo.getStockStatus());
         }
     }
 

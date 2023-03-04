@@ -8,6 +8,8 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.http.HttpHeaders;
 
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.time.Duration;
 import java.util.BitSet;
 import java.util.List;
@@ -18,6 +20,14 @@ public class SeleniumHelper {
     public static void clearAndType(WebElement field, String text) {
         field.clear();
         field.sendKeys(text);
+    }
+
+    public static boolean isNumberString(String str) {
+        if (str == null) return false;
+        NumberFormat formatter = NumberFormat.getInstance();
+        ParsePosition pos = new ParsePosition(0);
+        formatter.parse(str, pos);
+        return str.length() == pos.getIndex();
     }
 
     public static WebElement getByXpath(ChromeDriver driver, String xpath) {

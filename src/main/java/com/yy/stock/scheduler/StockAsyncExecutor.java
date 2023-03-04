@@ -9,11 +9,11 @@ import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
-import com.yy.stock.entity.Status;
+import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.Supplier;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.PlatformService;
-import com.yy.stock.service.StatusService;
+import com.yy.stock.service.StockStatusService;
 import com.yy.stock.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class StockAsyncExecutor {
     @Autowired
-    private StatusService statusService;
+    private StockStatusService stockStatusService;
     @Autowired
     private BuyerAccountService buyerAccountService;
     @Autowired
@@ -36,9 +36,10 @@ public class StockAsyncExecutor {
 
 
     @Async("asyncServiceExecutor")
-    public void startStockAsync(OrderItemAdaptorInfoDTO orderToStock, Status status) {
+    public void startStockAsync(OrderItemAdaptorInfoDTO orderToStock, StockStatus stockStatus) {
         System.out.println("进入 asyncServiceExecutor");
-        if (statusService.setStockingStatus(status) == false) {
+        // 设置备货中的状态
+        if (stockStatusService.saveStatus(stockStatus, StatusEnum.stocking) == false) {
             return;
         }
         Bot bot;
@@ -49,11 +50,11 @@ public class StockAsyncExecutor {
             Supplier supplier = supplierService.getByAmazonOrderInfo(orderToStock);
             Platform platform = platformService.getById(supplier.getPlatformId());
             bot = SpringUtil.getBean(platform.getBotBean());
-            stockRequest = new StockRequest(status, orderToStock, platform, supplier, buyer, ordersAddress);
+            stockRequest = new StockRequest(stockStatus, orderToStock, platform, supplier, buyer, ordersAddress);
         } catch (Exception ex) {
-            status.setStatus(StatusEnum.unstocked.ordinal());
-            status.setLog(ex.toString() + ex.getStackTrace());
-            statusService.save(status);
+            stockStatus.setStatus(StatusEnum.unstocked.ordinal());
+            stockStatus.setLog(ex.toString() + ex.getStackTrace());
+            stockStatusService.save(stockStatus);
             log.error("调度初始化失败,ex:" + ex.getMessage());
             return;
         }
@@ -61,9 +62,9 @@ public class StockAsyncExecutor {
             bot.doStock(stockRequest);
         } catch (Exception ex) {
 
-            status.setStatus(StatusEnum.stockFailed.ordinal());
-            status.setLog(ex.toString() + ex.getStackTrace());
-            statusService.save(status);
+            stockStatus.setStatus(StatusEnum.stockFailed.ordinal());
+            stockStatus.setLog(ex.toString() + ex.getStackTrace());
+            stockStatusService.save(stockStatus);
             log.error("bot采购失败,ex:" + ex.getMessage());
         }
 

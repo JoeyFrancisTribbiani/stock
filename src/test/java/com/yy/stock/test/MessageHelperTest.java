@@ -1,9 +1,12 @@
 package com.yy.stock.test;
 
+import cn.hutool.core.lang.Assert;
 import com.yy.stock.bot.helper.MessageHelper;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class MessageHelperTest {
 
@@ -20,5 +23,47 @@ class MessageHelperTest {
         c.add(Calendar.DATE, -2);
         System.out.println(c.getTime());
 
+    }
+
+    @Test
+    void testCleanName() {
+        String name = "fdaf&'fdfd$jk";
+        String regEx = "[%&',;=?$\\x22]+";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(name);
+        var s = matcher.replaceAll("").trim();
+        Assert.isTrue(s.equals("fdaffdfdjk"));
+
+    }
+
+    @Test
+    void testCleanPhone() {
+        String phone = "+61 3349029 3";
+        String regEx = "[^0-9]";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(phone);
+        phone = matcher.replaceAll("");
+        Assert.isTrue(phone.equals("6133490293"));
+
+        if (phone.charAt(phone.length() - 9) != '9' && (phone.length() == 10 || phone.length() == 12)) {
+            var sb = new StringBuilder(phone);
+            phone = sb.insert(phone.length() - 8, "9").toString();
+        }
+        if (phone.startsWith("55") && phone.length() > 11) {
+            phone = phone.substring(2);
+        }
+        if (phone.startsWith("0")) {
+            phone = phone.substring(1);
+        }
+        Assert.isTrue(phone.equals("61933490293"));
+    }
+
+    @Test
+    void testBrasilMoney() {
+        var text = "R$ 6,17";
+        text = text.substring(3);
+        text = text.replace(',', '.');
+        Float n = Float.parseFloat(text);
+        Assert.isTrue(n.floatValue() == 6.17f);
     }
 }

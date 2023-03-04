@@ -2,8 +2,8 @@ package com.yy.stock.test;
 
 import cn.hutool.core.lang.Assert;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
-import com.yy.stock.entity.Status;
-import com.yy.stock.service.StatusService;
+import com.yy.stock.entity.StockStatus;
+import com.yy.stock.service.StockStatusService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,9 @@ import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class StatusServiceTest {
+class StockStockStatusServiceTest {
     @Autowired
-    private StatusService statusService;
+    private StockStatusService stockStatusService;
 
     @Test
     void getOrCreate() {
@@ -183,7 +183,7 @@ class StatusServiceTest {
             }
         };
 
-        Status r = statusService.getOrCreateByOrderItemInfo(orderItemInfo);
+        StockStatus r = stockStatusService.getOrCreateByOrderItemInfo(orderItemInfo);
         Assert.notNull(r);
         Assert.notNull(r.getId());
     }
