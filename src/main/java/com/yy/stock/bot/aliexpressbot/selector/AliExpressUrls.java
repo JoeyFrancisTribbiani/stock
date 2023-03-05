@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "aliurls")        // 指定配置文件注入属性前缀
 @Component
 public class AliExpressUrls extends BaseUrls {
+    public String cainiaoGlobalTrackApi;
 //    public String homePage;
 //    public String loginPage;
 //    public String addToCartApi;

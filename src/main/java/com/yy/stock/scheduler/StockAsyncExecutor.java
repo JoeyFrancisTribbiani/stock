@@ -52,7 +52,7 @@ public class StockAsyncExecutor {
             bot = SpringUtil.getBean(platform.getBotBean());
             stockRequest = new StockRequest(stockStatus, orderToStock, platform, supplier, buyer, ordersAddress);
         } catch (Exception ex) {
-            stockStatus.setStatus(StatusEnum.unstocked.ordinal());
+            stockStatus.setStatus(StatusEnum.unstocked.name());
             stockStatus.setLog(ex.toString() + ex.getStackTrace());
             stockStatusService.save(stockStatus);
             log.error("调度初始化失败,ex:" + ex.getMessage());
@@ -62,7 +62,7 @@ public class StockAsyncExecutor {
             bot.doStock(stockRequest);
         } catch (Exception ex) {
 
-            stockStatus.setStatus(StatusEnum.stockFailed.ordinal());
+            stockStatus.setStatus(StatusEnum.stockFailed.name());
             stockStatus.setLog(ex.toString() + ex.getStackTrace());
             stockStatusService.save(stockStatus);
             log.error("bot采购失败,ex:" + ex.getMessage());

@@ -4,6 +4,7 @@ public enum StatusEnum {
     unstocked,
     stocking,
     stockFailed,
+    payedButInfoSaveError,
     stockedUnshipped,
     shipped,
     delivered,

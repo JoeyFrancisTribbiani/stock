@@ -55,14 +55,11 @@ public class StockStatus implements Serializable {
     private Float totalPrice;
 
     @Column(name = "status", nullable = false)
-    private Integer status;
-
+    private String status;
     @Column(name = "shipment_track_number")
     private String shipmentTrackNumber;
-
     @Column(name = "shipment")
     private String shipment;
-
     @Column(name = "log")
     private String log;
 

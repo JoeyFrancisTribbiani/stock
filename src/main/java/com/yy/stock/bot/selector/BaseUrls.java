@@ -17,6 +17,8 @@ public class BaseUrls {
     public String deleteAddressApi;
     public String addressListPage;
     public String confirmPaymentPage;
+    public String orderListPage;
+    public String logisticDetailApi;
     public String logisticViewPage;
     public String cartCountApi;
 }

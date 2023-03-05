@@ -47,4 +47,7 @@ public class BaseXpaths {
     public String shippingFeeDiv;
     public String totalPriceDiv;
     public String payNowButton;
+
+    // 订单相关
+    public String firstOrderIdLabel;
 }

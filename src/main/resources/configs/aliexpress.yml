@@ -35,6 +35,7 @@ alixpaths:
   shippingFeeDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[1]/div/div/div[4]/div[2]/div"
   totalPriceDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[1]/span[2]"
   payNowButton: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[2]/button"
+  firstOrderIdLabel: "//*[@id=\"root\"]/div/div[2]/div[1]/div/div[1]/div[1]/div[2]/div/div[2]"
 
 aliurls:
   homePage: "https://www.aliexpress.com/"
@@ -49,5 +50,7 @@ aliurls:
   createAddressApi: "https://member.lazada.sg/address/api/createAddress"
   deleteAddressApi: "https://member.lazada.sg/address/api/deleteAddress"
   confirmPaymentPage: "https://www.aliexpress.com/p/trade/confirm.html"
+  orderListPage: "https://www.aliexpress.com/p/order/index.html"
   logisticViewPage: "https://my.lazada.sg/customer/logisticDetail/view"
   cartCountApi: "https://cart.lazada.sg/cart/api/count"
+  cainiaoGlobalTrackApi: "https://global.cainiao.com/global/detail.json?lang=en-US&language=en-US&mailNos="

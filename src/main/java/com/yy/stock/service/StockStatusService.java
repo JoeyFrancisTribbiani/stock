@@ -31,7 +31,7 @@ public class StockStatusService {
             toCreate.setMarketplaceId(orderItemInfo.getMarketplaceId());
             toCreate.setAmazonOrderId(orderItemInfo.getOrderid());
             toCreate.setAmazonAuthId(orderItemInfo.getAuthid());
-            toCreate.setStatus(StatusEnum.unstocked.ordinal());
+            toCreate.setStatus(StatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 
             stockStatus = toCreate;
@@ -45,7 +45,7 @@ public class StockStatusService {
 
     public boolean saveStatus(StockStatus stockStatus, StatusEnum status) {
         try {
-            stockStatus.setStatus(status.ordinal());
+            stockStatus.setStatus(status.name());
             statusRepository.save(stockStatus);
         } catch (Exception ex) {
             return false;

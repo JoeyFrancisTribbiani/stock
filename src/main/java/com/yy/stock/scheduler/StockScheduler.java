@@ -73,13 +73,13 @@ public class StockScheduler {
         for (OrderItemAdaptorInfoDTO order :
                 unshippedIn9To3Days) {
             StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemInfo(order);
-            if (stockStatus.getStatus() == StatusEnum.unstocked.ordinal()) {
+            if (stockStatus.getStatus() == StatusEnum.unstocked.name()) {
                 count++;
                 if (count > capacity()) {
                     break;
                 }
 
-                stockStatus.setStatus(StatusEnum.stocking.ordinal());
+                stockStatus.setStatus(StatusEnum.stocking.name());
                 stockStatusService.save(stockStatus);
 
                 StockInfoDTO stockInfo = new StockInfoDTO();
