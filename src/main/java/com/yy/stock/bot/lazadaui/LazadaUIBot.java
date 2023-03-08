@@ -36,6 +36,7 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -56,6 +57,7 @@ import java.util.logging.Level;
 
 @Data
 @Component
+@Scope("prototype")
 @Slf4j
 public class LazadaUIBot implements Bot {
     private final LazadaXpaths xpaths;

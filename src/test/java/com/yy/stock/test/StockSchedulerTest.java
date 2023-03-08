@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -57,6 +58,16 @@ class StockSchedulerTest {
         Assert.notNull(o.getId());
         System.out.println(o.getOrderid() + o.getOrderstatus());
         System.out.println(list.size());
+    }
+
+    @Test
+    void testSyncOrderReportXxlJobHandler() throws IOException {
+        stockScheduler.syncOrderReportXxlJobHandler();
+    }
+
+    @Test
+    void testStockXxlJobHandler() throws InterruptedException {
+        stockScheduler.stockXxlJobHandler();
     }
 
 }

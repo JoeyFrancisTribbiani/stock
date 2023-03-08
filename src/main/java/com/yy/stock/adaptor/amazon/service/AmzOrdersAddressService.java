@@ -2,6 +2,7 @@ package com.yy.stock.adaptor.amazon.service;
 
 import com.yy.stock.adaptor.amazon.dto.AmzOrdersAddressDTO;
 import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
+import com.yy.stock.adaptor.amazon.entity.OrdersReport;
 import com.yy.stock.adaptor.amazon.repository.AmzOrdersAddressRepository;
 import com.yy.stock.adaptor.amazon.vo.AmzOrdersAddressQueryVO;
 import com.yy.stock.adaptor.amazon.vo.AmzOrdersAddressUpdateVO;
@@ -27,6 +28,11 @@ public class AmzOrdersAddressService {
         return bean.getAmazonOrderId();
     }
 
+    public String save(AmzOrdersAddress bean) {
+        bean = amzOrdersAddressRepository.save(bean);
+        return bean.getAmazonOrderId();
+    }
+
     public void delete(String id) {
         amzOrdersAddressRepository.deleteById(id);
     }
@@ -44,6 +50,11 @@ public class AmzOrdersAddressService {
 
     public AmzOrdersAddress getByOrderInfo(OrderItemAdaptorInfoDTO orderToStock) {
         AmzOrdersAddress ordersAddress = amzOrdersAddressRepository.findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderToStock.getMarketplaceId(), orderToStock.getAuthid(), orderToStock.getOrderid());
+        return ordersAddress;
+    }
+
+    public AmzOrdersAddress getByOrderReport(OrdersReport orderToStock) {
+        AmzOrdersAddress ordersAddress = amzOrdersAddressRepository.findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderToStock.getMarketplaceId(), orderToStock.getAmazonAuthId(), orderToStock.getAmazonOrderId());
         return ordersAddress;
     }
 

@@ -49,6 +49,7 @@ public class StockAsyncExecutor {
             AmzOrdersAddress ordersAddress = amzOrdersAddressService.getByOrderInfo(orderToStock);
             Supplier supplier = supplierService.getByAmazonOrderInfo(orderToStock);
             Platform platform = platformService.getById(supplier.getPlatformId());
+            // todo
             bot = SpringUtil.getBean(platform.getBotBean());
             stockRequest = new StockRequest(stockStatus, orderToStock, platform, supplier, buyer, ordersAddress);
         } catch (Exception ex) {

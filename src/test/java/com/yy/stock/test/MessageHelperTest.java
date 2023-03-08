@@ -66,4 +66,16 @@ class MessageHelperTest {
         Float n = Float.parseFloat(text);
         Assert.isTrue(n.floatValue() == 6.17f);
     }
+
+    @Test
+    void testSplit() {
+//        var name = "xiaohao_br-20230306133337.txt";
+//        var nameWords = name.split("-");
+//        var withExt = nameWords[1];
+        var withExt = "20230306133337.txt";
+        var s = withExt.split("\\.");
+        s = withExt.split(".");
+//        nameWords[1] = s[0];
+
+    }
 }

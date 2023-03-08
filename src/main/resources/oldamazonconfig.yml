@@ -1,0 +1,19 @@
+auth:
+  accessKeyId: AKIAVCZHDCZBJL6PSYNE
+  secretKey: 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
+  roleArn: arn:aws:iam::349584954946:role/erp_role
+  clientId: amzn1.application-oa2-client.0c73f7463a85441f9ea68bbcb59702af
+  clientSecret: 2bc5c7bed95d3891bf7b7562c7eb8497c307f8beebecc628614bfcde0d81a3b5
+  appid: amzn1.sp.solution.efbcd2d9-481e-4241-a056-c2143f81d469
+  sandbox: false
+  needproxy: false
+aws:
+  sqsStandArn: arn:aws:sqs:us-west-2:16132527896:testsqs
+  sqsStandPath: https://sqs.us-west-2.amazonaws.com/16132527896/testsqs
+  sqsFifoArn: arn:aws:sqs:us-west-2:16132527896:test.fifo
+  accessKeyId: AK45K1548DOI8579
+  secretKey: 26545687fdsafdsbv1f5f6d7s8afd4vc159f8d
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

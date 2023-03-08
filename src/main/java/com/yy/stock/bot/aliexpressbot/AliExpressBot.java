@@ -22,6 +22,7 @@ import com.yy.stock.common.email.EmailService;
 import com.yy.stock.common.exception.OverTopShipFeeException;
 import com.yy.stock.common.exception.SupplierUnavailableException;
 import com.yy.stock.common.exception.WrongStockPriceException;
+import com.yy.stock.common.util.YamlSourceFactory;
 import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockRequest;
@@ -42,6 +43,9 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -64,7 +68,9 @@ import java.util.regex.Pattern;
 
 @Data
 @Component
+@Scope("prototype")
 @Slf4j
+@PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称
 public class AliExpressBot implements Bot {
     private final AliExpressXpaths xpaths;
     private final AliExpressUrls urls;
@@ -75,9 +81,14 @@ public class AliExpressBot implements Bot {
     private HttpHeaders savedHeaders;
     private EmailService emailService;
     private StockRequest request;
+
+    // 付款开关，打开后才点击付款按钮，否则跳过付款，直接保存状态为已备货
+    @Value("${bot.paySwitch}")
+    private boolean paySwitch;
     private BuyerAccountService buyerAccountService;
     //    private SupplierService supplierService;
     private StockStatusService stockStatusService;
+
 
     public AliExpressBot(AliExpressXpaths xpaths, AliExpressUrls urls, EmailService emailService,
 //                       SupplierService supplierService,
@@ -96,6 +107,27 @@ public class AliExpressBot implements Bot {
 //        this.supplierService = supplierService;
         this.stockStatusService = stockStatusService;
         this.buyerAccountService = buyerAccountService;
+    }
+
+    public boolean loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
+        LoginRequest loginRequest = generLoginRequest();
+        login(loginRequest);
+
+        SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
+        updateCookies(getDriver().manage().getCookies());
+
+        updateSingleAddress(generCreateAddressRequest());
+
+        clickBuyNow();
+
+        checkout();
+
+        payNow();
+
+        saveOrderId();
+
+        getDriver().quit();
+        return true;
     }
 
     public LoginRequest generLoginRequest() {
@@ -193,27 +225,6 @@ public class AliExpressBot implements Bot {
         command.put("source", "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
         driver.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", command);
         return driver;
-    }
-
-    public boolean loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
-        LoginRequest loginRequest = generLoginRequest();
-        login(loginRequest);
-
-        SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
-        updateCookies(getDriver().manage().getCookies());
-
-        updateSingleAddress(generCreateAddressRequest());
-
-        clickBuyNow();
-
-        checkout();
-
-        placeOrder();
-
-        saveOrderId();
-
-        getDriver().quit();
-        return true;
     }
 
     private void saveOrderId() {
@@ -391,7 +402,7 @@ public class AliExpressBot implements Bot {
         Thread.sleep(1000);
 
         var noteInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressNoteInput);
-        var note = request.getAddress().getAddressLine3();
+        var note = request.getAddress().getAddressType();
         if (note != null && note != "") {
             note = note.replace(',', ' ');
         }
@@ -400,7 +411,7 @@ public class AliExpressBot implements Bot {
 
         var cpfInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCpfInput);
         // 使用此字段存储巴西cpf
-        var cpf = request.getAddress().getMunicipality();
+        var cpf = request.getAddress().getDistrict();
         cpf = cleanAddressCpf(cpf);
         SeleniumHelper.clearAndType(cpfInput, cpf);
         Thread.sleep(1000);
@@ -805,8 +816,6 @@ public class AliExpressBot implements Bot {
         WebElement totalPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getTotalPriceDiv());
         double totalPrice = parseBrazilMoney(totalPriceDiv.getText());
 
-        WebElement payNowButton = SeleniumHelper.getByXpath(getDriver(), xpaths.payNowButton);
-        payNowButton.click();
     }
 
     public double parseBrazilMoney(String text) {
@@ -815,11 +824,15 @@ public class AliExpressBot implements Bot {
         return Double.parseDouble(text);
     }
 
-    public void placeOrder() throws InterruptedException {
-        var succTips = "Payment Successful";
-        while (!getDriver().getPageSource().contains(succTips)) {
-            log.info("等待付款成功的提示...");
-            Thread.sleep(1000);
+    public void payNow() throws InterruptedException {
+        if (paySwitch) {
+            WebElement payNowButton = SeleniumHelper.getByXpath(getDriver(), xpaths.payNowButton);
+            payNowButton.click();
+            var succTips = "Payment Successful";
+            while (!getDriver().getPageSource().contains(succTips)) {
+                log.info("等待付款成功的提示...");
+                Thread.sleep(1000);
+            }
         }
         request.getStockStatus().setStatus(StatusEnum.stockedUnshipped.name());
         stockStatusService.save(request.getStockStatus());

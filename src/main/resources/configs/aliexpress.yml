@@ -1,3 +1,5 @@
+bot:
+  paySwitch: false
 alixpaths:
   loginTopButton: "//*[@id=\"anonLogin\"]"
   accountTopButtonSpan: "//*[@id=\"nav-user-account\"]/span/a/span"
