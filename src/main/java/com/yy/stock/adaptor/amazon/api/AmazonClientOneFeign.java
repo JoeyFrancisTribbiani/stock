@@ -1,6 +1,7 @@
 package com.yy.stock.adaptor.amazon.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.pojo.dto.ProductListQuery;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.AmzProductListVo;
 import com.yy.stock.common.result.Result;
@@ -19,7 +20,7 @@ import java.util.Map;
 public interface AmazonClientOneFeign {
 
     @PostMapping("/amazon/api/v1/report/product/productInfo/productList")
-    public Result<IPage<AmzProductListVo>> getProductListAction(@RequestBody ProductListQuery query);
+    public Result<Page<AmzProductListVo>> getProductListAction(@RequestBody ProductListQuery query);
 
     @GetMapping("/amazon/api/v1/shipFormSync/confirmSyncShipment")
     public Result<?> confirmSyncShipment(@RequestParam String shipmentid);

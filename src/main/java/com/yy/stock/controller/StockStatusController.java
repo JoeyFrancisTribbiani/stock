@@ -1,6 +1,7 @@
 package com.yy.stock.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.AmazonClientOneFeign;
 import com.yy.stock.adaptor.amazon.api.pojo.dto.ProductListQuery;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.AmzProductListVo;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/stock")
+@RequestMapping("/api/v1/stockStatus")
 public class StockStatusController {
 
     @Autowired
@@ -34,8 +35,8 @@ public class StockStatusController {
     }
 
     @PostMapping("/stockStatusList")
-    public Result<IPage<AmzProductListVo>> productListAction(@RequestBody ProductListQuery query) {
-        Result<IPage<AmzProductListVo>> result = amazonClientOneFeign.getProductListAction(query);
+    public Result<Page<AmzProductListVo>> productListAction(@RequestBody ProductListQuery query) {
+        Result<Page<AmzProductListVo>> result = amazonClientOneFeign.getProductListAction(query);
         if (Result.isSuccess(result) && result.getData() != null) {
 
         }
