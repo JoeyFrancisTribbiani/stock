@@ -38,8 +38,18 @@ public class BuyerAccountService {
         return original;
     }
 
-    public BuyerAccount getNewestBuyer() {
-        BuyerAccount original = buyerAccountRepository.findBuyerAccountByMinOrderCount();
+    public BuyerAccount getLeastOrderCountAndNotBuyingBuyer(BigInteger platformId) {
+        BuyerAccount original = buyerAccountRepository.findBuyerAccountByLeastOrderCountAndNotBuying(platformId);
+        return original;
+    }
+
+    public BuyerAccount getLatestLoginedBuyer(BigInteger platformId) {
+        BuyerAccount original = buyerAccountRepository.findBuyerAccountByLatestLoginTime(platformId);
+        return original;
+    }
+
+    public BuyerAccount getEarliestLoginedBuyer(BigInteger platformId) {
+        BuyerAccount original = buyerAccountRepository.findBuyerAccountByEarliestLoginTime(platformId);
         return original;
     }
 

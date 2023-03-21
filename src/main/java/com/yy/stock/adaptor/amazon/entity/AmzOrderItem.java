@@ -23,10 +23,10 @@ public class AmzOrderItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "`id`", nullable = false,columnDefinition = "bigint")
+    @Column(name = "`id`", nullable = false, columnDefinition = "bigint")
     private BigInteger id;
 
-//    @Id
+    //    @Id
 //    @Column(name = "`amazon_order_id`", nullable = false)
 //    private String amazonOrderId;
     @EmbeddedId
@@ -43,10 +43,10 @@ public class AmzOrderItem implements Serializable {
 //    @Column(name = "`orderItemId`", nullable = false)
 //    private String orderItemId;
 
-    @Column(name = "`asin`",columnDefinition = "char")
+    @Column(name = "`asin`", columnDefinition = "char")
     private String asin;
 
-    @Column(name = "`sku`", nullable = false,columnDefinition = "char")
+    @Column(name = "`sku`", nullable = false, columnDefinition = "char")
     private String sku;
 
     @Column(name = "`title`")
@@ -58,7 +58,7 @@ public class AmzOrderItem implements Serializable {
     @Column(name = "`QuantityShipped`")
     private Integer quantityShipped;
 
-    @Column(name = "`currency`",columnDefinition = "char")
+    @Column(name = "`currency`", columnDefinition = "char")
     private String currency;
 
     @Column(name = "`item_price`")
@@ -97,13 +97,13 @@ public class AmzOrderItem implements Serializable {
     @Column(name = "`GiftMessageText`")
     private String giftMessageText;
 
-    @Column(name = "`GiftWrapLevel`",columnDefinition = "char")
+    @Column(name = "`GiftWrapLevel`", columnDefinition = "char")
     private String giftWrapLevel;
 
-    @Column(name = "`ConditionId`",columnDefinition = "char")
+    @Column(name = "`ConditionId`", columnDefinition = "char")
     private String conditionId;
 
-    @Column(name = "`ConditionSubtypeId`",columnDefinition = "char")
+    @Column(name = "`ConditionSubtypeId`", columnDefinition = "char")
     private String conditionSubtypeId;
 
     @Column(name = "`ConditionNote`")
@@ -115,10 +115,10 @@ public class AmzOrderItem implements Serializable {
     @Column(name = "`ScheduledDeliveryEndDate`")
     private LocalDateTime scheduledDeliveryEndDate;
 
-    @Column(name = "`amazonAuthId`", nullable = false,columnDefinition = "bigint")
+    @Column(name = "`amazonAuthId`", nullable = false, columnDefinition = "bigint")
     private BigInteger amazonAuthId;
 
-    @Column(name = "`marketplaceId`",columnDefinition = "char")
+    @Column(name = "`marketplaceId`", columnDefinition = "char")
     private String marketplaceId;
 
 }

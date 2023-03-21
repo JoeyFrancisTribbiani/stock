@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * stock record from supplier
@@ -52,4 +53,13 @@ public class BuyerAccount implements Serializable {
 
     @Column(name = "verify_email_password")
     private String verifyEmailPassword;
+    @Column(name = "last_login_time")
+    private Date lastLoginTime;
+    @Column(name = "last_pay_time")
+    private Date lastPayTime;
+    @Column(name = "status")
+    private String status;
+    @Column(name = "in_buying")
+    private boolean inBuying;
+
 }

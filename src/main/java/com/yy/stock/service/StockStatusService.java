@@ -3,7 +3,7 @@ package com.yy.stock.service;
 import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.entity.StockStatus;
-import com.yy.stock.repository.StatusRepository;
+import com.yy.stock.repository.StockStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.math.BigInteger;
 public class StockStatusService {
 
     @Autowired
-    private StatusRepository statusRepository;
+    private StockStatusRepository statusRepository;
 
     public BigInteger save(StockStatus s) {
         statusRepository.save(s);

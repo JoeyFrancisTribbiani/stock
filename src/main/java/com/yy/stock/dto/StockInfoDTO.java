@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class StockInfoDTO {
-    OrderItemAdaptorInfoDTO orderItemAdaptorInfo;
+    OrderItemAdaptorInfoDTO orderItemAdaptorInfoDTO;
     StockStatus stockStatus;
 }

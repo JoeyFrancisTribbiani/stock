@@ -33,8 +33,9 @@ spring:
     amazon:
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.cj.jdbc.Driver
-      password: toor0109
-      jdbc-url: jdbc:mysql://192.168.50.238:3306/db_wimoor
+      password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
+      jdbc-url: jdbc:mysql://172.81.214.167:3306/db_wimoor
+      database-platform: org.hibernate.dialect.MySQL5Dialect
       username: root
       initialSize: 5
       minIdle: 5

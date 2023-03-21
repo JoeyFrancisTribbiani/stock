@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.math.BigInteger;
 
-public interface StatusRepository extends JpaRepository<StockStatus, String>, JpaSpecificationExecutor<StockStatus> {
+public interface StockStatusRepository extends JpaRepository<StockStatus, String>, JpaSpecificationExecutor<StockStatus> {
     public StockStatus findFirstBymarketplaceIdAndAmazonAuthIdAndAmazonOrderId(String marketplaceId, BigInteger authId, String amazonOrderId);
 }

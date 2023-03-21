@@ -1,14 +1,72 @@
 package com.yy.stock.test;
 
 import cn.hutool.core.lang.Assert;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.base.MyCookie;
 import com.yy.stock.bot.helper.MessageHelper;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 class MessageHelperTest {
+
+    public static byte[] unGZip(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {
+            byte[] buf = new byte[4096];
+            int len = -1;
+            while ((len = gzipInputStream.read(buf, 0, buf.length)) != -1) {
+                byteArrayOutputStream.write(buf, 0, len);
+            }
+            return byteArrayOutputStream.toByteArray();
+        } finally {
+            byteArrayOutputStream.close();
+        }
+    }
+
+    @Test
+    void testGetJavascript() throws IOException {
+        //获取根目录(绝对路径)
+        File path = new File(ResourceUtils.getURL("classpath:").getPath());
+        if (!path.exists()) path = new File("");
+        System.out.println("path:" + path.getAbsolutePath());
+
+        String html = new String(Files.readAllBytes(Paths.get("./HELP.html")));
+        Document doc = Jsoup.parse(html);
+        Elements tds = doc.getElementsByTag("script"); // 标识获取html中第一个<script>标签
+        for (var element : tds) {
+            var content = element.data();
+            content = content.trim();
+            if (content.startsWith("window.runParams")) {
+                var jsonStr = content.split("window.runParams = \\{")[1];
+                jsonStr = jsonStr.trim();
+                jsonStr = content.split("data: ")[1];
+                jsonStr = jsonStr.split("csrfToken: ")[0];
+                jsonStr = jsonStr.trim();
+                jsonStr = StringUtils.removeEnd(jsonStr, ",");
+                System.out.println("json:" + jsonStr);
+            }
+        }
+
+//        String data = tds.toString().replaceAll("\\&[a-zA-Z]{0,9};", "").replaceAll("<[^>]*>", "\n\t"); // 去除html中的标签
+
+    }
 
     @Test
     void getValueFromJsonMessage() {
@@ -77,5 +135,54 @@ class MessageHelperTest {
         s = withExt.split(".");
 //        nameWords[1] = s[0];
 
+    }
+
+    @Test
+    void testCookieStr() throws JsonProcessingException {
+        var cookieStr = "[{\"name\":\"ali_apache_track\",\"value\":\"mt=1|ms=|mid=uk2221891091rzaae\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010226000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_hvn_login\",\"value\":\"13\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1709208620000,\"sameSite\":null,\"httpOnly\":false,\"secure\":true},{\"name\":\"xman_us_t\",\"value\":\"x_lid=uk2221891091rzaae&sign=y&rmb_pp=nevenmore@outlook.com&x_user=1bScqlQS8NFR85BJ2xnbGVDgDy+VaMpVwBLBO6Itx8s=&ctoken=1dfhp9_vye7jl&l_source=aliexpress\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1686226220000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"aep_common_f\",\"value\":\"HszgPUcmrerH1F4MZu+RM2lQmvif+UqoAaX2oEt9Z6Rd5ZV6WmtUkQ==\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010220000,\"sameSite\":\"None\",\"httpOnly\":true,\"secure\":true},{\"name\":\"JSESSIONID\",\"value\":\"22DB009EC2E8CC34E601CD4910128AB6\",\"path\":\"/\",\"domain\":\"www.aliexpress.com\",\"expiry\":null,\"sameSite\":null,\"httpOnly\":true,\"secure\":false},{\"name\":\"_ym_visorc\",\"value\":\"b\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1678452034000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"x_router_us_f\",\"value\":\"x_alimid=3831282040\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010220000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_ym_uid\",\"value\":\"1678450232397516925\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1709986232000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"xman_us_f\",\"value\":\"zero_order=n&x_locale=en_US&x_l=1&x_user=UK|nevenmore|user|ifm|3831282040&x_lid=uk2221891091rzaae&x_c_chg=1&x_as_i=%7B%22aeuCID%22%3A%22%22%2C%22cookieCacheEffectTime%22%3A1678450523484%2C%22isCookieCache%22%3A%22Y%22%2C%22ms%22%3A%220%22%7D&acs_rt=e167ca1f52ec475ebf4114ad075d28d7\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010226000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"_ym_isad\",\"value\":\"2\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1678522232000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"cna\",\"value\":\"+QuSHHQ9ilQCAWeyNgveJ8cF\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010169000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"_m_h5_tk_enc\",\"value\":\"0b859e50605c046b1f8a260f6ab68857\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1679055024000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"_fbp\",\"value\":\"fb.1.1678450226072.1254795552\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1686226226000,\"sameSite\":\"Lax\",\"httpOnly\":false,\"secure\":false},{\"name\":\"cto_bundle\",\"value\":\"uUF6o18wQjJDbm1kJTJGbTR3QkJIaVpNaWpkU29nRUtPY0huNjAxZU1GVk9mMWZnNXlhTU5TeXhad2tPV1B1M2ZqWXQ3RjglMkYwQ05kQm9PVENjcVRqekl5U3VwbGg4aFkxJTJCQ29OZjF2SFBTcnU1S1A0TzhjUEh0ZlhRY0JURFhFMFlpcXQ1dVU3SFIxbGFldkdXU082cTVPb2NwTkElM0QlM0Q\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1712614225000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"acs_usuc_t\",\"value\":\"acs_rt=e167ca1f52ec475ebf4114ad075d28d7&x_csrf=3u64ank1zu56\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":null,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"_m_h5_tk\",\"value\":\"390f38d41a5324e8e405a6434f88746c_1678452834409\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1679055024000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"aep_usuc_f\",\"value\":\"site=glo&c_tp=USD&x_alimid=3831282040&isb=y&region=CN&b_locale=en_US\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010226000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"xlly_s\",\"value\":\"1\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1678536569000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"intl_locale\",\"value\":\"en_US\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":null,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"xman_t\",\"value\":\"221dY9sSN3d7qSvxpVQ/UgcbNHmAKxWmBtlyjiSI7CI6uTl3OpfSE2CWsklAsR3LECoHwMl6edikG85cZoGMGnPCmgCjcLzoomxkj1rZEpab84QbinQycUmE+ecb9Fd+5gp0MbA9oPc+fpmECJiUiBESNxCkSeH7FmGnHnINqK1dX/rYnNhzRU4NhU2uyeFBNzSM3YAJiKCkFxhTfzMrnrWej6rjY0RkZzFQ3AQiw9iD+Q99tqoK+Shjx2JD71rpl91j7tgYJ78Nn8qdHamR9OPi+B4GTT0n7vIltElJkoXulLcURJGCvK6lfkJZyFRtlOykpw8xJ3tNeogHuYfXJ7EYWVpvsl68BT0xx1kW6ng91vBz5BCa10OB7JoC+JHXYmTZom4G0Nbdw+YTmEL6yMx467gTKfpfHAkxtSMMm7h37fXVwRJWgsLzkkZf8itGPZ9vHwoFSdIiqoEaY0Fsz/4CDihj4EElKwclle0Q9Rv3IY7ef48JjEnjlZpbFVGw5kmU9SfHmaXqR9Jn/pXtOUSFfAJ0BeX9739dHQOauI7KB8Lu/tN3akSZdw5RwOJaiIkoxmaVorr8Pm0UhU2wbN1zIIy9raysveu4VKYOIOv8Pd7sTcDAFSxPzbujS6Mw+9NLgnOeETJapOTrUVwDlw/jafZb6O7ceD5CJiHX4jwP8Z6w2yPVz+DL5pIZhPhot2xiX9oH7RXR9ycxqIYprszHcpgxOcMTAag7qhx1VAN+gTF/4Xtwfg==\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1686226225000,\"sameSite\":\"None\",\"httpOnly\":true,\"secure\":true},{\"name\":\"ali_apache_id\",\"value\":\"33.50.246.208.1678450166652.473767.2\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010166000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"tfstk\",\"value\":\"ch_CBJ66ZTQNqZao-pNaaOb7OqYNZilXNk9hOJYh3-lsdICCiG32huVAqYLywC1..\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1694002224000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_ym_d\",\"value\":\"1678450232\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1709986232000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true},{\"name\":\"l\",\"value\":\"fB_yxbkcNg51J5qkXOfwFurza77tIIRAguPzaNbMi9fPOjfX5VYHX1GiFwYWCnGVFsswR38_FFteBeYBcSqEukhleSYFYMMmn_vWSGf..\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1694002224000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"havana_tgc\",\"value\":\"eyJwYXRpYWxUZ2MiOnsiYWNjSW5mb3MiOnsxMzp7ImFjY2Vzc1R5cGUiOjEsIm1lbWJlcklkIjoxNTc2NDE1Njg2MjQyLCJ0Z3RJZCI6IjdKdnk2ZWE1TG9FVlZYRFIteUltRFpnIn19fX0\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1709208620000,\"sameSite\":null,\"httpOnly\":true,\"secure\":true},{\"name\":\"_gid\",\"value\":\"GA1.2.1524856135.1678450225\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1678536625000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"ali_apache_tracktmp\",\"value\":\"W_signed=Y\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":null,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_ga_VED1YSGNC7\",\"value\":\"GS1.1.1678450225.1.0.1678450225.0.0.0\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010225000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"intl_common_forever\",\"value\":\"SCQ8xrvFRTzLcxDikcH7LP/CphWN5RsXKcxyCPjZv90aZQJ03UKOhA==\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010226000,\"sameSite\":null,\"httpOnly\":true,\"secure\":false},{\"name\":\"_gat\",\"value\":\"1\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1678450285000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_ga\",\"value\":\"GA1.1.1200079428.1678450225\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010225000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"_gcl_au\",\"value\":\"1.1.1604439341.1678450226\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1686226225000,\"sameSite\":null,\"httpOnly\":false,\"secure\":false},{\"name\":\"xman_f\",\"value\":\"isMxkG+69//105fHbGwyTQ69xDVzTkv4m4VkonKLVoc/MXscoUrd2DEPlxOBY8FCsYrlvt5TzyEUQdCaFKUEqnHthuGI1JclS0VK32InNsBMY4UQj8tULDsqgXbiwqojOY37VO8htb2eNePmqoWRluehNBlkIhZiWdS+We9H9+c2XxEWv8yXWLy4O0TsKoyDRMP6YbkwVi5rh75cuIAKe5BlIN8GrbZTM6hZCHK5JzJA1Ggaiw5OsmE9I0Q0cSRIXlhRy6k0tvjvNi8uEA1+wV31ac3I3WRuOXEi6HWegMapaQgdeH35WITO3cq56shB1P+ZDKjt7flT6U3Nb0IQvGWNanIcNkYZterV3j98ferAHBCjEfzLzCEvZ19/bltY62oNBdXADGnHuZKx44akid0y/CED9kq0\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1713010220000,\"sameSite\":\"None\",\"httpOnly\":true,\"secure\":true},{\"name\":\"isg\",\"value\":\"BGNjWM-AA0E_Ls91mAfK68yB8qENWPeatUDtA5XAt0I51IP2HCzm60iGyqRa9E-S\",\"path\":\"/\",\"domain\":\".aliexpress.com\",\"expiry\":1694002223000,\"sameSite\":\"None\",\"httpOnly\":false,\"secure\":true}]";
+
+//        cookieStr = cookieStr.replace("httpOnly", "isHttpOnly").replace("secure", "isSecure");
+        var cc = new ObjectMapper().readValue(cookieStr, MyCookie[].class);
+        Assert.notNull(cc);
+    }
+
+    @Test
+    void testProductHtml() throws IOException {
+        var url = "https://www.aliexpress.com";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> entity = new HttpEntity<>(initHeaders());
+        HttpEntity<byte[]> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                byte[].class
+        );
+        byte[] data = unGZip(new ByteArrayInputStream(response.getBody()));
+
+        var result = new String(data, "UTF-8");
+        System.out.println(result);
+    }
+
+    private HttpHeaders initHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("content-type", "text/html;charset=UTF-8");
+        headers.add("Host", "https://www.aliexpress.com/");
+        headers.add("cache-control", "no-cache");
+        headers.add("pragma", "no-cache");
+        headers.add("sec-ch-ua", "\"Not_A Brand\";v=\"99\", \"Google Chrome\";v=\"109\", \"Chromium\";v=\"109\"");
+        headers.add("sec-ch-ua-mobile", "?0");
+        headers.add("sec-ch-ua-platform", "\"macOS\"");
+        headers.add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36");
+        headers.add("sec-fetch-user", "?1");
+        headers.add("upgrade-insecure-requests", "1");
+        headers.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+        headers.add("Origin", "hhttps://www.aliexpress.com");
+        headers.add("Sec-Fetch-Site", "none");
+        headers.add("Sec-Fetch-Mode", "navigate");
+        headers.add("Sec-Fetch-Dest", "document");
+        headers.add("Referer", "https://www.aliexpress.com");
+        headers.add("Accept-Encoding", "gzip, deflate, br");
+        headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
+        return headers;
     }
 }

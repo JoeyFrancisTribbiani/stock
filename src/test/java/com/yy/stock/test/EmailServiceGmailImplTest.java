@@ -22,5 +22,12 @@ class EmailServiceGmailImplTest {
         System.out.println(code);
     }
 
+    @Test
+    void testParseMoney() {
+        var text = "US $7.49";
+        text = text.substring(4);
+        text = text.replace(',', '.');
+        var d = Double.parseDouble(text);
+    }
 
 }

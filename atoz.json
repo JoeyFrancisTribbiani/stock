@@ -1,0 +1,912 @@
+{
+  "message": "OK",
+  "problems": [
+    {
+      "claimDecisionReason": "TRACKING_INFORMATION_MISSING_OR_INVALID",
+      "claimantId": "4IGVAQRKUH2244CDK57WSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY2RTOFEQN2GCX3TNHS3GNALSROZ3OAYAHETNBYXU7KTMBM5CYNX334GNK56NH6UKHWHIZGLXYRWQJG",
+      "comments": "Estou aguardando o produto bastante atrasado sendo que o vendedor não me encaminhou o rastreamento correto. O site que foi informado para rastreio da compra não funciona e não tmr previsão se irá chegar. Solicito o cancelamento e reembolso. ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.20223565w5huzm6rywk2gvzfk0zdg",
+      "itemCount": 2,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1668049199000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1667530800000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 252,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1666637772395,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-1401883-1623464",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1666893040000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20256459054025",
+            "shippingCarrier": "360lion",
+            "tracking": "LB556818200HK"
+          },
+          {
+            "shipDate": {
+              "instant": 1666893040000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20256459054025",
+            "shippingCarrier": "360lion",
+            "tracking": "LB556818200HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 252,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-1401883-1623464",
+      "problemItems": [
+        {
+          "asin": "B0BJ6RCD15",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6RCD15",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "r8wtXEzHfHC9fDpL7SakqR2v5zfpLZx4Q+xdXD2hnBx3R4OQuBGMhQ==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil (Longe,M)",
+          "orderQuantity": 1
+        },
+        {
+          "asin": "B0BJ5WMBXT",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ5WMBXT",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "SlbHcemfC5sAeuEVwLmOqLbqNAA9x0i9BLuZNPcoEkUpw/nxTTCFiA==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil (Longe,P=S)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 20</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 21</strong>"
+      },
+      "settlementAmount": {
+        "amount": 252,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671669155000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "TRACKING_INFORMATION_MISSING_OR_INVALID",
+      "claimantId": "RK2F2IX2KCU36O5BYSZWSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY4PSLZYHEDVJ4ZEWFH2FRF6O2UU2L5JOA5OOH7VJCQ46INFBKQ3QLWMYWBVL2DO3MDIRP5ZNVUQ3UW",
+      "comments": "Até hoje não recebi o produtor atrasou muito ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022355neugzvi8sce6_bieghrvkq",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1670554799000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1669777200000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 199,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667540455711,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-5240364-8890607",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667986979000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20452784563025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556819538HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 199,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-5240364-8890607",
+      "problemItems": [
+        {
+          "asin": "B0BJ65R182",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ65R182",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "80gDVg45NQ2xTIdk82Iw+ADuv6VH6X2vT4J0sGTu09c3lpoLsj536Q==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Número do Nome Personalizado, Dê 50 reais de meias de treino de futebol. (Casa(+Qualquer Nome e Número),G)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 20</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 21</strong>"
+      },
+      "settlementAmount": {
+        "amount": 199,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671659262000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_BSM",
+      "claimantId": "KGWGSUJXUUP5GWNFMIEGSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY7QXD5VVQUFLWEIAMWWIA7JZVYDOIPC6EDRUXYLAK6ANQABQVHVHQLNFM7NYGZBNX5462V4NNUKWFH",
+      "comments": "O produto foi entregue em tamanho errado. São duas peças e era uma de cada tamanho e estava bem especificado. Mandaram as duas do mesmo tamanho ho. Quero devolver metade 50%.",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.20223559tacd07xqxm_vu7k9olckq",
+      "itemCount": 2,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1670036399000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1668740400000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 246,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667480631528,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-9639540-4673822",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667788290000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20446026202025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556819080HK"
+          },
+          {
+            "shipDate": {
+              "instant": 1667788290000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20446026202025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556819080HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 246,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-9639540-4673822",
+      "problemItems": [
+        {
+          "asin": "B0BJ6C47GK",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6C47GK",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "J3rLb60XvhRqcaNBa7WiWJdEmTFm3Tz76UZpIckgtewOPwy7awJVjw==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Casa,G)",
+          "orderQuantity": 1
+        },
+        {
+          "asin": "B0BJ6HM8Q3",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6HM8Q3",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "dJHFyVKkA+Rs081wgmGK1Bzdigx4f9BLOXXc9eIlnyNqdyr0gSsbxg==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Casa,GGG=3XL)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 20</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 21</strong>"
+      },
+      "settlementAmount": {
+        "amount": 246,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671632110000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "NOT_RECEIVED_NO_TRACKING_NOT_SHIPPED",
+      "claimantId": "RQDRRHBHCW72B6AIRGYGSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY45DO3ZLG3MHBFWM6VZYFW6TWYA4MSTRPDSBRKAMSILTKGHPT5T3JOI6CLH6C3WRQ2MQCUZUBA6AGW",
+      "comments": "Não recebi o produto!",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.202235483dad80jqlsqafa_g0wyjw",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1668740399000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1667962800000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 126,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1666128058816,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-0455908-3025830",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1666208589000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20180792876025",
+            "shippingCarrier": "AliExpress Standard Shipping",
+            "tracking": "LB552816844HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 126,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-0455908-3025830",
+      "problemItems": [
+        {
+          "asin": "B0BJ6RCD15",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6RCD15",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "zwhcerq95r/5S8zepg5A9HihIFU/GD6h6XXgU3gIIykVweYsM22now==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil (Longe,M)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 19</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 20</strong>"
+      },
+      "settlementAmount": {
+        "amount": 126,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671575445000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_BSM",
+      "claimantId": "HIOMO7A5A2ZIGQOCGS7WSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY2G3NAGKZTLSAH7PBTS5N5OJYJXG4KFEWFA6U5XS2XPZP6H42RBFDULSVLP4RJOZKIFPTJLNZNWC3U",
+      "comments": "Comprei essa camisa antes da Copa dia 05 de novembro e nunca chegou esse pedido e nem tenho respostas do vendedor ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022354zejqqu6srv2kydhxd1yn7g",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1669690799000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1668999600000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 121,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667692217389,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-9263959-5875429",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667987083000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20483315317025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556819407HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 121,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-9263959-5875429",
+      "problemItems": [
+        {
+          "asin": "B0BJ6C47GK",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6C47GK",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "mV171bh6q+HEHIj+rIx1Pjf3Xp8WUbcDos0Ah+G3VWsQJOqvw7rK7g==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Casa,G)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 19</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 20</strong>"
+      },
+      "settlementAmount": {
+        "amount": 121,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671554511000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_BSM",
+      "claimantId": "D3AH55ABOMUJE7DVAGNGSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVYYHYZARS4JWACW7GFC7FBJGZ4YAANYRXXQ3FREKSL4TOQ2OMOBTNLZ23OUWG6IJKS2BLRCL4COFOMO",
+      "comments": "Boa tarde ! \n\nO pedido está atrasado quase um mês, o vendedor não respondeu ao meu contato. Gostaria do reembolso do meu pedido.",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022354eqiyonjhtqokx46frtq06g",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1669949999000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1669604400000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 439,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1668610657298,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-0479226-2157041",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1668786977000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20743540839025",
+            "shippingCarrier": "Topyou",
+            "tracking": "LB556819606HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 439,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-0479226-2157041",
+      "problemItems": [
+        {
+          "asin": "B0BHZKGG69",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BHZKGG69",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "imageUrl": "https://m.media-amazon.com/images/I/51TC7fxbjXL.jpg",
+          "lineItemCode": "w6N+MifNCMptZ3tPdfPSi+nOi+6SjXUQS3HhlZ47lJdP2LB+rIGzfg==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "201",
+          "offeringTitle": "Árvore de Natal verde tradicional pinheiro tamanho 120cm/150cm/180cm/210cm com144/237/388/508 Galhos com suporte de plstico/Ferro para festa de Natal (180cm)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 19</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 20</strong>"
+      },
+      "settlementAmount": {
+        "amount": 439,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671554257000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_BSM",
+      "claimantId": "4DEAH65K7OIL5BVHEIEWSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVYZARD72XSMXRRNUPRXHLKGAG4NAMXNZFI3ZUXKO3PUOYL4UQPIBSIX4ZXW5SNGST4KRNISWZWCBJPY",
+      "comments": "Não recebo meu produto há quase 2 meses não obtive retorno. ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022354ast9zeqysdctref2ub4qcw",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1667962799000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1667444400000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 123.5,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1666562713433,
+          "locale": "zh-CN"
+        },
+        "orderId": "702-5450603-9433819",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1666881169000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20245684083025",
+            "shippingCarrier": "360lion",
+            "tracking": "LB556818118HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 123.5,
+          "code": "BRL"
+        }
+      },
+      "orderId": "702-5450603-9433819",
+      "problemItems": [
+        {
+          "asin": "B0BJ6HBYJX",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6HBYJX",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "K3scR0qmO+gfu1DaZYQzBwx95zHzykGswDsAtTQiABQWoizPm1DTVg==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 19</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 20</strong>"
+      },
+      "settlementAmount": {
+        "amount": 123.5,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671526507000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_BSM",
+      "claimantId": "WU64QJ4UXCOPIB3AQQRGSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVYZXVWM4F4AWCCSYH72SA7EI447TPDGUNJARREJKVTP24ZKZ3JQ2YEXUXCS6MITI7DCMLUT5L7CQ6ZF",
+      "comments": "Boa noite fiz o pedido dia 02/11/2022,e fui informada que meu pedido chegaria dia 05/12/2022 e até o momento não chegou, gostaria de receber o reembolso dessa compra .",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.202235441v2ybwlqj-k8q5u0s2rdq",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1670295599000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1669345200000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 252,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667403466026,
+          "locale": "zh-CN"
+        },
+        "orderId": "701-4288953-8925866",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667986962000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20450502107025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556819217HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 252,
+          "code": "BRL"
+        }
+      },
+      "orderId": "701-4288953-8925866",
+      "problemItems": [
+        {
+          "asin": "B0BJ6RCD15",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6RCD15",
+          "disputeQuantity": 2,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "dI51tHu0X99RFv5yv0A7uNw8ns8/Xjlk9q2RUm0HLnauTyvme3yHuw==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Longe,M)",
+          "orderQuantity": 2
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 18</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 19</strong>"
+      },
+      "settlementAmount": {
+        "amount": 252,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671497231000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "TRACKING_INFORMATION_MISSING_OR_INVALID",
+      "claimantId": "CI2AQ47PE5D6WUOKPXDWSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVYWGFBAYIIUUZTFGWTNAMPTFRYCHNOX47BCQ7UWIWTGUXCIXYS3UXFKTHX4MVOY3E5KXBDFPV4VS63F",
+      "comments": "O pedido não foi entregue ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022353vdxjnbsmtb-atv2ly9ic2q",
+      "itemCount": 1,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1669863599000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1669086000000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 125,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667238883459,
+          "locale": "zh-CN"
+        },
+        "orderId": "701-1339187-9581835",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667371235000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20377165855025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556818654HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 125,
+          "code": "BRL"
+        }
+      },
+      "orderId": "701-1339187-9581835",
+      "problemItems": [
+        {
+          "asin": "B0BJ6HM8Q3",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6HM8Q3",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "eVut/4K6CsikIZLTzjWJ4yqE5ILCG+k8nuG9gULgFYXVzxZBLQ0/lw==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Casa,GGG=3XL)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "包裹未到达",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 18</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 19</strong>"
+      },
+      "settlementAmount": {
+        "amount": 125,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671482043000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "Buyer"
+    },
+    {
+      "claimDecisionReason": "SELLER_IGNORED_RETURN_REQUESTS",
+      "claimantId": "IQN7WEF4PVQVFL26KMKGSN3HOVSWUZDTGJ4GI5DWGJTGE3RUMVY5HW2QLFWYQBYEUN6KNRKIMGHC7JGC3EREBTJCEWLUXRB6DNOZ7VHBOKORT4EEDI4LYSESUWE4XOU2",
+      "comments": "Cliente informa que solicitou a devolução ao vendedor o produto não serviu e o vendedor não respondeu e a mesma não realizou a devolução por falta de retorno do vendedor quanto a etiqueta de devolução e com isso foi aberto a solicitação da garantia. ",
+      "encMarketplaceId": "A2Q3Y263D00KWC",
+      "id": "amzn1.pwo.v1.2022353xbd5rxyxrzai4wsne5c0bw",
+      "itemCount": 2,
+      "legacyFault": "Seller",
+      "legacyFunding": "Seller",
+      "legacyId": "",
+      "legacyStatus": "",
+      "orderDetails": {
+        "business": "Marketplace",
+        "encMarketplaceId": "A2Q3Y263D00KWC",
+        "hasRemainingEligibility": false,
+        "maxEDD": {
+          "instant": 1669863599000,
+          "locale": "zh-CN"
+        },
+        "minEDD": {
+          "instant": 1668567600000,
+          "locale": "zh-CN"
+        },
+        "orderAmount": {
+          "amount": 244.5,
+          "code": "BRL"
+        },
+        "orderDate": {
+          "instant": 1667239865896,
+          "locale": "zh-CN"
+        },
+        "orderId": "701-8158610-3629011",
+        "orderItemCount": 0,
+        "orderShipments": [
+          {
+            "shipDate": {
+              "instant": 1667371276000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20392820233025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556818655HK"
+          },
+          {
+            "shipDate": {
+              "instant": 1667371276000,
+              "locale": "zh-CN"
+            },
+            "shipmentId": "20392820233025",
+            "shippingCarrier": "WanbExpress",
+            "tracking": "LB556818655HK"
+          }
+        ],
+        "reversalAmount": {
+          "amount": 244.5,
+          "code": "BRL"
+        }
+      },
+      "orderId": "701-8158610-3629011",
+      "problemItems": [
+        {
+          "asin": "B0BJ6C47GK",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6C47GK",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "jGAvxzHRsCxC7cBOGZsuHCpFCi6ptNGf3g/qkqx7gXW9ZbLZdlW//Q==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil, Dê 50 reais de meias de treino de futebol. (Casa,G)",
+          "orderQuantity": 1
+        },
+        {
+          "asin": "B0BJ6HBYJX",
+          "asinUrl": "https://www.amazon.com.br/dp/B0BJ6HBYJX",
+          "disputeQuantity": 1,
+          "encMarketplaceId": "A2Q3Y263D00KWC",
+          "lineItemCode": "u1x9a6veDmRiGP5fXVRlduLKeq7x4U0knLNWUFnl9Z5x4TaGmpZAMA==",
+          "offeringCondition": "New - New",
+          "offeringGLName": "193",
+          "offeringTitle": "2022 Camisa Da Copa Do Mundo Brasil Em Casa e Longe, Camisa Da Brasil,Dê 50 reais de meias de treino de futebol.(Casa,XG)",
+          "orderQuantity": 1
+        }
+      ],
+      "problemReason": "与我订购的商品不同",
+      "representations": [],
+      "respondentAppeals": [],
+      "respondentChangeOptions": [],
+      "respondentState": {
+        "displayString": "已通过",
+        "granted": true,
+        "nextStepsAndSlaText": "申诉截止日期：<strong>一月 18</strong>",
+        "status": "Resolved",
+        "subText": "卖家退款日期：<strong>十二月 19</strong>"
+      },
+      "settlementAmount": {
+        "amount": 244.5,
+        "code": "BRL"
+      },
+      "submittedDate": {
+        "instant": 1671471939000,
+        "locale": "zh-CN"
+      },
+      "submitterRole": "CSA"
+    }
+  ],
+  "rights": [
+    "atozclaims_view",
+    "seller_metrics_view",
+    "atozclaims_edit"
+  ],
+  "totalProblemCount": 409
+}

@@ -10,6 +10,8 @@ public class BaseXpaths {
     public String accountTopButtonSpan;
     public String passwordInput;
     public String loginButton;
+    public String loginAccessNowButton;
+    public String signInOtherAccountButton;
     public String accountVerifyButton;
     public String verifyEmailSendButton;
     public String verifyEmailCodeInput;
@@ -26,6 +28,10 @@ public class BaseXpaths {
     // 地址相关
     public String deleteAddressButton;
     public String confirmDeleteAddressButton;
+    public String addressRegionSelectDiv;
+    public String regionCheckListButton;
+    public String regionArrayLis;
+    public String regionSaveButton;
     public String addAddressButton;
     public String addressNameInput;
     public String addressPhoneInput;

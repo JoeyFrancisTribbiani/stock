@@ -1,6 +1,5 @@
 package com.yy.stock.test;
 
-import com.yy.stock.bot.base.LoginRequest;
 import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.LazadaUIBot;
 import com.yy.stock.bot.lazadaui.model.address.CreateAddressRequestModel;
@@ -44,7 +43,6 @@ class LazadaUIBotTest {
             model.setSkuId("14121812860");
             model.setItemId("2199811436");
             List<AddCartRequestModel> list = Collections.singletonList(model);
-            LoginRequest loginRequest = LoginRequest.builder().account("").password("").build();
             lazadaUIBot.loginAndPlaceOrder();
         } catch (Exception ex) {
             lazadaUIBot.get_driver().quit();

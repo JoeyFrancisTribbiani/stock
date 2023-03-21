@@ -38,6 +38,10 @@ public class PlatformService {
         return original;
     }
 
+    public Platform getByNameAndCountryCode(String name, String countryCode) {
+        return platformRepository.findFirstByNameAndCountry(name, countryCode);
+    }
+
     public Page<Platform> query(PlatformQueryVO vO) {
         throw new UnsupportedOperationException();
     }

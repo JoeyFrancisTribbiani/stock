@@ -1,11 +1,13 @@
 bot:
-  paySwitch: false
+  paySwitch: true
 alixpaths:
   loginTopButton: "//*[@id=\"anonLogin\"]"
   accountTopButtonSpan: "//*[@id=\"nav-user-account\"]/span/a/span"
   accountInput: "//*[@id=\"fm-login-id\"]"
   passwordInput: "//*[@id=\"fm-login-password\"]"
   loginButton: "//*[@id=\"root\"]/div/div/div[1]/div[2]/div/div/button[2]"
+  loginAccessNowButton: "//*[@id=\"root\"]/div/div/div[1]/div[2]/div/div/div/button"
+  signInOtherAccountButton: "//*[@id=\"root\"]/div/div/div[1]/div[2]/div/div/div/p[2]/span"
   accountVerifyButton: ""
   verifyEmailSendButton: ""
   verifyEmailCodeInput: ""
@@ -18,11 +20,18 @@ alixpaths:
   checkoutButton: ""
   deleteAddressButton: "//*[@id=\"address-main\"]/div/div/div[2]/div[2]/div[5]/button[2]"
   confirmDeleteAddressButton: "/html/body/div[11]/div[2]/div[2]/button[1]"
+
+  addressRegionSelectDiv: ""
+  regionCheckListButton: "//*[@id=\"nav-global\"]/div[4]/div/div/div/div[1]/div/a[1]/span/span"
+  regionArrayLis: "//*[@id=\"nav-global\"]/div[4]/div/div/div[1]/div/div[1]/ul/li"
+  regionSaveButton: "//*[@id=\"nav-global\"]/div[4]/div/div/div/div/button"
+
   addAddressButton: "//*[@id=\"address-main\"]/div/div/div[1]/button"
   addressNameInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[1]/div[2]/div/div[1]/div/div/span/input'
   addressPhoneInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[1]/div[2]/div/div[2]/div/div/span/span[2]/input'
   addressCepInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[1]/div[2]/div/div/span/span[1]/input'
-  addressCepSelectButton: '/html/body/div[10]/div/ul/li/div/span/div'
+  addressCepSelectButton: ''
+
   addressBairrorInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[2]/div[3]/div/div/span/input'
   addressRuaInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[3]/div[1]/div/div/span/input'
   addressRuaNumInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[2]/div[2]/div[3]/div[2]/div/div/span/input'
@@ -30,7 +39,7 @@ alixpaths:
   addressCpfInput: '//*[@id="halo-wrapper-root"]/div/div/form/div[3]/div[3]/div/div/div/div/span/input'
   addressSetDefaultButton: '//*[@id="halo-wrapper-root"]/div/div/form/div[4]/div/div/div/div/div/div[1]/label/span[1]/input'
   addressSaveButton: '//*[@id="halo-wrapper-root"]/div/div/form/div[5]/div/button[1]'
-  addressFirstAddressNameDiv: 'id="address-main"]/div/div/div[2]/div/div[1]/span'
+  addressFirstAddressNameDiv: '//*[@id="address-main"]/div/div/div[2]/div[1]/div[1]/span'
   buyNowButton: "/html/body/div[7]/div/div[2]/div/div[2]/div[13]/span[1]/button"
   confirmAddressNameDiv: "/html/body/div[2]/div/div/div/div/div[1]/div[1]/div/div[2]/div[1]/span[1]"
   subtotalDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[1]/div/div/div[2]/div[2]/div"
@@ -38,7 +47,8 @@ alixpaths:
   totalPriceDiv: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[1]/span[2]"
   payNowButton: "/html/body/div[2]/div/div/div/div/div[2]/div[2]/div/div/div[2]/button"
   firstOrderIdLabel: "//*[@id=\"root\"]/div/div[2]/div[1]/div/div[1]/div[1]/div[2]/div/div[2]"
-
+aliclass:
+  regionCheckListButton: "country-selector"
 aliurls:
   homePage: "https://www.aliexpress.com/"
   loginPage: "https://login.aliexpress.com/"

@@ -19,6 +19,11 @@ spring:
         shared-configs[1]:
           data-id: wimoor-commom-ext
           refresh: true
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
   redis:
     redisson:
       config: |

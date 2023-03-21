@@ -8,7 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigInteger;
 
 public interface BuyerAccountRepository extends JpaRepository<BuyerAccount, BigInteger>, JpaSpecificationExecutor<BuyerAccount> {
-    @Query("SELECT e FROM BuyerAccount e WHERE e.orderCount = (SELECT MIN(e.orderCount) FROM BuyerAccount e)")
-    public BuyerAccount findBuyerAccountByMinOrderCount();
+    @Query("SELECT e FROM BuyerAccount e WHERE e.platformId =:platformId and e.inBuying =false ORDER BY e.orderCount asc LIMIT 1")
+    public BuyerAccount findBuyerAccountByLeastOrderCountAndNotBuying(BigInteger platformId);
 
+    @Query("SELECT e FROM BuyerAccount e WHERE e.platformId =:platformId ORDER BY e.lastLoginTime desc LIMIT 1")
+    public BuyerAccount findBuyerAccountByLatestLoginTime(BigInteger platformId);
+
+    @Query("SELECT e FROM BuyerAccount e WHERE e.platformId =:platformId ORDER BY e.lastLoginTime asc LIMIT 1")
+    public BuyerAccount findBuyerAccountByEarliestLoginTime(BigInteger platformId);
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "status")
+@Table(name = "stock_status")
 @Accessors(chain = true)
 public class StockStatus implements Serializable {
 
@@ -52,7 +53,7 @@ public class StockStatus implements Serializable {
     private Integer quantity;
 
     @Column(name = "total_price")
-    private Float totalPrice;
+    private BigDecimal totalPrice;
 
     @Column(name = "status", nullable = false)
     private String status;

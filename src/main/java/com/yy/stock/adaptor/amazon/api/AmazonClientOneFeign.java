@@ -1,16 +1,12 @@
 package com.yy.stock.adaptor.amazon.api;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.pojo.dto.ProductListQuery;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.AmzProductListVo;
 import com.yy.stock.common.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +15,8 @@ import java.util.Map;
 @FeignClient(value = "wimoor-amazon")
 public interface AmazonClientOneFeign {
 
-    @PostMapping("/amazon/api/v1/report/product/productInfo/productList")
+    //    @PostMapping("/amazon/api/v1/report/product/productInfo/productList")
+    @RequestMapping(value = "/amazon/api/v1/report/product/productInfo/productList", method = RequestMethod.POST)
     public Result<Page<AmzProductListVo>> getProductListAction(@RequestBody ProductListQuery query);
 
     @GetMapping("/amazon/api/v1/shipFormSync/confirmSyncShipment")

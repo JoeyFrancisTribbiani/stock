@@ -13,10 +13,7 @@ import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockInfoDTO;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.SyncOrder;
-import com.yy.stock.service.BuyerAccountService;
-import com.yy.stock.service.StockStatusService;
-import com.yy.stock.service.SupplierService;
-import com.yy.stock.service.SyncOrderService;
+import com.yy.stock.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPFile;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +48,8 @@ public class StockScheduler {
     @Autowired
     private SupplierService supplierService;
     @Autowired
+    private PlatformService platformService;
+    @Autowired
     private StockAsyncExecutor stockAsyncExecutor;
     @Autowired
     private SyncOrderService syncOrderService;
@@ -66,12 +65,17 @@ public class StockScheduler {
     @XxlJob(value = "stockJobHandler")
     public void stockXxlJobHandler() throws InterruptedException {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
-        System.out.println("本线程 加锁成功，开始选择订单");
+        log.info("本线程 加锁成功，开始选择订单");
 
         List<StockInfoDTO> toStock = filterUnstockedOrderItems();
+        log.info("选择订单个数：" + toStock.size());
+        log.info("订单号为：");
+        for (var o : toStock) {
+            log.info(o.getOrderItemAdaptorInfoDTO().getOrderid());
+        }
 
         distributedLocker.unlock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
-        System.out.println("本线程 解锁");
+        log.info("本线程 解锁");
 
         schedule(toStock);
     }
@@ -138,8 +142,22 @@ public class StockScheduler {
         }
 
         List<OrderItemAdaptorInfoDTO> unshippedIn3Days = amzOrderItemService.get3DaysUnshipped();
+        log.info("3天内的订单个数：" + unshippedIn3Days.size());
         List<OrderItemAdaptorInfoDTO> unshippedIn9To3Days = ordersReportService.get9To3DaysUnshippedOrders();
+        log.info("3天内的订单个数：" + unshippedIn9To3Days.size());
         unshippedIn9To3Days.addAll(unshippedIn3Days);
+
+
+//        List<OrderItemAdaptorInfoDTO> singleList = new ArrayList<>();
+//        for (var o : unshippedIn9To3Days) {
+//            var sku = o.getSku();
+//            if (sku.equals("VN-22V2-1Y0D")) {
+//                singleList = Collections.singletonList(o);
+//                break;
+//            }
+//        }
+////        var testSingle = unshippedIn9To3Days.stream().filter(s -> s.getSku() == "VN-22V2-1Y0D").findFirst().orElse(null);
+//        unshippedIn9To3Days = singleList;
 
 
         int count = 0;
@@ -149,7 +167,8 @@ public class StockScheduler {
                 continue;
             }
             StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemInfo(order);
-            if (stockStatus.getStatus().equals(StatusEnum.unstocked.name())) {
+            if (stockStatus.getStatus().equals(StatusEnum.unstocked.name()) ||
+                    stockStatus.getStatus().equals(StatusEnum.stockFailed.name())) {
                 count++;
                 if (count > capacity()) {
                     break;
@@ -159,7 +178,7 @@ public class StockScheduler {
                 stockStatusService.save(stockStatus);
 
                 StockInfoDTO stockInfo = new StockInfoDTO();
-                stockInfo.setOrderItemAdaptorInfo(order);
+                stockInfo.setOrderItemAdaptorInfoDTO(order);
                 stockInfo.setStockStatus(stockStatus);
 
                 toStock.add(stockInfo);
@@ -170,7 +189,7 @@ public class StockScheduler {
 
     public void schedule(List<StockInfoDTO> toStock) {
         for (StockInfoDTO stockInfo : toStock) {
-            stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfo(), stockInfo.getStockStatus());
+            stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfoDTO(), stockInfo.getStockStatus());
         }
     }
 

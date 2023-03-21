@@ -38,4 +38,7 @@ public class Platform implements Serializable {
     @Column(name = "msg_url")
     private String msgUrl;
 
+    @Column(name = "cookie_expires_hours")
+    private String cookieExpiresHours;
+
 }

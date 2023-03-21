@@ -1,7 +1,6 @@
 package com.yy.stock.dto;
 
 import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
-import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.Supplier;
@@ -15,6 +14,5 @@ public class StockRequest {
     private OrderItemAdaptorInfoDTO orderInfo;
     private Platform platform;
     private Supplier supplier;
-    private BuyerAccount buyerAccount;
     private AmzOrdersAddress address;
 }

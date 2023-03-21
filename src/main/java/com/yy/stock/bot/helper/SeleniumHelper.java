@@ -1,6 +1,7 @@
 package com.yy.stock.bot.helper;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.logging.LogEntry;
@@ -19,8 +20,35 @@ public class SeleniumHelper {
 
     public static void clearAndType(WebElement field, String text) {
         field.clear();
+        field.click();
+        if (!field.getAttribute("value").equals("")) {
+            var os = System.getProperty("os.name");
+            if (os != null) {
+                os = os.toLowerCase();
+                if (os.contains("mac")) {
+                    field.sendKeys(Keys.COMMAND, "a");
+                } else {
+                    field.sendKeys(Keys.CONTROL, "a");
+                }
+            } else {
+                field.sendKeys(Keys.CONTROL, "a");
+            }
+            field.sendKeys(Keys.BACK_SPACE);
+        }
+        field.click();
+        field.clear();
+        field.click();
         field.sendKeys(text);
     }
+
+//    public static void clearAndType(ChromeDriver driver, WebElement field, String text) {
+//        clearJs(field, driver);
+//        field.sendKeys(text);
+//    }
+//
+//    public static void clearJs(WebElement ele, ChromeDriver driver) {
+//        driver.executeScript("arguments[0].value = '';", ele);
+//    }
 
     public static boolean isNumberString(String str) {
         if (str == null) return false;
@@ -35,9 +63,34 @@ public class SeleniumHelper {
                 .until(d -> d.findElement(By.xpath(xpath)));
     }
 
-    public static List<WebElement> getByClassName(ChromeDriver driver, String className) {
+    public static WebElement getByRelativeXpath(ChromeDriver driver, WebElement root, String xpath) {
+        return new WebDriverWait(driver, Duration.ofSeconds(6))
+                .until(d -> root.findElement(By.xpath(xpath)));
+    }
+
+    public static List<WebElement> listByRelativeXpath(ChromeDriver driver, WebElement root, String xpath) {
+        return new WebDriverWait(driver, Duration.ofSeconds(6))
+                .until(d -> root.findElements(By.xpath(xpath)));
+    }
+
+    public static List<WebElement> listByXpath(ChromeDriver driver, String xpath) {
+        return new WebDriverWait(driver, Duration.ofSeconds(6))
+                .until(d -> d.findElements(By.xpath(xpath)));
+    }
+
+    public static WebElement getByClassName(ChromeDriver driver, String className) {
+        return new WebDriverWait(driver, Duration.ofSeconds(6))
+                .until(d -> d.findElement(By.className(className)));
+    }
+
+    public static List<WebElement> listByClassName(ChromeDriver driver, String className) {
         return new WebDriverWait(driver, Duration.ofSeconds(6))
                 .until(d -> d.findElements(By.className(className)));
+    }
+
+    public static List<WebElement> listByTagName(ChromeDriver driver, String tag) {
+        return new WebDriverWait(driver, Duration.ofSeconds(6))
+                .until(d -> d.findElements(By.tagName(tag)));
     }
 
     public static void updateHeaderValueFromLogs(ChromeDriver driver, HttpHeaders toUpdate, String[] headerNames) {

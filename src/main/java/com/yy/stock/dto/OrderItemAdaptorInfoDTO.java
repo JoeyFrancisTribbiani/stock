@@ -51,6 +51,8 @@ public interface OrderItemAdaptorInfoDTO {
 
     String getOrderid();
 
+    String getOrderItemId();
+
     BigInteger getGroupid();
 
     String getChannel();

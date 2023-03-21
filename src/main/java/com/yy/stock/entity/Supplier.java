@@ -104,7 +104,7 @@ public class Supplier implements Serializable {
      * 货源价格
      */
     @Column(name = "price", nullable = false)
-    private Float price;
+    private String price;
 
     @Column(name = "api_shop_id")
     private String apiShopId;
@@ -112,8 +112,8 @@ public class Supplier implements Serializable {
     private String apiSkuId;
     @Column(name = "api_item_id")
     private String apiItemId;
-    @Column(name = "max_ship_fee")
-    private Float maxShipFee;
+    @Column(name = "min_ship_fee")
+    private String minShipFee;
     @Column(name = "ui_style1_xpath")
     private String uiStyle1Xpath;
     @Column(name = "ui_style2_xpath")
@@ -122,4 +122,8 @@ public class Supplier implements Serializable {
     private String uiStyle3Xpath;
     @Column(name = "ui_amount_xpath")
     private String uiAmountXpath;
+    @Column(name = "image_url")
+    private String imageUrl;
+    @Column(name = "style_name")
+    private String styleName;
 }
