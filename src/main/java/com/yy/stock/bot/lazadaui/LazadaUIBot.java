@@ -149,7 +149,7 @@ public class LazadaUIBot extends BaseBot {
 
         saveTrackInfo();
 
-        getDriver().quit();
+        quitDriver();
         return true;
     }
 
@@ -295,7 +295,7 @@ public class LazadaUIBot extends BaseBot {
 //            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);  // 调用截图方法
 //            FileUtils.copyFile(src, new File(path));
             System.out.println("登录失败!");
-            getDriver().quit();
+            quitDriver();
         }
         return true;
     }

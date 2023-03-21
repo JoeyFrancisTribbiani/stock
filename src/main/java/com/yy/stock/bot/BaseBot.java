@@ -133,7 +133,7 @@ public class BaseBot implements Bot {
      *
      */
     @Override
-    public void quit() {
+    public void quitDriver() {
         if (this._driver != null) {
             this._driver.quit();
         }

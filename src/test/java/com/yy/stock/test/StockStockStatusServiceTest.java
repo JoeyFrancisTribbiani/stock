@@ -61,6 +61,14 @@ class StockStockStatusServiceTest {
                 return oId;
             }
 
+            /**
+             * @return
+             */
+            @Override
+            public String getOrderItemId() {
+                return null;
+            }
+
             @Override
             public BigInteger getGroupid() {
                 return null;
@@ -197,7 +205,7 @@ class StockStockStatusServiceTest {
             }
         };
 
-        StockStatus r = stockStatusService.getOrCreateByOrderItemInfo(orderItemInfo);
+        StockStatus r = stockStatusService.getOrCreateByOrderItemId(orderItemInfo);
         Assert.notNull(r);
         Assert.notNull(r.getId());
     }

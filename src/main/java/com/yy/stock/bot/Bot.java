@@ -24,5 +24,5 @@ public interface Bot {
 
     String getSkuProperties(String html);
 
-    void quit();
+    void quitDriver();
 }

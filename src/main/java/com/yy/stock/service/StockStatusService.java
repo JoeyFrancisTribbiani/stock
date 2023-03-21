@@ -24,13 +24,31 @@ public class StockStatusService {
         statusRepository.deleteById(id);
     }
 
-    public StockStatus getOrCreateByOrderItemInfo(OrderItemAdaptorInfoDTO orderItemInfo) {
-        StockStatus stockStatus = statusRepository.findFirstBymarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderItemInfo.getMarketplaceId(), orderItemInfo.getAuthid(), orderItemInfo.getOrderid());
+    public StockStatus getOrCreateByOrderItemId(OrderItemAdaptorInfoDTO orderItemInfo) {
+        StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndOrderItemId(orderItemInfo.getAuthid(), orderItemInfo.getMarketplaceId(), orderItemInfo.getOrderid(), orderItemInfo.getOrderItemId());
         if (stockStatus == null) {
             StockStatus toCreate = new StockStatus();
             toCreate.setMarketplaceId(orderItemInfo.getMarketplaceId());
             toCreate.setAmazonOrderId(orderItemInfo.getOrderid());
             toCreate.setAmazonAuthId(orderItemInfo.getAuthid());
+            toCreate.setOrderItemId(orderItemInfo.getOrderItemId());
+            toCreate.setStatus(StatusEnum.unstocked.name());
+            statusRepository.save(toCreate);
+
+            stockStatus = toCreate;
+        }
+        return stockStatus;
+    }
+
+
+    public StockStatus getOrCreateByOrderItemSku(BigInteger authId, String marketpalceId, String orderId, String sku) {
+        StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(authId, marketpalceId, orderId, sku);
+        if (stockStatus == null) {
+            StockStatus toCreate = new StockStatus();
+            toCreate.setMarketplaceId(marketpalceId);
+            toCreate.setAmazonOrderId(orderId);
+            toCreate.setAmazonAuthId(authId);
+            toCreate.setOrderItemId(sku);
             toCreate.setStatus(StatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 
@@ -43,13 +61,4 @@ public class StockStatusService {
         statusRepository.save(s);
     }
 
-    public boolean saveStatus(StockStatus stockStatus, StatusEnum status) {
-        try {
-            stockStatus.setStatus(status.name());
-            statusRepository.save(stockStatus);
-        } catch (Exception ex) {
-            return false;
-        }
-        return true;
-    }
 }

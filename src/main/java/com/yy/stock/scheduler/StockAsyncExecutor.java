@@ -82,7 +82,7 @@ public class StockAsyncExecutor {
             stockStatusService.save(stockStatus);
             if (bot != null) {
                 log.info(bot.getBotName() + "开始退出chromedriver.");
-                bot.quit();
+                bot.quitDriver();
             }
             if (buyer != null) {
                 log.info(getExecutorName(orderToStock) + "开始设置buyer的进行状态为false.");

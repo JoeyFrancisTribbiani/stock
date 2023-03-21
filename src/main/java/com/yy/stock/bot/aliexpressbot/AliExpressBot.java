@@ -133,7 +133,7 @@ public class AliExpressBot extends BaseBot {
 
         saveOrderId();
 
-        getDriver().quit();
+        quitDriver();
         buyerAccount.setInBuying(false);
         buyerAccountService.save(buyerAccount);
         return true;
@@ -154,7 +154,7 @@ public class AliExpressBot extends BaseBot {
     }
 
     public void trackLogisticByAmazonOrderInfo(OrderItemAdaptorInfoDTO order) throws JsonProcessingException, InterruptedException {
-        var stockStatus = stockStatusService.getOrCreateByOrderItemInfo(order);
+        var stockStatus = stockStatusService.getOrCreateByOrderItemId(order);
         trackLogisticByStockStatus(stockStatus);
     }
 
@@ -629,7 +629,7 @@ public class AliExpressBot extends BaseBot {
 //            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);  // 调用截图方法
 //            FileUtils.copyFile(src, new File(path));
             System.out.println("登录失败!");
-            getDriver().quit();
+            quitDriver();
         }
         handleSuccessLogin();
         return true;
@@ -1061,6 +1061,6 @@ public class AliExpressBot extends BaseBot {
     }
 
     protected void finalize() {
-        getDriver().quit();
+        quitDriver();
     }
 }

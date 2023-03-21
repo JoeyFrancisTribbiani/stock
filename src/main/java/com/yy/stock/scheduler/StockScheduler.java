@@ -144,7 +144,7 @@ public class StockScheduler {
         List<OrderItemAdaptorInfoDTO> unshippedIn3Days = amzOrderItemService.get3DaysUnshipped();
         log.info("3天内的订单个数：" + unshippedIn3Days.size());
         List<OrderItemAdaptorInfoDTO> unshippedIn9To3Days = ordersReportService.get9To3DaysUnshippedOrders();
-        log.info("3天内的订单个数：" + unshippedIn9To3Days.size());
+        log.info("9到3天的订单个数：" + unshippedIn9To3Days.size());
         unshippedIn9To3Days.addAll(unshippedIn3Days);
 
 
@@ -166,7 +166,7 @@ public class StockScheduler {
             if (address == null || address.getName() == null || address.getName().equals("")) {
                 continue;
             }
-            StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemInfo(order);
+            StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemId(order);
             if (stockStatus.getStatus().equals(StatusEnum.unstocked.name()) ||
                     stockStatus.getStatus().equals(StatusEnum.stockFailed.name())) {
                 count++;

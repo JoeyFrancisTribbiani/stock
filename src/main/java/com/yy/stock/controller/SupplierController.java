@@ -65,7 +65,7 @@ public class SupplierController {
         var bot = BotFactory.getBot(platform, buyerAccount);
         var html = bot.getProductHtmlSource(url);
         var jsonStr = bot.getSkuProperties(html);
-        bot.quit();
+        bot.quitDriver();
         var platfromJsonStr = new ObjectMapper().writeValueAsString(platform);
         platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
         var sb = new StringBuilder(jsonStr);

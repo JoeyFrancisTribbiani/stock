@@ -36,6 +36,8 @@ public class StockStatus implements Serializable {
 
     @Column(name = "order_item_id")
     private String orderItemId;
+    @Column(name = "amazon_sku")
+    private String amazonSku;
 
     @Column(name = "supplier_id")
     private BigInteger supplierId;
