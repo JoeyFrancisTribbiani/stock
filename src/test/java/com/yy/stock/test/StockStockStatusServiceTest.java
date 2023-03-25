@@ -205,7 +205,7 @@ class StockStockStatusServiceTest {
             }
         };
 
-        StockStatus r = stockStatusService.getOrCreateByOrderItemId(orderItemInfo);
+        StockStatus r = stockStatusService.getOrCreateByOrderItemSku(orderItemInfo);
         Assert.notNull(r);
         Assert.notNull(r.getId());
     }

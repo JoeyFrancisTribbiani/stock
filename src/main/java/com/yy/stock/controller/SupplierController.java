@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
 import com.yy.stock.common.result.Result;
+import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.entity.Supplier;
 import com.yy.stock.scheduler.BotFactory;
 import com.yy.stock.scheduler.PlatformFactory;
@@ -64,8 +65,14 @@ public class SupplierController {
         var buyerAccount = buyerAccountService.getLatestLoginedBuyer(platform.getId());
         var bot = BotFactory.getBot(platform, buyerAccount);
         var html = bot.getProductHtmlSource(url);
+        if (html == GlobalVariables.PRODUCT_PAGE_NOT_FOUND) {
+            return Result.success(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
+        }
         var jsonStr = bot.getSkuProperties(html);
         bot.quitDriver();
+        if (jsonStr.equals("")) {
+            return Result.failed("抓取失败！请检查链接！");
+        }
         var platfromJsonStr = new ObjectMapper().writeValueAsString(platform);
         platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
         var sb = new StringBuilder(jsonStr);

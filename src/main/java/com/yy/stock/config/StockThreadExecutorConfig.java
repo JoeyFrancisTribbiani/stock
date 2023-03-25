@@ -1,6 +1,6 @@
 package com.yy.stock.config;
 
-import com.yy.stock.common.util.VisibleThreadPoolTaskExecutor;
+import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,18 +12,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 @EnableAsync
 @Slf4j
-public class ExecutorConfig {
+public class StockThreadExecutorConfig {
 
-    @Value("${thread.pool.coreSize}")
+    @Value("${thread.pool.stockPool.coreSize}")
     private int coreSize;
 
-    @Value("${thread.pool.maxSize}")
+    @Value("${thread.pool.stockPool.maxSize}")
     private int maxSize;
 
-    @Value("${thread.pool.queueSize}")
+    @Value("${thread.pool.stockPool.queueSize}")
     private int queueSize;
 
-    @Value("${thread.pool.threadNamePrefix}")
+    @Value("${thread.pool.stockPool.threadNamePrefix}")
     private String threadNamePrefix;
 
     /**
@@ -32,10 +32,10 @@ public class ExecutorConfig {
      * @return Executor
      */
     @Bean(name = "asyncServiceExecutor")
-    public VisibleThreadPoolTaskExecutor asyncServiceExecutor() {
+    public VisibleStockThreadPoolTaskExecutor asyncServiceExecutor() {
         log.info("start asyncServiceExecutor");
         // 使用 自定义 CustomThreadPoolTaskExecutor
-        VisibleThreadPoolTaskExecutor executor = new VisibleThreadPoolTaskExecutor();
+        VisibleStockThreadPoolTaskExecutor executor = new VisibleStockThreadPoolTaskExecutor();
         // 配置核心线程数
         executor.setCorePoolSize(coreSize);
         // 配置最大线程数

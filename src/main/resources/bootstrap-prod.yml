@@ -99,7 +99,13 @@ xxl:
     accessToken: default_token
 thread:
   pool:
-    coreSize: 8
-    maxSize: 8
-    queueSize: 0
-    threadNamePrefix: stock-job-async
+    stockPool:
+      coreSize: 8
+      maxSize: 8
+      queueSize: 0
+      threadNamePrefix: stock-job-async
+    trackPool:
+
+
+
+

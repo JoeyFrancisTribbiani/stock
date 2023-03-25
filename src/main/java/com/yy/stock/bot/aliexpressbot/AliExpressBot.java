@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.BaseBot;
-import com.yy.stock.bot.aliexpressbot.model.logistic.aliexpress.LogisticDetailResponseModel;
+import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticCityResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticDetailResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.Module;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressClassSelectors;
@@ -12,114 +12,74 @@ import com.yy.stock.bot.aliexpressbot.selector.AliExpressUrls;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressXpaths;
 import com.yy.stock.bot.base.MyCookie;
 import com.yy.stock.bot.base.Product;
-import com.yy.stock.bot.base.ShipmentInfo;
 import com.yy.stock.bot.helper.RestTemplateHelper;
 import com.yy.stock.bot.helper.SeleniumHelper;
-import com.yy.stock.bot.lazadaui.model.address.AddressApiResponseModel;
-import com.yy.stock.bot.lazadaui.model.address.ListAddressRespModel;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRespModule;
 import com.yy.stock.bot.lazadaui.model.cart.CartApiResponseModel;
 import com.yy.stock.bot.lazadaui.model.cart.CartCountRspModel;
-import com.yy.stock.common.email.EmailService;
 import com.yy.stock.common.exception.OverTopShipFeeException;
 import com.yy.stock.common.exception.PayFailedException;
 import com.yy.stock.common.exception.SupplierUnavailableException;
 import com.yy.stock.common.exception.WrongStockPriceException;
 import com.yy.stock.common.util.YamlSourceFactory;
+import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.config.StatusEnum;
-import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockRequest;
-import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.StockStatus;
-import com.yy.stock.service.BuyerAccountService;
-import com.yy.stock.service.PlatformService;
-import com.yy.stock.service.StockStatusService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Data
-@Component
-@Scope("prototype")
 @Slf4j
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称
-public class AliExpressBot extends BaseBot {
-    private final AliExpressXpaths xpaths;
-    private final AliExpressUrls urls;
-    private final AliExpressClassSelectors classSelectors;
-    public BuyerAccount buyerAccount;
-    private boolean logined = false;
-    private RestTemplate restTemplate;
-    private HttpHeaders savedHeaders;
-    private EmailService emailService;
-    private StockRequest request;
-    // 付款开关，打开后才点击付款按钮，否则跳过付款，直接保存状态为已备货
-    @Value("${bot.paySwitch}")
-    private boolean paySwitch;
-    private BuyerAccountService buyerAccountService;
-    //    private SupplierService supplierService;
-    private PlatformService platformService;
-    private StockStatusService stockStatusService;
+public abstract class AliExpressBot extends BaseBot {
+    @Autowired
+    protected AliExpressXpaths xpaths;
+    @Autowired
+    protected AliExpressUrls urls;
+    @Autowired
+    protected AliExpressClassSelectors classSelectors;
 
-
-    private AliExpressBot(AliExpressXpaths xpaths, AliExpressUrls urls, AliExpressClassSelectors classSelectors, EmailService emailService,
-//                       SupplierService supplierService,
-                          PlatformService platformService,
-                          StockStatusService stockStatusService,
-                          BuyerAccountService buyerAccountService) {
-        System.out.println("Construct LazadaUIBot Instance...");
-        this.stockStatusService = stockStatusService;
-        this.buyerAccountService = buyerAccountService;
-        this.platformService = platformService;
-        this.xpaths = xpaths;
-        this.urls = urls;
-        this.classSelectors = classSelectors;
-        this.emailService = emailService;
-//        this.restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(
-                HttpClientBuilder.create().build());
-        this.restTemplate = new RestTemplate(factory);
-
+    protected AliExpressBot() {
+        super();
+        log.info("Construct AliExpressBot Instance...");
         initHeaders();
-//        this.supplierService = supplierService;
     }
 
-    public boolean loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
+    public void loginAndPlaceOrder() throws InterruptedException, OverTopShipFeeException, JsonProcessingException {
         login();
 
         SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
-        var c = getDriverCookies();
+        var c = chromeDriverManager.getDriverCookies();
         updateCookiesInHeaders(c);
         saveCookiesToBuyerAccount(c);
 
@@ -136,14 +96,14 @@ public class AliExpressBot extends BaseBot {
         quitDriver();
         buyerAccount.setInBuying(false);
         buyerAccountService.save(buyerAccount);
-        return true;
     }
 
     private void saveOrderId() {
-        var stockStatus = request.getStockStatus();
+        var stockStatus = stockRequest.getStockStatus();
         try {
             var platformOrderId = getPlatformOrderId();
             stockStatus.setPlatformOrderId(platformOrderId);
+            stockStatus.setPlatformOrderPageUrl(generPlatformOrderPageUrl(platformOrderId));
             stockStatusService.save(stockStatus);
         } catch (Exception ex) {
             stockStatus.setLog("付款后保存订单ID时出错!ex:" + ex.getMessage());
@@ -153,14 +113,24 @@ public class AliExpressBot extends BaseBot {
         }
     }
 
-    public void trackLogisticByAmazonOrderInfo(OrderItemAdaptorInfoDTO order) throws JsonProcessingException, InterruptedException {
-        var stockStatus = stockStatusService.getOrCreateByOrderItemId(order);
-        trackLogisticByStockStatus(stockStatus);
+    private String generPlatformOrderPageUrl(String platformOrderId) {
+        return "https://www.aliexpress.com/p/order/detail.html?orderId=" + platformOrderId;
     }
+
+//    public ShipmentInfo trackOrderByUrl(String url) throws JsonProcessingException {
+//        var modules = getCainiaoTrackInfoByUrl(url);
+//        var json = new ObjectMapper().writeValueAsString(modules.get(0));
+//        return new ShipmentInfo();
+//    }
+
+//    public void trackLogisticByAmazonOrderInfo(OrderItemAdaptorInfoDTO order) throws JsonProcessingException, InterruptedException {
+//        var stockStatus = stockStatusService.getOrCreateByOrderItemSku(order);
+//        trackLogisticByStockStatus(stockStatus);
+//    }
 
     public void trackLogisticByStockStatus(StockStatus stockStatus) throws JsonProcessingException, InterruptedException {
         var platformOrderId = stockStatus.getPlatformOrderId();
-        if (platformOrderId == null || platformOrderId == "") {
+        if (platformOrderId == null || platformOrderId.equals("")) {
             stockStatus.setLog("状态信息中未保存平台订单ID!");
             stockStatus.setStatus(StatusEnum.payedButInfoSaveError.name());
             stockStatusService.save(stockStatus);
@@ -178,14 +148,36 @@ public class AliExpressBot extends BaseBot {
 
         trackNumber = stockStatus.getShipmentTrackNumber();
         var modules = getCainiaoTrackInfo(trackNumber);
-        var json = new ObjectMapper().writer().writeValueAsString(modules);
+        var module = modules.get(0);
+        Thread.sleep(1000L);
+        var city = getCainiaoCityInfo(trackNumber);
+        module.setDestCity(city);
+        var json = new ObjectMapper().writer().writeValueAsString(module);
         stockStatus.setShipment(json);
+        stockStatus.setLastShipmentTrackTime(LocalDateTime.now());
         stockStatusService.save(stockStatus);
+    }
 
+    public String getCainiaoCityInfo(String trackNumber) {
+        var url = "https://global.cainiao.com/global/getCity.json?lang=en-US&language=en-US&mailNo=" + trackNumber;
+        HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
+
+        try {
+            HttpEntity<CainiaoGlobalLogisticCityResponseModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+            });
+            return response.getBody().getModule();
+        } catch (Exception ex) {
+            log.error("拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
+        }
+        return "";
     }
 
     public List<Module> getCainiaoTrackInfo(String trackNumber) {
         var url = urls.cainiaoGlobalTrackApi + trackNumber;
+        return getCainiaoTrackInfoByUrl(url);
+    }
+
+    public List<Module> getCainiaoTrackInfoByUrl(String url) {
         HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
 
         try {
@@ -193,53 +185,51 @@ public class AliExpressBot extends BaseBot {
             });
             return response.getBody().getModule();
         } catch (Exception ex) {
-            log.error("拉取菜鸟物流追踪信息出错! trackNumber:" + trackNumber + "ex:" + ex.getMessage());
+            log.error("拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
         }
         return null;
     }
 
     public boolean refetchShipmentTrackNumber(StockStatus stockStatus) throws JsonProcessingException, InterruptedException {
-        String shipTrackNumber;
+        String shipTrackNumber = null;
 
-        if (!logined) {
-            if (!login()) {
-                return false;
-            }
-            var c = getDriverCookies();
-            updateCookiesInHeaders(c);
-            saveCookiesToBuyerAccount(c);
-        }
-        HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
         try {
-            HttpEntity<LogisticDetailResponseModel> response = restTemplate.exchange(urls.logisticDetailApi, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-            });
-            shipTrackNumber = response.getBody().getData().getPackages().get(0).getLogisticsNo();
+            if (!logined) {
+//                if (!canLoginUseBuyerCookie()) {
+                if (!login()) {
+                    return false;
+                }
+//                }
+            }
+            getDriver().get("https://track.aliexpress.com/logisticsdetail.htm?tradeId=" + stockStatus.getPlatformOrderId());
+            var noDiv = SeleniumHelper.getByClassName(getDriver(), "tracking-no");
+            shipTrackNumber = noDiv.getText();
+
+//            updateCookiesInHeaders(chromeDriverManager.getDriverCookies());
+//
+//            HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
+//            var url = urls.logisticDetailApi + stockStatus.getPlatformOrderId();
+//            HttpEntity<LogisticDetailResponseModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+//            });
+//            shipTrackNumber = Objects.requireNonNull(response.getBody()).getData().getPackages().get(0).getLogisticsNo();
             if (shipTrackNumber != null) {
                 stockStatus.setShipmentTrackNumber(shipTrackNumber);
+                stockStatus.setShipmentTrackUrl("https://global.cainiao.com/newDetail.htm?mailNoList=" + shipTrackNumber);
+                stockStatus.setStatus(StatusEnum.shipped.name());
                 stockStatusService.save(stockStatus);
                 return true;
             }
         } catch (Exception ex) {
             stockStatus.setLog("拉取物流追踪号失败！ex:" + ex.getMessage());
             stockStatusService.save(stockStatus);
-            log.error("拉取物流追踪号失败! statusID:" + stockStatus.getId() + "ex:" + ex.getMessage());
+            log.info("拉取物流追踪号失败! statusID:" + stockStatus.getId() + "ex:" + ex.getMessage());
             return false;
+        } finally {
+            quitDriver();
         }
         return false;
     }
 
-    @NotNull
-    private MyCookie[] getDriverCookies() {
-        var cookies = getDriver().manage().getCookies();
-        List<MyCookie> list = new ArrayList<>();
-        MyCookie[] res = new MyCookie[]{};
-        for (var ck : cookies) {
-            MyCookie c = new MyCookie();
-            BeanUtils.copyProperties(ck, c);
-            list.add(c);
-        }
-        return list.toArray(res);
-    }
 
     private String getPlatformOrderId() {
         getDriver().get(urls.orderListPage);
@@ -250,17 +240,6 @@ public class AliExpressBot extends BaseBot {
         orderId = orderId.strip();
         return orderId;
     }
-
-//    public CreateAddressRequestModel generCreateAddressRequest() {
-//        CreateAddressRequestModel model = new CreateAddressRequestModel();
-//        model.setName(request.getAddress().getName());
-//        model.setPhone(request.getAddress().getPhone());
-//        model.setPostCode(request.getAddress().getPostalCode());
-//        model.setDetailAddress(request.getAddress().getAddressLine1());
-//        model.setExtendAddress(request.getAddress().getAddressLine2());
-//        model.setLoading(false);
-//        return model;
-//    }
 
     public void updateSingleAddress() throws InterruptedException {
         getDriver().get(urls.addressListPage);
@@ -281,7 +260,7 @@ public class AliExpressBot extends BaseBot {
 
 
         var nameInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressNameInput);
-        var name = cleanAddressName(request.getAddress().getName());
+        var name = cleanAddressName(stockRequest.getAddress().getName());
         if (name.length() > 49) {
             name = name.substring(0, 49);
         }
@@ -289,19 +268,19 @@ public class AliExpressBot extends BaseBot {
         Thread.sleep(1000);
 
         var phoneInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressPhoneInput);
-        var phone = cleanAddressPhone(request.getAddress().getPhone());
+        var phone = cleanAddressPhone(stockRequest.getAddress().getPhone());
         phoneInput.sendKeys(phone);
         Thread.sleep(1000);
 
         var cepInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCepInput);
-        cepInput.sendKeys(request.getAddress().getPostalCode());
+        cepInput.sendKeys(stockRequest.getAddress().getPostalCode());
         Thread.sleep(1000);
         var cepSelectButton = SeleniumHelper.getByClassName(getDriver(), "postcode-option-item-content");
         cepSelectButton.click();
         Thread.sleep(3000);
 
         var bairrorInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressBairrorInput);
-        var bairror = request.getAddress().getAddressLine2();
+        var bairror = stockRequest.getAddress().getAddressLine2();
         if (bairror != null && !bairror.equals("")) {
             if (bairror.length() > 49) {
                 bairror = bairror.substring(bairror.length() - 30);
@@ -317,7 +296,7 @@ public class AliExpressBot extends BaseBot {
         Thread.sleep(1000);
 
         var ruaInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressRuaInput);
-        String rua = cleanAddressRua(request.getAddress().getAddressLine1());
+        String rua = cleanAddressRua(stockRequest.getAddress().getAddressLine1());
         var ruaWords = rua.split(" ");
         var ruaNum = ruaWords[ruaWords.length - 1];
         if (rua.length() > 1) {
@@ -339,7 +318,7 @@ public class AliExpressBot extends BaseBot {
         Thread.sleep(1000);
 
         var noteInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressNoteInput);
-        var note = request.getAddress().getAddressType();
+        var note = stockRequest.getAddress().getAddressType();
         if (note != null && !note.equals("")) {
             note = note.replace(',', ' ');
         }
@@ -348,7 +327,7 @@ public class AliExpressBot extends BaseBot {
 
         var cpfInput = SeleniumHelper.getByXpath(getDriver(), xpaths.addressCpfInput);
         // 使用此字段存储巴西cpf
-        var cpf = request.getAddress().getDistrict();
+        var cpf = stockRequest.getAddress().getDistrict();
         cpf = cleanAddressCpf(cpf);
         SeleniumHelper.clearAndType(cpfInput, cpf);
         Thread.sleep(1000);
@@ -370,14 +349,19 @@ public class AliExpressBot extends BaseBot {
         Thread.sleep(1000);
     }
 
-    public void changeRegion() throws InterruptedException {
+    private void goHome() {
         getDriver().get(urls.homePage);
+        closeAdPop();
+    }
+
+    public void changeRegion() throws InterruptedException {
+        goHome();
         String code;
-        if (request == null) {
-            var platform = platformService.getById(getBuyerAccount().getPlatformId());
+        if (stockRequest == null) {
+            var platform = platformService.getById(buyerAccount.getPlatformId());
             code = platform.getCountry();
         } else {
-            code = request.getAddress().getCountryCode();
+            code = stockRequest.getAddress().getCountryCode();
         }
         var countryName = getCountryNameByCountryCode(code);
 
@@ -425,15 +409,6 @@ public class AliExpressBot extends BaseBot {
         }
         Thread.sleep(3000L);
 
-//        var lis = SeleniumHelper.listByXpath(getDriver(), xpaths.regionArrayLis);
-//        for (var li : lis) {
-//            if (li.getAttribute("data-name").equals(countryName)) {
-//                li.click();
-//                break;
-//            }
-//        }
-//        Thread.sleep(1000L);
-
         var languageSwitcher = SeleniumHelper.getByClassName(getDriver(), "switcher-language");
         var languageButton = SeleniumHelper.getByRelativeXpath(getDriver(), languageSwitcher, ".//span[@class='select-item']");
         languageButton.click();
@@ -465,7 +440,18 @@ public class AliExpressBot extends BaseBot {
 
         var saveButton = SeleniumHelper.getByXpath(getDriver(), xpaths.regionSaveButton);
         saveButton.click();
-        Thread.sleep(2000L);
+        Thread.sleep(6000L);
+    }
+
+    private void closeAdPop() {
+        try {
+            Thread.sleep(2000L);
+            var closeBtn = SeleniumHelper.getByClassName(getDriver(), "pop-close-btn");
+            closeBtn.click();
+            Thread.sleep(2000L);
+        } catch (Exception ex) {
+
+        }
     }
 
     private String getCountryNameByCountryCode(String countryCode) {
@@ -539,60 +525,14 @@ public class AliExpressBot extends BaseBot {
         return html;
     }
 
-    public List<ListAddressRespModel> listAddress() {
-        updateHeaders("Accept-Encoding", "gzip, deflate, br");
-        HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
-        try {
-            HttpEntity<AddressApiResponseModel<List<ListAddressRespModel>>> response = restTemplate.exchange(urls.listAddressApi, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-            });
-            return response.getBody().getModule();
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    public boolean deleteAddress(long addressId) {
-        String paramMap = MessageFormat.format("{\"addressId\":\"{0}\"}", addressId);
-        HttpEntity<String> entity = new HttpEntity<>(paramMap, savedHeaders);
-
-        HttpEntity<AddressApiResponseModel<Object>> response = restTemplate.exchange(urls.deleteAddressApi, HttpMethod.POST, entity, new ParameterizedTypeReference<>() {
-        });
-        return response.getBody().getSuccess();
-    }
-
-    private void updateCookiesInHeaders(MyCookie[] cookies) throws JsonProcessingException {
-//        savedCookie = cookies;
-        StringBuilder builder = new StringBuilder();
-        for (var cookie : cookies) {
-            builder.append(cookie.getName())
-                    .append("=")
-                    .append(cookie.getValue())
-                    .append(";");
-        }
-        if (builder.isEmpty()) {
-            return;
-        }
-        savedHeaders.set("Cookie", builder.toString());
-    }
-
-    private void saveCookiesToBuyerAccount(MyCookie[] cookies) throws JsonProcessingException {
-        var cookiesStr = new ObjectMapper().writeValueAsString(cookies);
-        var buyerAccount = getBuyerAccount();
-        buyerAccount.setLoginCookie(cookiesStr);
-        buyerAccountService.save(buyerAccount);
-    }
-
-    private void updateHeaders(String key, String value) {
-        getSavedHeaders().set(key, value);
-    }
-
     public boolean login() throws InterruptedException, JsonProcessingException {
         if (loginWithCookie()) {
             handleSuccessLogin();
             return true;
         }
 
-        getDriver().get(urls.homePage);
+        goHome();
+//        throw new InterruptedException();
 
         try {
             if (getDriver().getCurrentUrl().startsWith(urls.homePage)) {
@@ -635,18 +575,6 @@ public class AliExpressBot extends BaseBot {
         return true;
     }
 
-    private void handleSuccessLogin() throws InterruptedException, JsonProcessingException {
-        this.logined = true;
-        changeRegion();
-        updateCookiesInHeaders(getDriverCookies());
-        saveCookiesToBuyerAccount(getDriverCookies());
-        updateLoginTime();
-    }
-
-    private void updateLoginTime() {
-        buyerAccount.setLastLoginTime(DateTime.now());
-        buyerAccountService.save(buyerAccount);
-    }
 
     private void verifyLoginByEmail() throws InterruptedException, MessagingException, IOException {
         inputAccountAndPassword();
@@ -667,8 +595,8 @@ public class AliExpressBot extends BaseBot {
 
         Thread.sleep(18000);
 
-        String accountVerifyEmailAddress = getBuyerAccount().getVerifyEmail();
-        String accountVerifyEmailPassword = getBuyerAccount().getVerifyEmailPassword();
+        String accountVerifyEmailAddress = buyerAccount.getVerifyEmail();
+        String accountVerifyEmailPassword = buyerAccount.getVerifyEmailPassword();
         String code = emailService.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
 
         if (code != "") {
@@ -697,14 +625,14 @@ public class AliExpressBot extends BaseBot {
     }
 
     public boolean loginWithCookie() {
-        getDriver().get(urls.homePage);
+        goHome();
         try {
             var mycookies = getBuyerAccountCookie();
             for (var myCookie : mycookies) {
                 var cookie = new Cookie(myCookie.name, myCookie.value);
                 getDriver().manage().addCookie(cookie);
             }
-            getDriver().get(urls.homePage);
+            goHome();
             String currentUrl = getDriver().getCurrentUrl();// 获取跳转后的url地址
             if (currentUrl.startsWith(urls.loginPage)) {
                 var html = getDriver().getPageSource();
@@ -762,7 +690,13 @@ public class AliExpressBot extends BaseBot {
 
     @Override
     public String getBotName() {
-        return "BOT" + "__" + request.getOrderInfo().getOrderid() + "__" + request.getOrderInfo().getOrderItemId() + "：";
+        if (stockRequest != null) {
+            return "BOT" + "__" + stockRequest.getOrderInfo().getOrderid() + "__" + stockRequest.getOrderInfo().getOrderItemId() + "：";
+        }
+        if (trackRequest != null) {
+            return "BOT" + "__" + trackRequest.getStockStatus().getAmazonOrderId() + "__" + trackRequest.getStockStatus().getOrderItemId() + ": ";
+        }
+        return "BOT" + "__" + buyerAccount.getEmail();
     }
 
     /**
@@ -771,7 +705,7 @@ public class AliExpressBot extends BaseBot {
      */
     @Override
     public boolean doStock(StockRequest request) throws InterruptedException, JsonProcessingException {
-        this.request = request;
+        this.stockRequest = request;
         log.info(getBotName() + "开始下单操作.");
 
         var supplier = request.getSupplier();
@@ -786,6 +720,12 @@ public class AliExpressBot extends BaseBot {
         return false;
     }
 
+    @Override
+    public void doTrack(TrackRequest trackRequest) throws JsonProcessingException, InterruptedException {
+        var stock = trackRequest.getStockStatus();
+        trackLogisticByStockStatus(stock);
+    }
+
     public String getProductHtmlSource(String url) throws IOException, InterruptedException {
         var cookieSet = getBuyerAccountCookie();
         updateCookiesInHeaders(cookieSet);
@@ -793,6 +733,9 @@ public class AliExpressBot extends BaseBot {
         if (html.contains("Buy Now")) {
             updateLoginTime();
             return html;
+        }
+        if (html.contains("Page Not Found")) {
+            return GlobalVariables.PRODUCT_PAGE_NOT_FOUND;
         }
 
         login();
@@ -820,6 +763,21 @@ public class AliExpressBot extends BaseBot {
         return jsonStr;
     }
 
+    @Override
+    protected void whenSuccessLogin() throws InterruptedException {
+        changeRegion();
+    }
+
+    public boolean canLoginUseBuyerCookie() throws InterruptedException, IOException {
+        var cookieSet = getBuyerAccountCookie();
+        updateCookiesInHeaders(cookieSet);
+        var html = reqeustHtml("https://www.aliexpress.com/item/1005004631075179.html");
+        if (html.contains("Buy Now")) {
+            return true;
+        }
+        return false;
+    }
+
     private String reqeustHtml(String url) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
@@ -837,28 +795,15 @@ public class AliExpressBot extends BaseBot {
     }
 
     private List<AddCartRequestModel> generAddCartRequest() {
-        var supplier = request.getSupplier();
+        var supplier = stockRequest.getSupplier();
         AddCartRequestModel addCartRequestModel = new AddCartRequestModel();
         addCartRequestModel.setItemId(supplier.getApiItemId());
         addCartRequestModel.setSkuId(supplier.getApiSkuId());
-        addCartRequestModel.setQuantity(request.getOrderInfo().getQuantity());
+        addCartRequestModel.setQuantity(stockRequest.getOrderInfo().getQuantity());
         List<AddCartRequestModel> addCartRequest = Collections.singletonList(addCartRequestModel);
         return addCartRequest;
     }
 
-    /**
-     * @param orderId
-     * @return
-     */
-    @Override
-    public ShipmentInfo trackOrder(String orderId) {
-        return null;
-    }
-
-    /**
-     * @param product
-     * @return
-     */
     @Override
     public boolean returnOrder(Product product) {
         return false;
@@ -912,9 +857,9 @@ public class AliExpressBot extends BaseBot {
     }
 
     public void clickBuyNow() throws InterruptedException {
-        var productPage = request.getSupplier().getUrl();
+        var productPage = stockRequest.getSupplier().getUrl();
         getDriver().get(productPage);
-        var styleList = request.getSupplier().getStyleName().split(",");
+        var styleList = stockRequest.getSupplier().getStyleName().split(",");
         var skuPanels = SeleniumHelper.listByClassName(getDriver(), "product-sku");
         for (int i = 0; i < styleList.length; i++) {
             var panel = skuPanels.get(i);
@@ -942,7 +887,7 @@ public class AliExpressBot extends BaseBot {
 
         WebElement amountDiv = SeleniumHelper.getByClassName(getDriver(), "product-quantity");
         var amountInput = SeleniumHelper.getByRelativeXpath(getDriver(), amountDiv, ".//input");
-        SeleniumHelper.clearAndType(amountInput, request.getOrderInfo().getQuantity().toString());
+        SeleniumHelper.clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
         Thread.sleep(2333);
 
         var buyNowButtonDiv = SeleniumHelper.getByClassName(getDriver(), "product-action");
@@ -958,13 +903,16 @@ public class AliExpressBot extends BaseBot {
             Thread.sleep(1000);
         }
 
-        var quantityToBuy = BigDecimal.valueOf(request.getOrderInfo().getQuantity());
+        var quantityToBuy = BigDecimal.valueOf(stockRequest.getOrderInfo().getQuantity());
 
         WebElement orderSummaryPriceDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getSubtotalDiv());
         var text = orderSummaryPriceDiv.getText();
         var subTotalPrice = parseUSDMoney(text);
 
-        var supplierPrice = new BigDecimal(request.getSupplier().getPrice()).multiply(quantityToBuy);
+        var supplierPriceOdr = new BigDecimal(stockRequest.getSupplier().getPrice());
+        var supplierPriceBuffer = stockRequest.getSupplier().getPriceBuffer();
+        var supplierPrice = supplierPriceOdr.add(supplierPriceBuffer);
+        supplierPrice = subTotalPrice.multiply(quantityToBuy);
         log.info("供应商价格:$" + supplierPrice);
         log.info("本次购买数量:" + quantityToBuy);
         log.info("页面显示的价格:" + subTotalPrice);
@@ -972,16 +920,26 @@ public class AliExpressBot extends BaseBot {
             throw new WrongStockPriceException("we got sub total price without ship fee:" + subTotalPrice + ", but the supplier price*quantity is:" + supplierPrice);
         }
 
-        WebElement shippingFeeDiv = SeleniumHelper.getByXpath(getDriver(), xpaths.getShippingFeeDiv());
-        text = shippingFeeDiv.getText();
-        text = text.equals("Free") ? "US $0" : text;
+        WebElement shippingFeeDiv = SeleniumHelper.getByClassName(getDriver(), "pl-summary__items");
+        var items = SeleniumHelper.listByRelativeXpath(getDriver(), shippingFeeDiv, ".//div");
+        for (var item : items) {
+            var divs = SeleniumHelper.listByRelativeXpath(getDriver(), item, ".//div/div");
+            if (divs != null && divs.size() >= 2) {
+                var span = SeleniumHelper.getByRelativeXpath(getDriver(), divs.get(0), ".//span");
+                if (span != null && span.getText().equals("Total shipping")) {
+                    var feeDiv = divs.get(1);
+//                    var textDiv = SeleniumHelper.getByRelativeXpath(getDriver(), feeDiv, ".//div");
+                    text = feeDiv.getText();
+                    text = text.equals("Free") ? "US $0" : text;
+                    break;
+                }
+            }
+        }
         var shippingFee = parseUSDMoney(text);
-        var minSupplierShippingFee = new BigDecimal(request.getSupplier().getMinShipFee());
+        var minSupplierShippingFee = new BigDecimal(stockRequest.getSupplier().getMinShipFee());
         if (shippingFee.compareTo(minSupplierShippingFee) > 0) {
             throw new OverTopShipFeeException("we got a ship fee:" + shippingFee);
         }
-
-
     }
 
     public void payNow() throws InterruptedException {
@@ -1001,11 +959,11 @@ public class AliExpressBot extends BaseBot {
                 waitTick++;
                 Thread.sleep(1000);
             }
-            request.getStockStatus().setStatus(StatusEnum.stockedUnshipped.name());
-            request.getStockStatus().setStockTime(DateTime.now());
-            request.getStockStatus().setQuantity(request.getOrderInfo().getQuantity());
-            request.getStockStatus().setTotalPrice(totalPrice);
-            stockStatusService.save(request.getStockStatus());
+            stockRequest.getStockStatus().setStatus(StatusEnum.stockedUnshipped.name());
+            stockRequest.getStockStatus().setStockTime(DateTime.now());
+            stockRequest.getStockStatus().setQuantity(stockRequest.getOrderInfo().getQuantity());
+            stockRequest.getStockStatus().setTotalPrice(totalPrice);
+            stockStatusService.save(stockRequest.getStockStatus());
             buyerAccount.setOrderCount(buyerAccount.getOrderCount() + 1);
             buyerAccountService.save(buyerAccount);
         } else {
@@ -1033,34 +991,24 @@ public class AliExpressBot extends BaseBot {
         headers.add("Referer", "https://www.aliexpress.com");
         headers.add("Accept-Encoding", "gzip, deflate, br");
         headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
-        this.savedHeaders = headers;
+        savedHeaders = headers;
     }
 
     private HttpHeaders getCainiaoGlobalHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Host", "member.lazada.sg");
-        headers.add("Connection", "keep-alive");
-        headers.add("Content-Length", "85");
-        headers.add("sec-ch-ua", "\"Not_A Brand\";v=\"99\", \"Google Chrome\";v=\"109\", \"Chromium\";v=\"109\"");
-        headers.add("sec-ch-ua-mobile", "?0");
+        headers.add("cache-control", "no-cache");
+        headers.add("pragma", "no-cache");
+        headers.add("sec-fetch-user", "?1");
         headers.add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36");
-        headers.add("Content-Type", "application/json");
-        headers.add("bx-sys", "ua-l:no__um-l:lazada__js:https://laz-g-cdn.alicdn.com/");
-        headers.add("Accept", "application/json, text/plain, */*");
-        headers.add("X-Requested-With", "XMLHttpRequest");
-        headers.add("bx-v", "2.2.3");
+        headers.add("Sec-Fetch-Site", "none");
+        headers.add("Sec-Fetch-Mode", "navigate");
+        headers.add("Sec-Fetch-Dest", "document");
         headers.add("sec-ch-ua-platform", "\"macOS\"");
-        headers.add("Origin", "https://member.lazada.sg");
-        headers.add("Sec-Fetch-Site", "same-origin");
-        headers.add("Sec-Fetch-Mode", "cors");
-        headers.add("Sec-Fetch-Dest", "empty");
-        headers.add("Referer", "https://member.lazada.sg/user/login?spm=a2o42.home.header.d5.100546b5LfhQvN&redirect=https%3A%2F%2Fwww.lazada.sg%2F%23hp-flash-sale");
+        headers.add("sec-ch-ua-mobile", "?0");
+        headers.add("sec-ch-ua", "\"Not_A Brand\";v=\"99\", \"Google Chrome\";v=\"109\", \"Chromium\";v=\"109\"");
+        headers.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
         headers.add("Accept-Encoding", "gzip, deflate, br");
-        headers.add("Accept-Language", "zh-CN,zh;q=0.9");
+        headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
         return headers;
-    }
-
-    protected void finalize() {
-        quitDriver();
     }
 }

@@ -13,16 +13,12 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @Date: 2022/7/16/0016 22:19
  */
 @Slf4j
-public class VisibleThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
+public class VisibleStockThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
 
 //    private static final Logger logger = LoggerFactory.getLogger(VisiableThreadPoolTaskExecutor.class);
 
     private void showThreadPoolInfo(String prefix) {
         ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
-
-        if (null == threadPoolExecutor) {
-            return;
-        }
 
         log.info("{}, {},taskCount [{}], completedTaskCount [{}], activeCount [{}], queueSize [{}], isFull [{}]",
                 this.getThreadNamePrefix(),

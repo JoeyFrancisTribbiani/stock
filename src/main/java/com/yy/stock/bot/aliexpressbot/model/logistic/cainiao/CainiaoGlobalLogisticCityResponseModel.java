@@ -12,15 +12,9 @@ import lombok.Data;
  * @website http://www.json.cn/java2pojo/
  */
 @Data
-public class LatestTrace {
+public class CainiaoGlobalLogisticCityResponseModel {
 
-    private long time;
-    private String timeStr;
-    private String desc;
-    private String standerdDesc;
-    private String descTitle;
-    private String timeZone;
-    private String actionCode;
-    private Group group;
+    private String module;
+    private boolean success;
 
 }

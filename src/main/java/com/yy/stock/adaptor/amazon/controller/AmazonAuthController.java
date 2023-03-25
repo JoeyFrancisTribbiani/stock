@@ -1,6 +1,6 @@
 package com.yy.stock.adaptor.amazon.controller;
 
-import com.yy.stock.adaptor.amazon.dto.AmazonAuthDTO;
+import com.yy.stock.adaptor.amazon.entity.AmazonAuth;
 import com.yy.stock.adaptor.amazon.service.AmazonAuthService;
 import com.yy.stock.adaptor.amazon.vo.AmazonAuthQueryVO;
 import com.yy.stock.adaptor.amazon.vo.AmazonAuthUpdateVO;
@@ -26,23 +26,23 @@ public class AmazonAuthController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") String id) {
+    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
         amazonAuthService.delete(id);
     }
 
     @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") String id,
+    public void update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody AmazonAuthUpdateVO vO) {
         amazonAuthService.update(id, vO);
     }
 
     @GetMapping("/{id}")
-    public AmazonAuthDTO getById(@Valid @NotNull @PathVariable("id") String id) {
+    public AmazonAuth getById(@Valid @NotNull @PathVariable("id") Long id) {
         return amazonAuthService.getById(id);
     }
 
     @GetMapping
-    public Page<AmazonAuthDTO> query(@Valid AmazonAuthQueryVO vO) {
+    public Page<AmazonAuth> query(@Valid AmazonAuthQueryVO vO) {
         return amazonAuthService.query(vO);
     }
 }

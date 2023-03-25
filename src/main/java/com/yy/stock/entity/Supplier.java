@@ -1,10 +1,13 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -21,6 +24,7 @@ public class Supplier implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
     /**
@@ -33,6 +37,7 @@ public class Supplier implements Serializable {
      * 亚马逊店铺ID
      */
     @Column(name = "amazon_auth_id", nullable = false)
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger amazonAuthId;
     /**
      * 亚马逊sku
@@ -56,6 +61,7 @@ public class Supplier implements Serializable {
      * 货源平台
      */
     @Column(name = "platform_id", nullable = false)
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger platformId;
 
     /**
@@ -105,6 +111,8 @@ public class Supplier implements Serializable {
      */
     @Column(name = "price", nullable = false)
     private String price;
+    @Column(name = "price_buffer", nullable = false)
+    private BigDecimal priceBuffer;
 
     @Column(name = "api_shop_id")
     private String apiShopId;

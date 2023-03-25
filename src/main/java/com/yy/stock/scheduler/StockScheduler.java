@@ -6,7 +6,7 @@ import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
 import com.yy.stock.common.util.FtpUtil;
 import com.yy.stock.common.util.RedissonDistributedLocker;
-import com.yy.stock.common.util.VisibleThreadPoolTaskExecutor;
+import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
@@ -34,7 +34,7 @@ public class StockScheduler {
     @Autowired
     protected RedissonDistributedLocker distributedLocker;
     @Autowired
-    protected VisibleThreadPoolTaskExecutor executor;
+    protected VisibleStockThreadPoolTaskExecutor executor;
     @Autowired
     private AmzOrderItemService amzOrderItemService;
     @Autowired
@@ -166,7 +166,13 @@ public class StockScheduler {
             if (address == null || address.getName() == null || address.getName().equals("")) {
                 continue;
             }
-            StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemId(order);
+            StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemSku(order);
+
+            // 异常订单标记为stockful=false，不发货
+            if (stockStatus.getStockful() == false) {
+                continue;
+            }
+
             if (stockStatus.getStatus().equals(StatusEnum.unstocked.name()) ||
                     stockStatus.getStatus().equals(StatusEnum.stockFailed.name())) {
                 count++;
@@ -200,17 +206,5 @@ public class StockScheduler {
     public int capacity() {
         return executor.getIdleCount();
     }
-
-//    public void autoStock() {
-//        List<OrdersReportDTO> unshiped = ordersReportService.getUnshiped();
-//        for (OrdersReportDTO ordersReportDTO : unshiped) {
-//            BuyerAccountDTO buyer = buyerAccountService.getNewestBuyer();
-//            AmzOrdersAddressDTO ordersAddress = amzOrdersAddressService.getByOrderIdAndAuthId(ordersReportDTO.getAmazonOrderId(), ordersReportDTO.getAmazonAuthId());
-//            SupplierDTO supplier = supplierService.getByAmazonOrderInfo(ordersReportDTO);
-//            StockRequest stockRequest = new StockRequest(ordersReportDTO, supplier, buyer, ordersAddress);
-//            System.out.println(ordersAddress);
-//        }
-//    }
-
 
 }

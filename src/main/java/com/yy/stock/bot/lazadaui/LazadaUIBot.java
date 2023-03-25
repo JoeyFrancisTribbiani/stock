@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.BaseBot;
 import com.yy.stock.bot.base.Product;
-import com.yy.stock.bot.base.ShipmentInfo;
 import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.model.address.*;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
@@ -19,7 +18,7 @@ import com.yy.stock.common.exception.SupplierUnavailableException;
 import com.yy.stock.common.exception.WrongCartItemsCountAddedException;
 import com.yy.stock.common.exception.WrongStockPriceException;
 import com.yy.stock.dto.StockRequest;
-import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.StockStatusService;
 import lombok.Data;
@@ -57,7 +56,6 @@ import java.util.*;
 public class LazadaUIBot extends BaseBot {
     private final LazadaXpaths xpaths;
     private final LazadaUrls urls;
-    public BuyerAccount buyerAccount;
     private ChromeDriver _driver;
     private RestTemplate restTemplate;
     private HttpHeaders savedHeaders;
@@ -254,10 +252,6 @@ public class LazadaUIBot extends BaseBot {
         buyerAccountService.save(buyerAccount);
     }
 
-    private void updateHeaders(String key, String value) {
-        getSavedHeaders().set(key, value);
-    }
-
     public boolean login() {
         if (loginWithCookie()) {
             return true;
@@ -319,8 +313,8 @@ public class LazadaUIBot extends BaseBot {
 
         Thread.sleep(18000);
 
-        String accountVerifyEmailAddress = getBuyerAccount().getVerifyEmail();
-        String accountVerifyEmailPassword = getBuyerAccount().getVerifyEmailPassword();
+        String accountVerifyEmailAddress = buyerAccount.getVerifyEmail();
+        String accountVerifyEmailPassword = buyerAccount.getVerifyEmailPassword();
         String code = emailService.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
 
         if (code != "") {
@@ -397,6 +391,14 @@ public class LazadaUIBot extends BaseBot {
         return false;
     }
 
+    /**
+     * @param trackRequest
+     * @return
+     */
+    @Override
+    public void doTrack(TrackRequest trackRequest) {
+    }
+
     private List<AddCartRequestModel> generAddCartRequest() {
         var supplier = request.getSupplier();
         AddCartRequestModel addCartRequestModel = new AddCartRequestModel();
@@ -405,15 +407,6 @@ public class LazadaUIBot extends BaseBot {
         addCartRequestModel.setQuantity(request.getOrderInfo().getQuantity());
         List<AddCartRequestModel> addCartRequest = Collections.singletonList(addCartRequestModel);
         return addCartRequest;
-    }
-
-    /**
-     * @param orderId
-     * @return
-     */
-    @Override
-    public ShipmentInfo trackOrder(String orderId) {
-        return null;
     }
 
     /**
@@ -547,5 +540,23 @@ public class LazadaUIBot extends BaseBot {
     @Override
     public String getSkuProperties(String html) {
         return null;
+    }
+
+    /**
+     * @throws InterruptedException
+     */
+    @Override
+    protected void whenSuccessLogin() throws InterruptedException {
+
+    }
+
+    /**
+     * @return
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    @Override
+    protected boolean canLoginUseBuyerCookie() throws InterruptedException, IOException {
+        return false;
     }
 }

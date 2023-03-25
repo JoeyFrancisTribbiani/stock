@@ -3,6 +3,7 @@ package com.yy.stock.test;
 import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.base.ChromeDriverManager;
 import com.yy.stock.bot.base.MyCookie;
 import com.yy.stock.bot.helper.MessageHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,13 +21,13 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 class MessageHelperTest {
-
     public static byte[] unGZip(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {
@@ -37,6 +39,22 @@ class MessageHelperTest {
             return byteArrayOutputStream.toByteArray();
         } finally {
             byteArrayOutputStream.close();
+        }
+    }
+
+    @Test
+    void testChromeDiver() throws InterruptedException {
+        var dList = new ArrayList<ChromeDriver>();
+        for (int i = 0; i < 5; i++) {
+            var driverManager = new ChromeDriverManager();
+            var driver = driverManager.getDriver();
+            dList.add(driver);
+            driver.get("https://www.baidu.com");
+            Thread.sleep(10000L);
+        }
+        for (int i = 0; i < 5; i++) {
+            dList.get(i).quit();
+            Thread.sleep(5000L);
         }
     }
 

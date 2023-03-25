@@ -2,7 +2,7 @@ package com.yy.stock.test;
 
 import cn.hutool.core.lang.Assert;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
-import com.yy.stock.common.util.VisibleThreadPoolTaskExecutor;
+import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.scheduler.StockScheduler;
 import com.yy.stock.service.BuyerAccountService;
@@ -28,7 +28,7 @@ class StockSchedulerTest {
 
 
     @Autowired
-    private VisibleThreadPoolTaskExecutor executor;
+    private VisibleStockThreadPoolTaskExecutor executor;
 
     @Test
     void testSchedule() throws InterruptedException {
@@ -69,5 +69,6 @@ class StockSchedulerTest {
     void testStockXxlJobHandler() throws InterruptedException {
         stockScheduler.stockXxlJobHandler();
     }
+
 
 }

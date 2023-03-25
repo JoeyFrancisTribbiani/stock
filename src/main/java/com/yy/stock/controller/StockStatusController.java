@@ -9,6 +9,8 @@ import com.yy.stock.adaptor.amazon.api.pojo.vo.AmazonOrdersVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.AmzProductListVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockOrderStatusListVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
+import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
+import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.common.result.Result;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
@@ -34,6 +36,8 @@ import java.util.List;
 @RequestMapping("/api/v1/stockStatus")
 public class StockStatusController {
     @Autowired
+    private AmzOrdersAddressService amzOrdersAddressService;
+    @Autowired
     private BuyerAccountService buyerAccountService;
 
     @Autowired
@@ -51,7 +55,7 @@ public class StockStatusController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") String id) {
+    public void delete(@Valid @NotNull @PathVariable("id") BigInteger id) {
         stockStatusService.delete(id);
     }
 
@@ -69,7 +73,7 @@ public class StockStatusController {
                 var marketplaceId = product.getMarketplaceid();
                 var supplier = supplierService.getBySku(new BigInteger(authId), marketplaceId, sku);
 
-                Platform platform;
+                Platform platform = null;
                 if (supplier == null) {
 //                    supplier = supplierService.createEmptySupplier(new BigInteger(authId), marketplaceId, sku);
                     supplier = new Supplier();
@@ -112,18 +116,27 @@ public class StockStatusController {
                 } else {
                     platform = platformService.getById(supplier.getPlatformId());
                 }
+
                 var stockStatus = stockStatusService.getOrCreateByOrderItemSku(new BigInteger(authId), marketplaceId, orderVo.getOrderid(), orderVo.getSku());
                 BuyerAccount buyerAccount = null;
                 if (stockStatus != null) {
-                    buyerAccount = buyerAccountService.getById(stockStatus.getBuyerId());
+                    if (stockStatus.getBuyerId() != null) {
+                        buyerAccount = buyerAccountService.getById(stockStatus.getBuyerId());
+                    } else {
+                        buyerAccount = new BuyerAccount();
+                    }
                 } else {
                     stockStatus = new StockStatus();
-                    buyerAccount = new BuyerAccount();
+                }
+                var address = amzOrdersAddressService.getByOrderInfo(new BigInteger(authId), marketplaceId, orderVo.getOrderid());
+                if (address == null) {
+                    address = new AmzOrdersAddress();
                 }
                 vo.setSupplier(supplier);
                 vo.setPlatform(platform);
                 vo.setBuyerAccount(buyerAccount);
                 vo.setStockStatus(stockStatus);
+                vo.setAddress(address);
                 list.add(vo);
             }
             var page = new Page<StockOrderStatusListVo>(gotPage.getCurrent(), gotPage.getSize(), gotPage.getTotal(), gotPage.searchCount());
@@ -134,6 +147,16 @@ public class StockStatusController {
 
         }
         return Result.failed();
+    }
+
+    @PostMapping("/saveOrderStockStatus")
+    public Result<Boolean> saveOrderStockStatusAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
+        try {
+            stockStatusService.save(stockStatus);
+            return Result.success(true);
+        } catch (Exception ex) {
+            return Result.failed();
+        }
     }
 
     @PostMapping("/orderInvoiceStatusList")

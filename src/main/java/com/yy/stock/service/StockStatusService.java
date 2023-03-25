@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class StockStatusService {
@@ -20,18 +24,24 @@ public class StockStatusService {
         return s.getId();
     }
 
-    public void delete(String id) {
+    public void delete(BigInteger id) {
         statusRepository.deleteById(id);
     }
 
-    public StockStatus getOrCreateByOrderItemId(OrderItemAdaptorInfoDTO orderItemInfo) {
-        StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndOrderItemId(orderItemInfo.getAuthid(), orderItemInfo.getMarketplaceId(), orderItemInfo.getOrderid(), orderItemInfo.getOrderItemId());
+    public StockStatus getById(BigInteger id) {
+        return statusRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+    }
+
+    public StockStatus getOrCreateByOrderItemSku(OrderItemAdaptorInfoDTO orderItemInfo) {
+        StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(orderItemInfo.getAuthid(), orderItemInfo.getMarketplaceId(), orderItemInfo.getOrderid(), orderItemInfo.getSku());
         if (stockStatus == null) {
             StockStatus toCreate = new StockStatus();
             toCreate.setMarketplaceId(orderItemInfo.getMarketplaceId());
             toCreate.setAmazonOrderId(orderItemInfo.getOrderid());
             toCreate.setAmazonAuthId(orderItemInfo.getAuthid());
             toCreate.setOrderItemId(orderItemInfo.getOrderItemId());
+            toCreate.setAmazonSku(orderItemInfo.getSku());
             toCreate.setStatus(StatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 
@@ -41,6 +51,22 @@ public class StockStatusService {
     }
 
 
+    public List<StockStatus> getUndeliveredOrders() {
+        var statuses = new ArrayList<String>();
+        statuses.add(StatusEnum.stockedUnshipped.name());
+        statuses.add(StatusEnum.shipped.name());
+        statuses.add(StatusEnum.shippedAskReturn.name());
+        statuses.add(StatusEnum.payedButInfoSaveError.name());
+        statuses.add(StatusEnum.stockedUnshippedAskReturn.name());
+        statuses.add(StatusEnum.deliveredAskReturn.name());
+        statuses.add(StatusEnum.shippedLosed.name());
+        var trackTime = LocalDateTime.now().minusHours(12);
+        var oldStockList = statusRepository.findAllByStatusInAndLastShipmentTrackTimeBefore(statuses, trackTime);
+        var virgins = statusRepository.findAllByStatusInAndLastShipmentTrackTimeIsNull(statuses);
+        virgins.addAll(oldStockList);
+        return virgins;
+    }
+
     public StockStatus getOrCreateByOrderItemSku(BigInteger authId, String marketpalceId, String orderId, String sku) {
         StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(authId, marketpalceId, orderId, sku);
         if (stockStatus == null) {
@@ -48,7 +74,7 @@ public class StockStatusService {
             toCreate.setMarketplaceId(marketpalceId);
             toCreate.setAmazonOrderId(orderId);
             toCreate.setAmazonAuthId(authId);
-            toCreate.setOrderItemId(sku);
+            toCreate.setAmazonSku(sku);
             toCreate.setStatus(StatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 

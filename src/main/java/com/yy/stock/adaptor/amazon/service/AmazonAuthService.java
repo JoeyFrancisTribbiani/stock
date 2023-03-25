@@ -1,6 +1,5 @@
 package com.yy.stock.adaptor.amazon.service;
 
-import com.yy.stock.adaptor.amazon.dto.AmazonAuthDTO;
 import com.yy.stock.adaptor.amazon.entity.AmazonAuth;
 import com.yy.stock.adaptor.amazon.repository.AmazonAuthRepository;
 import com.yy.stock.adaptor.amazon.vo.AmazonAuthQueryVO;
@@ -26,32 +25,25 @@ public class AmazonAuthService {
         return bean.getId();
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         amazonAuthRepository.deleteById(id);
     }
 
-    public void update(String id, AmazonAuthUpdateVO vO) {
+    public void update(Long id, AmazonAuthUpdateVO vO) {
         AmazonAuth bean = requireOne(id);
         BeanUtils.copyProperties(vO, bean);
         amazonAuthRepository.save(bean);
     }
 
-    public AmazonAuthDTO getById(String id) {
-        AmazonAuth original = requireOne(id);
-        return toDTO(original);
+    public AmazonAuth getById(Long id) {
+        return requireOne(id);
     }
 
-    public Page<AmazonAuthDTO> query(AmazonAuthQueryVO vO) {
+    public Page<AmazonAuth> query(AmazonAuthQueryVO vO) {
         throw new UnsupportedOperationException();
     }
 
-    private AmazonAuthDTO toDTO(AmazonAuth original) {
-        AmazonAuthDTO bean = new AmazonAuthDTO();
-        BeanUtils.copyProperties(original, bean);
-        return bean;
-    }
-
-    private AmazonAuth requireOne(String id) {
+    private AmazonAuth requireOne(Long id) {
         return amazonAuthRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
     }

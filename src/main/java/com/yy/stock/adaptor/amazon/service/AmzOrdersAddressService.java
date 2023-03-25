@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.NoSuchElementException;
 
 @Service
@@ -56,6 +57,10 @@ public class AmzOrdersAddressService {
     public AmzOrdersAddress getByOrderReport(OrdersReport orderToStock) {
         AmzOrdersAddress ordersAddress = amzOrdersAddressRepository.findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(orderToStock.getMarketplaceId(), orderToStock.getAmazonAuthId(), orderToStock.getAmazonOrderId());
         return ordersAddress;
+    }
+
+    public AmzOrdersAddress getByOrderInfo(BigInteger amazonAuthId, String marketplaceId, String amazonOrderId) {
+        return amzOrdersAddressRepository.findByMarketplaceIdAndAmazonAuthIdAndAmazonOrderId(marketplaceId, amazonAuthId, amazonOrderId);
     }
 
     public Page<AmzOrdersAddressDTO> query(AmzOrdersAddressQueryVO vO) {

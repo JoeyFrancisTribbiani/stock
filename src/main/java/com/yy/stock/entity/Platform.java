@@ -1,5 +1,7 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,6 +23,7 @@ public class Platform implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
     @Column(name = "name", nullable = false)

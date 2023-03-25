@@ -1,142 +1,118 @@
 package com.yy.stock.bot;
 
+import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.base.ChromeDriverManager;
+import com.yy.stock.bot.base.MyCookie;
 import com.yy.stock.bot.base.Product;
-import com.yy.stock.bot.base.ShipmentInfo;
+import com.yy.stock.common.email.EmailService;
 import com.yy.stock.dto.StockRequest;
+import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.service.BuyerAccountService;
+import com.yy.stock.service.PlatformService;
+import com.yy.stock.service.StockStatusService;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
-public class BaseBot implements Bot {
+public abstract class BaseBot implements Bot {
+    @Autowired
+    protected RestTemplate restTemplate;
+    @Autowired
+    protected EmailService emailService;
+    @Autowired
+    protected BuyerAccountService buyerAccountService;
+    @Autowired
+    protected PlatformService platformService;
+    @Autowired
+    protected StockStatusService stockStatusService;
+    protected ChromeDriverManager chromeDriverManager;
+    protected HttpHeaders savedHeaders;
+    protected BuyerAccount buyerAccount;
+    protected StockRequest stockRequest;
+    protected TrackRequest trackRequest;
 
-    private ChromeDriver _driver;
+    protected boolean logined = false;
+    // 付款开关，打开后才点击付款按钮，否则跳过付款，直接保存状态为已备货
+    @Value("${bot.paySwitch}")
+    protected boolean paySwitch;
+
+    public BaseBot() {
+        chromeDriverManager = new ChromeDriverManager();
+    }
 
     protected ChromeDriver getDriver() {
-        if (this._driver == null) {
-            this._driver = initChromeDriver();
-        }
-        return this._driver;
+        return chromeDriverManager.getDriver();
     }
 
-    private ChromeDriver initChromeDriver() {
-        System.setProperty("webdriver.chrome.driver",
-                "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("disable-infobars");
-        options.addArguments("--disable-popup-blocking"); // 禁用阻止弹出窗口
-        options.addArguments("no-sandbox");//禁用沙盒
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        options.addArguments("disable-extensions"); // 禁用扩展
-        options.addArguments("no-default-browser-check"); // 默认浏览器检查
-
-        List<String> excludeSwitches = Lists.newArrayList("enable-automation");//设置ExperimentalOption
-        options.setExperimentalOption("excludeSwitches", excludeSwitches);
-//        options.setExperimentalOption("useAutomationExtension", false);
-        Map<String, Object> prefs = new HashMap();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        options.setExperimentalOption("prefs", prefs);// 禁用保存密码提示框
-
-        // set performance logger
-        // this sends Network.enable to chromedriver
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        logPrefs.enable(LogType.BROWSER, Level.ALL);
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-
-        ChromeDriver driver = new ChromeDriver(options);
-
-        //修改window.navigator.webdirver=undefined，防机器人识别机制
-        Map<String, Object> command = new HashMap<>();
-        command.put("source", "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
-        driver.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", command);
-        return driver;
-    }
-
-    /**
-     * @return
-     */
     @Override
     public String getBotName() {
         return null;
     }
 
-    /**
-     * @param requestDTO
-     * @return
-     * @throws InterruptedException
-     * @throws JsonProcessingException
-     */
     @Override
     public boolean doStock(StockRequest requestDTO) throws InterruptedException, JsonProcessingException {
         return false;
     }
 
-    /**
-     * @param orderId
-     * @return
-     */
     @Override
-    public ShipmentInfo trackOrder(String orderId) {
-        return null;
-    }
+    public abstract void doTrack(TrackRequest trackRequest) throws JsonProcessingException, InterruptedException;
 
-    /**
-     * @param product
-     * @return
-     */
     @Override
     public boolean returnOrder(Product product) {
         return false;
     }
 
-    /**
-     * @param buyerAccount
-     */
     @Override
     public void setBuyerAccount(BuyerAccount buyerAccount) {
-
+        this.buyerAccount = buyerAccount;
     }
 
-    /**
-     * @param url
-     * @return
-     * @throws IOException
-     */
     @Override
     public String getProductHtmlSource(String url) throws IOException, InterruptedException {
         return null;
     }
 
-    /**
-     * @param html
-     * @return
-     */
     @Override
     public String getSkuProperties(String html) {
         return null;
     }
 
-    /**
-     *
-     */
     @Override
     public void quitDriver() {
-        if (this._driver != null) {
-            this._driver.quit();
+        chromeDriverManager.quitDriver();
+    }
+
+
+    protected void saveCookiesToBuyerAccount(MyCookie[] cookies) throws JsonProcessingException {
+        var cookiesStr = new ObjectMapper().writeValueAsString(cookies);
+        buyerAccount.setLoginCookie(cookiesStr);
+        buyerAccountService.save(buyerAccount);
+    }
+
+    protected void updateHeaders(String key, String value) {
+        savedHeaders.set(key, value);
+    }
+
+    protected void updateCookiesInHeaders(MyCookie[] cookies) throws JsonProcessingException {
+        StringBuilder builder = new StringBuilder();
+        for (var cookie : cookies) {
+            builder.append(cookie.getName())
+                    .append("=")
+                    .append(cookie.getValue())
+                    .append(";");
         }
+        if (builder.isEmpty()) {
+            return;
+        }
+        savedHeaders.set("Cookie", builder.toString());
     }
 
     protected BigDecimal parseUSDMoney(String text) {
@@ -145,4 +121,20 @@ public class BaseBot implements Bot {
         return new BigDecimal(text);
     }
 
+    protected void handleSuccessLogin() throws InterruptedException, JsonProcessingException {
+        this.logined = true;
+        whenSuccessLogin();
+        updateCookiesInHeaders(chromeDriverManager.getDriverCookies());
+        saveCookiesToBuyerAccount(chromeDriverManager.getDriverCookies());
+        updateLoginTime();
+    }
+
+    protected abstract void whenSuccessLogin() throws InterruptedException;
+
+    protected abstract boolean canLoginUseBuyerCookie() throws InterruptedException, IOException;
+
+    protected void updateLoginTime() {
+        buyerAccount.setLastLoginTime(DateTime.now());
+        buyerAccountService.save(buyerAccount);
+    }
 }
