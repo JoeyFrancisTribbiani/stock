@@ -16,6 +16,9 @@ public class AmazonOrdersVo {
 
     @ApiModelProperty(value = "订单购买时间")
     Long buydate;
+    Boolean buyerrequestedcancel;
+    String buyercancelreason;
+
 
     @ApiModelProperty(value = "订单Item状态")
     String itemstatus;

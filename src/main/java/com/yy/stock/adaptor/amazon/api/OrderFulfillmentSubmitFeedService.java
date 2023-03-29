@@ -4,14 +4,12 @@ import com.yy.stock.adaptor.amazon.dto.AmazonAuthority;
 import com.yy.stock.adaptor.amazon.dto.SubmitFeedRequest;
 import com.yy.stock.adaptor.amazon.dto.UserInfo;
 import com.yy.stock.adaptor.amazon.service.AmazonAuthService;
+import com.yy.stock.adaptor.amazon.service.MarketplaceService;
 import com.yy.stock.entity.StockStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +17,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,6 +24,8 @@ import java.util.GregorianCalendar;
 @Slf4j
 @Service
 public class OrderFulfillmentSubmitFeedService {
+    @Autowired
+    private MarketplaceService marketplaceService;
     @Autowired
     private AmazonAuthService amazonAuthService;
     @Autowired
@@ -40,24 +39,25 @@ public class OrderFulfillmentSubmitFeedService {
 //        org.w3c.dom.Document document = builder.newDocument();
         var auth = amazonAuthService.getById(stockStatus.getAmazonAuthId().longValue());
         var sellerId = auth.getSellerid();
+        var marketplace = marketplaceService.getById(stockStatus.getMarketplaceId());
 
         Document document = DocumentHelper.createDocument();
         document.setXMLEncoding("UTF-8");
         Element amazonEnvelope = document.addElement("AmazonEnvelope");
-        amazonEnvelope.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        amazonEnvelope.addAttribute("xsi:noNamespaceSchemaLocation", "amznenvelope.xsd");
+//        amazonEnvelope.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+//        amazonEnvelope.addAttribute("xsi:noNamespaceSchemaLocation", "amznenvelope.xsd");
         Element header = amazonEnvelope.addElement("Header");
         Element documentVersion = header.addElement("DocumentVersion");
-        documentVersion.setText("1.01");
+        documentVersion.setText("1.02");
         Element merchantIdentifier = header.addElement("MerchantIdentifier");
         merchantIdentifier.setText(sellerId);//卖家编号
         Element messageType = amazonEnvelope.addElement("MessageType");
         messageType.setText("OrderFulfillment");
+        Element purgeAndReplace = amazonEnvelope.addElement("PurgeAndReplace");
+        purgeAndReplace.setText("true");
         Element message = amazonEnvelope.addElement("Message");
-        //Element messageID = message.addElement("MessageID");
-        //messageID.setText(arg0);//Seller-supplied unique identifier for the shipment (not used by Amazon)
-        //name.setText("ddvip"); //添加Text值；例：<a>abc</a>
-        //name.setAttributeValue("sa", "sa"); //添加属性；例：<a item="item"></a>
+        Element msgid = message.addElement("MessageID");
+        msgid.setText("1");
         Element orderFulfillment = message.addElement("OrderFulfillment");
 
         Element amazonOrderID = orderFulfillment.addElement("AmazonOrderID");
@@ -75,7 +75,7 @@ public class OrderFulfillmentSubmitFeedService {
         fulfillmentDate.setText(xmlGregorianCalendar.toString());
 
         Element fulfillmentData = orderFulfillment.addElement("FulfillmentData");
-        Element carrierCode = fulfillmentData.addElement("CarrierCode");
+        Element carrierCode = fulfillmentData.addElement("CarrierName");
         var deliverySupplierId = "CainiaoGlobal";
         carrierCode.setText(deliverySupplierId);
         Element shippingMethod = fulfillmentData.addElement("ShippingMethod");
@@ -87,41 +87,28 @@ public class OrderFulfillmentSubmitFeedService {
 //        if (synchStateInfo.getConsignInfo() != null && synchStateInfo.getConsignInfo().size() > 0) {
 //            for (ConsignInfo consignInfo : synchStateInfo.getConsignInfo()) {
         Element item = orderFulfillment.addElement("Item");
-        Element merchantOrderItemID = item.addElement("MerchantOrderItemID");
-        merchantOrderItemID.setText(stockStatus.getAmazonSku());//商品的卖家 SKU。P110118110101010395
+        Element merchantOrderItemID = item.addElement("AmazonOrderItemCode");
+        merchantOrderItemID.setText(stockStatus.getOrderItemId());//商品的卖家 SKU。P110118110101010395
         Element quantity = item.addElement("Quantity");
         quantity.setText(stockStatus.getQuantity().toString());
-//            }
-//        }
 
-//        SubmitFeedRequest request = new SubmitFeedRequest();
-//        request.setMerchant(shopInfo.getSessionkey());//商户编号
-//        final IdList marketplaces = new IdList(Arrays.asList(AMAZON_CHINA_SHOP_CODE));
-//        request.setMarketplaceIdList(marketplaces);
-//        request.setFeedType("_POST_ORDER_FULFILLMENT_DATA_");
-        //http://docs.developer.amazonservices.com/zh_CN/feeds/Feeds_FeedType.html
-        //订单配送确认上传数据 	_POST_ORDER_FULFILLMENT_DATA_
-//        request.setFeedContent(new ByteArrayInputStream(document.asXML().getBytes("UTF-8")));
         SubmitFeedRequest submitFeedRequest = new SubmitFeedRequest();
+        var xmlStr = document.asXML();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter(baos, format);
-        writer.write(document);
-        log.info(baos.toString());
-
-
-        submitFeedRequest.setContent(baos);
+        submitFeedRequest.setContent(xmlStr);
         submitFeedRequest.setName("fulfillment_" + stockStatus.getOrderItemId());
         AmazonAuthority amazonAuthority = new AmazonAuthority();
-        BeanUtils.copyProperties(auth, amazonAuthority);
+        amazonAuthority.setMarketPlace(marketplace);
+        amazonAuthority.setShopId(auth.getShopId().toString());
+        amazonAuthority.setId(auth.getId().toString());
         submitFeedRequest.setAmazonAuthority(amazonAuthority);
         var user = new UserInfo();
         user.setId("888888");
         submitFeedRequest.setUser(user);
-        submitFeedRequest.setFeedType("_POST_ORDER_FULFILLMENT_DATA_");
+        submitFeedRequest.setFeedType("POST_ORDER_FULFILLMENT_DATA");
 
         amazonClientOneFeign.submitFeed(submitFeedRequest);
 
     }
+
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AmazonEnvelope>
+    <Header>
+        <DocumentVersion>1.02</DocumentVersion>
+        <MerchantIdentifier>A1UC9STTBPAD8V</MerchantIdentifier>
+    </Header>
+    <MessageType>OrderFulfillment</MessageType>
+    <Message>
+        <OrderFulfillment>
+            <AmazonOrderID>702-2137096-8204262</AmazonOrderID>
+            <FulfillmentDate>2023-03-27T14:36:23.149+08:00</FulfillmentDate>
+            <FulfillmentData>
+                <CarrierCode>CainiaoGlobal</CarrierCode>
+                <ShippingMethod>0</ShippingMethod>
+                <ShipperTrackingNumber>NL472743012BR</ShipperTrackingNumber>
+            </FulfillmentData>
+            <Item>
+                <MerchantOrderItemID>SD-57MS-5M99</MerchantOrderItemID>
+                <Quantity>1</Quantity>
+            </Item>
+        </OrderFulfillment>
+    </Message>
+</AmazonEnvelope>
