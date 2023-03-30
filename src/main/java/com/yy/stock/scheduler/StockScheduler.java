@@ -62,20 +62,25 @@ public class StockScheduler {
         return nameWords;
     }
 
-    @XxlJob(value = "stockJobHandler")
+    //    @XxlJob(value = "stockJobHandler")
     public void stockXxlJobHandler() throws InterruptedException {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         log.info("本线程 加锁成功，开始选择订单");
-
-        List<StockInfoDTO> toStock = filterUnstockedOrderItems();
-        log.info("选择订单个数：" + toStock.size());
-        log.info("订单号为：");
-        for (var o : toStock) {
-            log.info(o.getOrderItemAdaptorInfoDTO().getOrderid());
+        List<StockInfoDTO> toStock = null;
+        try {
+            toStock = filterUnstockedOrderItems();
+            log.info("选择订单个数：" + toStock.size());
+            log.info("订单号为：");
+            for (var o : toStock) {
+                log.info(o.getOrderItemAdaptorInfoDTO().getOrderid());
+            }
+        } catch (Exception ex) {
+            log.info("筛选未备货订单时出错，跳过本次任务.");
+            return;
+        } finally {
+            distributedLocker.unlock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
+            log.info("本线程 解锁");
         }
-
-        distributedLocker.unlock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
-        log.info("本线程 解锁");
 
         schedule(toStock);
     }
@@ -141,10 +146,10 @@ public class StockScheduler {
             return toStock;
         }
 
-        List<OrderItemAdaptorInfoDTO> unshippedIn3Days = amzOrderItemService.get3DaysUnshipped();
-        log.info("3天内的订单个数：" + unshippedIn3Days.size());
-        List<OrderItemAdaptorInfoDTO> unshippedIn9To3Days = ordersReportService.get9To3DaysUnshippedOrders();
-        log.info("9到3天的订单个数：" + unshippedIn9To3Days.size());
+        List<OrderItemAdaptorInfoDTO> unshippedIn3Days = amzOrderItemService.get6DaysUnshipped();
+        log.info("6天内的订单个数：" + unshippedIn3Days.size());
+        List<OrderItemAdaptorInfoDTO> unshippedIn9To3Days = ordersReportService.get9To6DaysUnshippedOrders();
+        log.info("9到6天的订单个数：" + unshippedIn9To3Days.size());
         unshippedIn9To3Days.addAll(unshippedIn3Days);
 
 
@@ -169,7 +174,7 @@ public class StockScheduler {
             StockStatus stockStatus = stockStatusService.getOrCreateByOrderItemSku(order);
 
             // 异常订单标记为stockful=false，不发货
-            if (stockStatus.getStockful() == false) {
+            if (!stockStatus.getStockful()) {
                 continue;
             }
 

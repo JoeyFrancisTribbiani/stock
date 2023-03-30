@@ -22,8 +22,8 @@ public class AmzOrderItemService {
     @Autowired
     private AmzOrderItemRepository amzOrderItemRepository;
 
-    public List<OrderItemAdaptorInfoDTO> get3DaysUnshipped() {
-        return amzOrderItemRepository.find3DaysUnshippedOrders();
+    public List<OrderItemAdaptorInfoDTO> get6DaysUnshipped() {
+        return amzOrderItemRepository.find6DaysUnshippedOrders();
     }
 
     public AmzOrderItemUPK save(AmzOrderItemVO vO) {

@@ -1,7 +1,7 @@
 package com.yy.stock.test;
 
 import com.yy.stock.bot.helper.SeleniumHelper;
-import com.yy.stock.bot.lazadaui.LazadaUIBot;
+import com.yy.stock.bot.lazadaui.LazadaBot;
 import com.yy.stock.bot.lazadaui.model.address.CreateAddressRequestModel;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
 import com.yy.stock.bot.lazadaui.selector.LazadaXpaths;
@@ -19,15 +19,15 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-class LazadaUIBotTest {
-    private final LazadaUIBot lazadaUIBot;
+class LazadaBotTest {
+    private final LazadaBot lazadaBot;
     @Autowired
     private LazadaXpaths xpaths;
 
 
     @Autowired
-    public LazadaUIBotTest(LazadaUIBot lazadaUIBot) {
-        this.lazadaUIBot = lazadaUIBot;
+    public LazadaBotTest(LazadaBot lazadaBot) {
+        this.lazadaBot = lazadaBot;
     }
 
     @Test
@@ -43,11 +43,11 @@ class LazadaUIBotTest {
             model.setSkuId("14121812860");
             model.setItemId("2199811436");
             List<AddCartRequestModel> list = Collections.singletonList(model);
-            lazadaUIBot.loginAndPlaceOrder();
+            lazadaBot.loginAndPlaceOrder();
         } catch (Exception ex) {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         } finally {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         }
     }
 
@@ -65,7 +65,7 @@ class LazadaUIBotTest {
     @Test
     void testParseFiddlerHeaders() throws InterruptedException {
 //        LazadaUIBot lazadaUIBot = new LazadaUIBot();
-        lazadaUIBot.setSavedHeaders(SeleniumHelper.parseFiddlerSavedHeaders("Key: Host; Value: member.lazada.sg\n" +
+        lazadaBot.setSavedHeaders(SeleniumHelper.parseFiddlerSavedHeaders("Key: Host; Value: member.lazada.sg\n" +
                 "Key: Connection; Value: keep-alive\n" +
                 "Key: sec-ch-ua; Value: \"Not_A Brand\";v=\"99\", \"Google Chrome\";v=\"109\", \"Chromium\";v=\"109\"\n" +
                 "Key: x-umidtoken; Value: defaultToken2_load_failed with timeout@@https://checkout.lazada.sg/shipping?spm=a2o42.cart.proceed_to_checkout.proceed_to_checkout@@1676298269704\n" +
@@ -92,18 +92,18 @@ class LazadaUIBotTest {
             address.setDetailAddress("MenPaiHao 30");
             address.setExtendAddress("Specific Info");
             address.setLoading(false);
-            lazadaUIBot.updateSingleAddress(address);
+            lazadaBot.updateSingleAddress(address);
         } catch (Exception ex) {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         } finally {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         }
     }
 
     @Test
     void getAddrByPostCode() {
 //        LazadaUIBot lazadaUIBot = new LazadaUIBot();
-        lazadaUIBot.setSavedHeaders(SeleniumHelper.parseFiddlerSavedHeaders("Key: Host; Value: member.lazada.sg\n" +
+        lazadaBot.setSavedHeaders(SeleniumHelper.parseFiddlerSavedHeaders("Key: Host; Value: member.lazada.sg\n" +
                 "Key: Connection; Value: keep-alive\n" +
                 "Key: sec-ch-ua; Value: \"Not_A Brand\";v=\"99\", \"Google Chrome\";v=\"109\", \"Chromium\";v=\"109\"\n" +
                 "Key: x-umidtoken; Value: defaultToken2_load_failed with timeout@@https://checkout.lazada.sg/shipping?spm=a2o42.cart.proceed_to_checkout.proceed_to_checkout@@1676298269704\n" +
@@ -127,17 +127,17 @@ class LazadaUIBotTest {
 //        urls.getByPostCodeApi = "https://member.lazada.sg/locationtree/api/getByPostCode";
 //        lazadaUIBot.setUrls(urls);
         try {
-            lazadaUIBot.getAddrByPostCode("238801");
+            lazadaBot.getAddrByPostCode("238801");
         } catch (Exception ex) {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         } finally {
-            lazadaUIBot.get_driver().quit();
+            lazadaBot.get_driver().quit();
         }
     }
 
     @Test
     void getEmailVerifyCode() throws MessagingException, IOException {
-        EmailService service = lazadaUIBot.getEmailService();
+        EmailService service = lazadaBot.getEmailService();
         service.getEmailVerifyCode("willowwu123@gmail.com", "nvqwbcmkgcsmlcog");
     }
 }

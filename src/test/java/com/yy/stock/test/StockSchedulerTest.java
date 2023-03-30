@@ -52,7 +52,7 @@ class StockSchedulerTest {
 
     @Test
     void testGet9DaysUnshipped() {
-        List<OrderItemAdaptorInfoDTO> list = ordersReportService.get9To3DaysUnshippedOrders();
+        List<OrderItemAdaptorInfoDTO> list = ordersReportService.get9To6DaysUnshippedOrders();
         Assert.notNull(list);
         OrderItemAdaptorInfoDTO o = list.get(0);
         Assert.notNull(o.getId());

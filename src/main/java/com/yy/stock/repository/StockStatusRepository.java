@@ -16,5 +16,7 @@ public interface StockStatusRepository extends JpaRepository<StockStatus, BigInt
 
     List<StockStatus> findAllByStatusInAndLastShipmentTrackTimeIsNull(Collection<String> statuses);
 
+    List<StockStatus> findAllByStatusIs(String status);
+
     StockStatus findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(BigInteger authId, String marketplaceId, String amazonOrderId, String sku);
 }

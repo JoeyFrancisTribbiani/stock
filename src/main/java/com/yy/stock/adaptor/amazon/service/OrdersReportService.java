@@ -132,7 +132,7 @@ public class OrdersReportService {
         }
     }
 
-    public List<OrderItemAdaptorInfoDTO> get9To3DaysUnshippedOrders() {
+    public List<OrderItemAdaptorInfoDTO> get9To6DaysUnshippedOrders() {
         return ordersReportRepository
                 .find9To3DaysUnshippedOrders();
     }

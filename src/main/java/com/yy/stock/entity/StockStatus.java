@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ import java.util.Date;
 @Entity
 @Table(name = "stock_status")
 @Accessors(chain = true)
-public class StockStatus implements Serializable {
+public class StockStatus {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +43,8 @@ public class StockStatus implements Serializable {
     @Column(name = "amazon_sku")
     private String amazonSku;
 
+    @Column(name = "amazon_purchase_time")
+    private Date amazonPurchaseTime;
     @Column(name = "supplier_id")
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger supplierId;
@@ -82,5 +83,5 @@ public class StockStatus implements Serializable {
     @Column(name = "stockful")
     private Boolean stockful;
     @Column(name = "remarks")
-    private Boolean remarks;
+    private String remarks;
 }

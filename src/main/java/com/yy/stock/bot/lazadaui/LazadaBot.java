@@ -2,8 +2,7 @@ package com.yy.stock.bot.lazadaui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yy.stock.bot.BaseBot;
-import com.yy.stock.bot.base.Product;
+import com.yy.stock.bot.Bot;
 import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.model.address.*;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
@@ -53,7 +52,7 @@ import java.util.*;
 @Component
 @Scope("prototype")
 @Slf4j
-public class LazadaUIBot extends BaseBot {
+public class LazadaBot extends Bot {
     private final LazadaXpaths xpaths;
     private final LazadaUrls urls;
     private ChromeDriver _driver;
@@ -66,10 +65,10 @@ public class LazadaUIBot extends BaseBot {
     //    private SupplierService supplierService;
     private StockStatusService stockStatusService;
 
-    public LazadaUIBot(LazadaXpaths xpaths, LazadaUrls urls, EmailService emailService,
+    public LazadaBot(LazadaXpaths xpaths, LazadaUrls urls, EmailService emailService,
 //                       SupplierService supplierService,
-                       StockStatusService stockStatusService,
-                       BuyerAccountService buyerAccountService) {
+                     StockStatusService stockStatusService,
+                     BuyerAccountService buyerAccountService) {
         System.out.println("Construct LazadaUIBot Instance...");
         this.xpaths = xpaths;
         this.urls = urls;
@@ -409,14 +408,6 @@ public class LazadaUIBot extends BaseBot {
         return addCartRequest;
     }
 
-    /**
-     * @param product
-     * @return
-     */
-    @Override
-    public boolean returnOrder(Product product) {
-        return false;
-    }
 
     public void cartAdd(List<AddCartRequestModel> model) {
 //        String paramMap = "[{\"itemId\":\"2199811436\",\"skuId\":\"14121812860\",\"quantity\":8}]";

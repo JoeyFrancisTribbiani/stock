@@ -112,7 +112,7 @@ public class Supplier implements Serializable {
     @Column(name = "price", nullable = false)
     private String price;
     @Column(name = "price_buffer", nullable = false)
-    private BigDecimal priceBuffer;
+    private BigDecimal priceBuffer = BigDecimal.valueOf(0);
 
     @Column(name = "api_shop_id")
     private String apiShopId;

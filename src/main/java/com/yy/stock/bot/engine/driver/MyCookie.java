@@ -1,4 +1,4 @@
-package com.yy.stock.bot.base;
+package com.yy.stock.bot.engine.driver;
 
 import lombok.Data;
 

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Objects;
 
 @Validated
 @RestController
@@ -65,7 +66,7 @@ public class SupplierController {
         var buyerAccount = buyerAccountService.getLatestLoginedBuyer(platform.getId());
         var bot = BotFactory.getBot(platform, buyerAccount);
         var html = bot.getProductHtmlSource(url);
-        if (html == GlobalVariables.PRODUCT_PAGE_NOT_FOUND) {
+        if (Objects.equals(html, GlobalVariables.PRODUCT_PAGE_NOT_FOUND)) {
             return Result.success(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
         }
         var jsonStr = bot.getSkuProperties(html);

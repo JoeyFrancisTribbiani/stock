@@ -1,4 +1,4 @@
-package com.yy.stock.bot.base;
+package com.yy.stock.bot.engine.driver;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 @Slf4j
-public class ChromeDriverManager {
+public class ChromeDriverEngine {
     private ChromeDriver _driver;
 
     public ChromeDriver getDriver() {
@@ -29,6 +29,7 @@ public class ChromeDriverManager {
 
     public void quitDriver() {
         if (this._driver != null) {
+            this._driver.close();
             this._driver.quit();
         }
     }

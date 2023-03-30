@@ -3,8 +3,8 @@ package com.yy.stock.test;
 import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yy.stock.bot.base.ChromeDriverManager;
-import com.yy.stock.bot.base.MyCookie;
+import com.yy.stock.bot.engine.driver.ChromeDriverEngine;
+import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.helper.MessageHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -46,7 +46,7 @@ class MessageHelperTest {
     void testChromeDiver() throws InterruptedException {
         var dList = new ArrayList<ChromeDriver>();
         for (int i = 0; i < 5; i++) {
-            var driverManager = new ChromeDriverManager();
+            var driverManager = new ChromeDriverEngine();
             var driver = driverManager.getDriver();
             dList.add(driver);
             driver.get("https://www.baidu.com");

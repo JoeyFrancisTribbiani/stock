@@ -3,15 +3,14 @@ package com.yy.stock.bot.aliexpressbot;
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yy.stock.bot.BaseBot;
+import com.yy.stock.bot.Bot;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticCityResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticDetailResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.Module;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressClassSelectors;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressUrls;
 import com.yy.stock.bot.aliexpressbot.selector.AliExpressXpaths;
-import com.yy.stock.bot.base.MyCookie;
-import com.yy.stock.bot.base.Product;
+import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.helper.RestTemplateHelper;
 import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
@@ -45,6 +44,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -61,7 +62,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称
-public abstract class AliExpressBot extends BaseBot {
+public abstract class AliExpressBot extends Bot {
     @Autowired
     protected AliExpressXpaths xpaths;
     @Autowired
@@ -79,7 +80,7 @@ public abstract class AliExpressBot extends BaseBot {
         login();
 
         SeleniumHelper.updateHeaderValueFromLogs(getDriver(), savedHeaders, new String[]{"x-csrf-token", "x-umidtoken", "x-ua"});
-        var c = chromeDriverManager.getDriverCookies();
+        var c = chromeDriverEngine.getDriverCookies();
         updateCookiesInHeaders(c);
         saveCookiesToBuyerAccount(c);
 
@@ -128,24 +129,30 @@ public abstract class AliExpressBot extends BaseBot {
 //        trackLogisticByStockStatus(stockStatus);
 //    }
 
-    public void trackLogisticByStockStatus(StockStatus stockStatus) throws JsonProcessingException, InterruptedException {
+    public void trackLogisticByStockStatus(StockStatus stockStatus) throws IOException, InterruptedException, DatatypeConfigurationException, ParserConfigurationException {
         var platformOrderId = stockStatus.getPlatformOrderId();
         if (platformOrderId == null || platformOrderId.equals("")) {
             stockStatus.setLog("状态信息中未保存平台订单ID!");
             stockStatus.setStatus(StatusEnum.payedButInfoSaveError.name());
             stockStatusService.save(stockStatus);
-            log.error("状态信息中未保存平台订单ID! statusID:" + stockStatus.getId());
+            log.error(getBotName() + "状态信息中未保存平台订单ID! ");
             return;
         }
         var trackNumber = stockStatus.getShipmentTrackNumber();
         if (trackNumber == null || trackNumber == "") {
-            log.info("状态信息中未保存订单追踪号, statusID:" + stockStatus.getId());
+            log.info(getBotName() + "状态信息中未保存订单追踪号");
+            log.info(getBotName() + "开始去速卖通获取订单追踪号");
             boolean fetched = refetchShipmentTrackNumber(stockStatus);
             if (!fetched) {
                 return;
+            } else {
+                // submit feed to amazon update order fulfillment
+                log.info(getBotName() + "成功获取到订单追踪号, 开始提交feed给亚马逊更新订单物流信息" + stockStatus.getShipmentTrackNumber());
+                orderFulfillmentSubmitFeedService.submit(stockStatus);
             }
         }
 
+        log.info(getBotName() + "开始获取订单物流信息");
         trackNumber = stockStatus.getShipmentTrackNumber();
         var modules = getCainiaoTrackInfo(trackNumber);
         var module = modules.get(0);
@@ -153,6 +160,7 @@ public abstract class AliExpressBot extends BaseBot {
         var city = getCainiaoCityInfo(trackNumber);
         module.setDestCity(city);
         var json = new ObjectMapper().writer().writeValueAsString(module);
+        log.info(getBotName() + "获取到订单物流信息: " + json);
         stockStatus.setShipment(json);
         stockStatus.setLastShipmentTrackTime(LocalDateTime.now());
         stockStatusService.save(stockStatus);
@@ -167,7 +175,7 @@ public abstract class AliExpressBot extends BaseBot {
             });
             return response.getBody().getModule();
         } catch (Exception ex) {
-            log.error("拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
+            log.error(getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
         }
         return "";
     }
@@ -185,7 +193,7 @@ public abstract class AliExpressBot extends BaseBot {
             });
             return response.getBody().getModule();
         } catch (Exception ex) {
-            log.error("拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
+            log.error(getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
         }
         return null;
     }
@@ -222,7 +230,7 @@ public abstract class AliExpressBot extends BaseBot {
         } catch (Exception ex) {
             stockStatus.setLog("拉取物流追踪号失败！ex:" + ex.getMessage());
             stockStatusService.save(stockStatus);
-            log.info("拉取物流追踪号失败! statusID:" + stockStatus.getId() + "ex:" + ex.getMessage());
+            log.info(getBotName() + "拉取物流追踪号失败! statusID:" + stockStatus.getId() + "ex:" + ex.getMessage());
             return false;
         } finally {
             quitDriver();
@@ -249,9 +257,9 @@ public abstract class AliExpressBot extends BaseBot {
             Thread.sleep(2333);
             var confirmDeleteAddressButton = SeleniumHelper.getByClassName(getDriver(), "next-dialog-btn");
             confirmDeleteAddressButton.click();
-            Thread.sleep(6666);
+            Thread.sleep(5000);
         } catch (Exception ex) {
-            log.info("只有一个地址，无需删除.");
+            log.info(getBotName() + "只有一个地址，无需删除.");
         }
 //        var confirmDeleteAddressButton = SeleniumHelper.getByXpath(getDriver(), xpaths.confirmDeleteAddressButton);
         var addAddressButton = SeleniumHelper.getByXpath(getDriver(), xpaths.addAddressButton);
@@ -691,12 +699,12 @@ public abstract class AliExpressBot extends BaseBot {
     @Override
     public String getBotName() {
         if (stockRequest != null) {
-            return "BOT" + "__" + stockRequest.getOrderInfo().getOrderid() + "__" + stockRequest.getOrderInfo().getOrderItemId() + "：";
+            return "BOT" + "__STOCKING__ORDER__" + stockRequest.getOrderInfo().getOrderid() + "__" + stockRequest.getOrderInfo().getOrderItemId() + "：";
         }
         if (trackRequest != null) {
-            return "BOT" + "__" + trackRequest.getStockStatus().getAmazonOrderId() + "__" + trackRequest.getStockStatus().getOrderItemId() + ": ";
+            return "BOT" + "__TRACLING__ORDER__" + trackRequest.getStockStatus().getAmazonOrderId() + "__" + trackRequest.getStockStatus().getOrderItemId() + ": ";
         }
-        return "BOT" + "__" + buyerAccount.getEmail();
+        return "BOT" + "__NO_STOCK_TRACK__BUYER__" + buyerAccount.getEmail();
     }
 
     /**
@@ -721,7 +729,8 @@ public abstract class AliExpressBot extends BaseBot {
     }
 
     @Override
-    public void doTrack(TrackRequest trackRequest) throws JsonProcessingException, InterruptedException {
+    public void doTrack(TrackRequest trackRequest) throws IOException, InterruptedException, DatatypeConfigurationException, ParserConfigurationException {
+        this.trackRequest = trackRequest;
         var stock = trackRequest.getStockStatus();
         trackLogisticByStockStatus(stock);
     }
@@ -739,8 +748,9 @@ public abstract class AliExpressBot extends BaseBot {
         }
 
         login();
-
-        return reqeustHtml(url);
+        getDriver().get(url);
+        return getDriver().getPageSource();
+//        return reqeustHtml(url);
     }
 
     public String getSkuProperties(String html) {
@@ -804,10 +814,6 @@ public abstract class AliExpressBot extends BaseBot {
         return addCartRequest;
     }
 
-    @Override
-    public boolean returnOrder(Product product) {
-        return false;
-    }
 
     public void cartAdd(List<AddCartRequestModel> model) throws InterruptedException {
 //        String paramMap = "[{\"itemId\":\"2199811436\",\"skuId\":\"14121812860\",\"quantity\":8}]";
@@ -913,9 +919,9 @@ public abstract class AliExpressBot extends BaseBot {
         var supplierPriceBuffer = stockRequest.getSupplier().getPriceBuffer();
         var supplierPrice = supplierPriceOdr.add(supplierPriceBuffer);
         supplierPrice = subTotalPrice.multiply(quantityToBuy);
-        log.info("供应商价格:$" + supplierPrice);
-        log.info("本次购买数量:" + quantityToBuy);
-        log.info("页面显示的价格:" + subTotalPrice);
+        log.info(getBotName() + "供应商价格:$" + supplierPrice);
+        log.info(getBotName() + "本次购买数量:" + quantityToBuy);
+        log.info(getBotName() + "页面显示的价格:" + subTotalPrice);
         if (subTotalPrice.compareTo(supplierPrice) > 0) {
             throw new WrongStockPriceException("we got sub total price without ship fee:" + subTotalPrice + ", but the supplier price*quantity is:" + supplierPrice);
         }
@@ -953,12 +959,13 @@ public abstract class AliExpressBot extends BaseBot {
             int waitTick = 0;
             while (!getDriver().getPageSource().contains(succTips)) {
                 if (waitTick > 66) {
-                    throw new PayFailedException("付款失败！请检查详情！");
+                    throw new PayFailedException(getBotName() + "付款失败！请检查详情！");
                 }
-                log.info("等待付款成功的提示...");
+                log.info(getBotName() + "等待付款成功的提示...");
                 waitTick++;
                 Thread.sleep(1000);
             }
+            log.info(getBotName() + "付款成功！");
             stockRequest.getStockStatus().setStatus(StatusEnum.stockedUnshipped.name());
             stockRequest.getStockStatus().setStockTime(DateTime.now());
             stockRequest.getStockStatus().setQuantity(stockRequest.getOrderInfo().getQuantity());

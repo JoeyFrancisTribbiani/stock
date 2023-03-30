@@ -34,26 +34,19 @@ public class StockStatusService {
     }
 
     public StockStatus getOrCreateByOrderItemSku(OrderItemAdaptorInfoDTO orderItemInfo) {
-        StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(orderItemInfo.getAuthid(), orderItemInfo.getMarketplaceId(), orderItemInfo.getOrderid(), orderItemInfo.getSku());
-        if (stockStatus == null) {
-            StockStatus toCreate = new StockStatus();
-            toCreate.setMarketplaceId(orderItemInfo.getMarketplaceId());
-            toCreate.setAmazonOrderId(orderItemInfo.getOrderid());
-            toCreate.setAmazonAuthId(orderItemInfo.getAuthid());
-            toCreate.setOrderItemId(orderItemInfo.getOrderItemId());
-            toCreate.setAmazonSku(orderItemInfo.getSku());
-            toCreate.setStatus(StatusEnum.unstocked.name());
-            statusRepository.save(toCreate);
-
-            stockStatus = toCreate;
+        StockStatus stockStatus = getOrCreateByOrderItemSku(orderItemInfo.getAuthid(), orderItemInfo.getMarketplaceId(), orderItemInfo.getOrderid(), orderItemInfo.getSku());
+        if (stockStatus.getOrderItemId() == null) {
+            stockStatus.setOrderItemId(orderItemInfo.getOrderItemId());
+            stockStatus.setAmazonPurchaseTime(orderItemInfo.getBuydate());
+            statusRepository.save(stockStatus);
         }
         return stockStatus;
     }
 
 
-    public List<StockStatus> getUndeliveredOrders() {
+    public List<StockStatus> getOnTheWayOrders() {
         var statuses = new ArrayList<String>();
-        statuses.add(StatusEnum.stockedUnshipped.name());
+//        statuses.add(StatusEnum.stockedUnshipped.name());
         statuses.add(StatusEnum.shipped.name());
         statuses.add(StatusEnum.shippedAskReturn.name());
         statuses.add(StatusEnum.payedButInfoSaveError.name());
@@ -67,6 +60,11 @@ public class StockStatusService {
         return virgins;
     }
 
+    public List<StockStatus> getStockedUnshippedOrders() {
+        return statusRepository.findAllByStatusIs(StatusEnum.stockedUnshipped.name());
+    }
+
+
     public StockStatus getOrCreateByOrderItemSku(BigInteger authId, String marketpalceId, String orderId, String sku) {
         StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(authId, marketpalceId, orderId, sku);
         if (stockStatus == null) {
@@ -75,6 +73,7 @@ public class StockStatusService {
             toCreate.setAmazonOrderId(orderId);
             toCreate.setAmazonAuthId(authId);
             toCreate.setAmazonSku(sku);
+            toCreate.setStockful(true);
             toCreate.setStatus(StatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 

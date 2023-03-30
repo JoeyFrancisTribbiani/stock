@@ -2,7 +2,7 @@ package com.yy.stock.bot.lazadaui;
 
 import org.junit.jupiter.api.Test;
 
-class LazadaUIBotTest {
+class LazadaBotTest {
 
     @Test
     void getEmailVerifyCode() {

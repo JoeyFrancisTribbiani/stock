@@ -1,6 +1,5 @@
 package com.yy.stock.scheduler;
 
-import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
@@ -24,7 +23,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class TrackScheduler {
+public class TrackOnTheWayScheduler {
     //    @Autowired
 //    protected RedissonDistributedLocker distributedLocker;
 //    @Autowired
@@ -57,7 +56,7 @@ public class TrackScheduler {
         return nameWords;
     }
 
-    @XxlJob(value = "trackJobHandler")
+    //    @XxlJob(value = "trackOnTheWayJobHandler")
     public void trackXxlJobHandler() throws InterruptedException {
         if (isBusy()) {
             log.info("物流追踪任务正忙，跳过此次计划.");
@@ -69,7 +68,7 @@ public class TrackScheduler {
     }
 
     public List<StockStatus> filterUndeliveredOrders() {
-        return stockStatusService.getUndeliveredOrders();
+        return stockStatusService.getOnTheWayOrders();
     }
 
     public void schedule(List<StockStatus> toTrack) {
