@@ -1,10 +1,11 @@
-package com.yy.stock.adaptor.amazon.api.pojo.entity;
+package com.yy.stock.adaptor.amazon.api.pojo.vo;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yy.stock.adaptor.amazon.api.pojo.entity.BizException;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

@@ -36,7 +36,7 @@ public class EmailAccountService {
     }
 
     public Page<EmailAccount> query(EmailAccountListQuery vO) {
-        throw new UnsupportedOperationException();
+        return emailAccountRepository.findAll(vO);
     }
 
 

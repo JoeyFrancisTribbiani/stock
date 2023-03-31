@@ -1,7 +1,7 @@
 package com.yy.stock.adaptor.amazon.api.pojo.dto;
 
 
-import com.yy.stock.adaptor.amazon.api.pojo.entity.BasePageQuery;
+import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

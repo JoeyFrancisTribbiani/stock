@@ -11,12 +11,13 @@ show
 global variables like 'wait_timeout';
 
 set
-global wait_timeout=120;
+global wait_timeout=60;
+
 show
 processlist;
 
 set
-global  interactive_timeout=120;
+global  interactive_timeout=60;
 
 show
 global variables like '%timeout%';
