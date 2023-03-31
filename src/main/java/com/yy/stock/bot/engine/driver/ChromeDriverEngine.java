@@ -37,12 +37,14 @@ public class ChromeDriverEngine {
     private ChromeDriver initChromeDriver() {
         log.info("开始初始化chromeDriver");
         System.setProperty("webdriver.chrome.driver",
-                "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver");
+                "D:\\Fadacai888888\\wimoor_work\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         options.addArguments("--disable-popup-blocking"); // 禁用阻止弹出窗口
         options.addArguments("no-sandbox");//禁用沙盒
         options.addArguments("--disable-blink-features=AutomationControlled");
+        options.addArguments("--remote-allow-origins=*");
+
         options.addArguments("disable-extensions"); // 禁用扩展
         options.addArguments("no-default-browser-check"); // 默认浏览器检查
 

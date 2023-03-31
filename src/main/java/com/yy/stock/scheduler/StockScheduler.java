@@ -62,7 +62,7 @@ public class StockScheduler {
         return nameWords;
     }
 
-    //    @XxlJob(value = "stockJobHandler")
+    @XxlJob(value = "stockJobHandler")
     public void stockXxlJobHandler() throws InterruptedException {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         log.info("本线程 加锁成功，开始选择订单");

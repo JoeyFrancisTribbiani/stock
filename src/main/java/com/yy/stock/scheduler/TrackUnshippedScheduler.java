@@ -1,5 +1,6 @@
 package com.yy.stock.scheduler;
 
+import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
@@ -56,15 +57,21 @@ public class TrackUnshippedScheduler {
         return nameWords;
     }
 
-    //    @XxlJob(value = "trackUnshippedJobHandler")
+        @XxlJob(value = "trackUnshippedJobHandler")
     public void trackXxlJobHandler() throws InterruptedException {
         if (isBusy()) {
             log.info("物流追踪任务正忙，跳过此次计划.");
             return;
         }
         isBusy = true;
-        var toTrack = filterUnshippedOrders();
-        schedule(toTrack);
+        try {
+            var toTrack = filterUnshippedOrders();
+            schedule(toTrack);
+        }catch (Exception ex){
+            log.info("追踪任务过程中报错,ex:" + ex.getMessage());
+        }finally {
+            isBusy=false;
+        }
     }
 
     public List<StockStatus> filterUnshippedOrders() {
@@ -96,8 +103,7 @@ public class TrackUnshippedScheduler {
                     log.info(bot.getBotName() + "开始退出chromedriver.");
                     bot.quitDriver();
                 }
-//                log.info(getExecutorName(stock) + "bot下单失败,ex:" + ex.getMessage());
-
+                log.info("追踪任务过程中报错,ex:" + ex.getMessage());
             }
         }
     }
