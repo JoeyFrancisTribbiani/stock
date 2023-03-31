@@ -375,6 +375,37 @@ public abstract class AliExpressBot extends Bot {
 
         Thread.sleep(6000L);
         var regionDiv = new WebDriverWait(getDriver(), Duration.ofSeconds(6)).until(d -> d.findElement(By.id("switcher-info")));
+
+
+
+        var spans = SeleniumHelper.listByRelativeXpath(getDriver(), regionDiv, ".//span");
+        boolean needChange  = false;
+        for(var span : spans){
+            if(span.getAttribute("class").equals("ship-to")){
+                var regionCode = SeleniumHelper.getByRelativeXpath(getDriver(),span,".//i").getAttribute("class");
+                if(!regionCode.contains(code.toLowerCase())){
+                    needChange = true;
+                    break;
+                }
+            }
+            if(span.getAttribute("class").equals("language_txt")){
+                if(!span.getText().contains("English")){
+                    needChange = true;
+                    break;
+                }
+            }
+            if(span.getAttribute("class").equals("currency")){
+                if(!span.getText().contains("USD")){
+                    needChange = true;
+                    break;
+                }
+            }
+        }
+        if(!needChange){
+            return;
+        }
+
+
         regionDiv.click();
 
         Thread.sleep(2000L);
@@ -658,7 +689,7 @@ public abstract class AliExpressBot extends Bot {
                         }
                         return false;
                     }
-                    WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(8L));
+                    WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(18));
                     wait.until(ExpectedConditions.urlContains(urls.homePage));
                     return true;
                 } else {
@@ -739,7 +770,7 @@ public abstract class AliExpressBot extends Bot {
         var cookieSet = getBuyerAccountCookie();
         updateCookiesInHeaders(cookieSet);
         var html = reqeustHtml(url);
-        if (html.contains("Buy Now")) {
+        if (html.contains("imageModule")) {
             updateLoginTime();
             return html;
         }
