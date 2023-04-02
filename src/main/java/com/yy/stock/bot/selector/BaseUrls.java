@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class BaseUrls {
     public String homePage;
+    public String testLogin;
     public String loginPage;
     public String addToCartApi;
     public String cartPage;

@@ -25,9 +25,11 @@ public class BuyerAccount implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
+    @ManyToOne
+    @JoinColumn(name = "platform_id", insertable = false, updatable = false)
     @Column(name = "platform_id", nullable = false)
     @JsonSerialize(using = ToStringSerializer.class)
-    private BigInteger platformId;
+    private Platform platform;
 
     @Column(name = "email")
     private String email;
@@ -61,9 +63,10 @@ public class BuyerAccount implements Serializable {
     private Date lastLoginTime;
     @Column(name = "last_pay_time")
     private Date lastPayTime;
+    @Column(name = "bot_status", columnDefinition = "varchar(18) default 'IDLE'")
+    private String botStatus;
     @Column(name = "status")
     private String status;
-    @Column(name = "in_buying")
-    private boolean inBuying;
-
+//    @Column(name = "in_buying")
+//    private boolean inBuying;
 }

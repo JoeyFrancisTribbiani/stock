@@ -75,7 +75,7 @@ public class StockAsyncExecutor {
                     .setOrderItemId(orderToStock.getOrderItemId());
             stockStatusService.save(stockStatus);
             stockRequest = new StockRequest(stockStatus, orderToStock, platform, supplier, ordersAddress);
-            bot.doStock(stockRequest);
+            bot.stock(stockRequest);
         } catch (Exception ex) {
             stockStatus.setStatus(StatusEnum.stockFailed.name());
             stockStatus.setLog(ex + Arrays.toString(ex.getStackTrace()));

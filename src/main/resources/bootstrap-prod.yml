@@ -105,4 +105,6 @@ thread:
       maxSize: 8
       queueSize: 0
       threadNamePrefix: stock-job-async
-    trackPool:
+bot:
+  gridhub:
+    url: http://115.159.45.30:26666

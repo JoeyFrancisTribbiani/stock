@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 
 /**
  * stock record from supplier
@@ -43,5 +44,9 @@ public class Platform implements Serializable {
 
     @Column(name = "cookie_expires_hours")
     private String cookieExpiresHours;
+
+    @OneToMany
+    @JoinColumn(name = "platform_id")
+    private List<BuyerAccount> buyerAccounts;
 
 }

@@ -1,12 +1,14 @@
 package com.yy.stock.bot.helper;
 
+import org.springframework.stereotype.Component;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+@Component
 public class RestTemplateHelper {
-
     public static byte[] unGZip(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {

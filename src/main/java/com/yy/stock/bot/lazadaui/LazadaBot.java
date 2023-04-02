@@ -3,7 +3,6 @@ package com.yy.stock.bot.lazadaui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.Bot;
-import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.model.address.*;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRespModule;
@@ -370,15 +369,15 @@ public class LazadaBot extends Bot {
     }
 
     /**
-     * @param request
+     * @param stockRequest
      * @return
      */
     @Override
-    public boolean doStock(StockRequest request) throws InterruptedException, JsonProcessingException {
-        this.request = request;
+    public boolean stock(StockRequest stockRequest) throws InterruptedException, JsonProcessingException {
+        this.request = stockRequest;
         log.info("bot checking available...");
 
-        var supplier = request.getSupplier();
+        var supplier = stockRequest.getSupplier();
         if (!supplier.getAvailable()) {
             throw new SupplierUnavailableException();
         }

@@ -1,15 +1,14 @@
-package com.yy.stock.common.email;
-
+package com.yy.stock.bot.engine.email;
 
 import com.sun.mail.imap.IMAPMessage;
+import com.yy.stock.common.email.EmailServiceGmailImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -22,9 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-@EnableRetry
-@Service
-public class EmailServiceGmailImpl implements EmailService {
+@Component
+public class EmailEngine {
     /**
      * 删除邮件
      *

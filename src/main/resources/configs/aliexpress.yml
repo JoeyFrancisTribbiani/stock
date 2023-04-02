@@ -49,8 +49,12 @@ alixpaths:
   firstOrderIdLabel: "//*[@id=\"root\"]/div/div[2]/div[1]/div/div[1]/div[1]/div[2]/div/div[2]"
 aliclass:
   regionCheckListButton: "country-selector"
+  homePageAdCloseButton: "pop-close-btn"
+
+
 aliurls:
   homePage: "https://www.aliexpress.com/"
+  testLogin: "https://www.aliexpress.com/item/1005004631075179.html"
   loginPage: "https://login.aliexpress.com/"
   addToCartApi: "https://cart.lazada.sg/cart/api/add"
   cartPage: "https://cart.lazada.sg/cart"

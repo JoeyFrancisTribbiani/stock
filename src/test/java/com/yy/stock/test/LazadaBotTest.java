@@ -1,6 +1,5 @@
 package com.yy.stock.test;
 
-import com.yy.stock.bot.helper.SeleniumHelper;
 import com.yy.stock.bot.lazadaui.LazadaBot;
 import com.yy.stock.bot.lazadaui.model.address.CreateAddressRequestModel;
 import com.yy.stock.bot.lazadaui.model.cart.AddCartRequestModel;

@@ -8,5 +8,6 @@ public class BaseClassSelector {
     public String regionCheckListButton;
     public String regionArrayLis;
     public String regionSaveButton;
+    public String homePageAdCloseButton;
 
 }
