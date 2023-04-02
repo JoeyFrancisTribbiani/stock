@@ -1,0 +1,10 @@
+[node]
+detect-drivers = false
+hub = "http://192.168.196.242:4444"
+host = "192.168.196.61"
+max-sessions = 3
+override-max-sessions = true
+[[node.driver-configuration]]
+display-name = "Chrome"
+stereotype = "{\"browserName\": \"chrome\"}"
+webdriver-executable = 'C:\Users\Administrator\Documents\chromedriver.exe'

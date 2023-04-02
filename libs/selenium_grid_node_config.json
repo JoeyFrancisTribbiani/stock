@@ -1,0 +1,21 @@
+{
+  "capabilities": [
+    {
+      "browserName": "chrome",
+      "maxInstances": 3,
+      "platform": "WINDOWS",
+      "webdriver.chrome.driver": "C:\\Users\\Administrator\\Documents\\chromedriver.exe"
+    }
+  ],
+  "_comment": "Configuration for Node",
+  "cleanUpCycle": 2000,
+  "timeout": 30000,
+  "proxy": "org.openqa.grid.selenium.proxy.WebDriverRemoteProxy",
+  "port": 5555,
+  "host": "192.168.196.61",
+  "register": true,
+  "role": "node",
+  "hub": "http://192.168.196.242:4444",
+  "hubPort": 4444,
+  "maxSession": 3
+}
