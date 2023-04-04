@@ -4,7 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -12,10 +13,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-/**
- * purchase_order_number
- */
-@Data
+@Getter
+@Setter
 @Entity
 @Accessors(chain = true)
 @Table(name = "t_amz_order_main")
@@ -23,7 +22,7 @@ public class AmzOrderMain implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "id", nullable = false,columnDefinition = "bigint")
+    @Column(name = "id", nullable = false, columnDefinition = "bigint")
     private BigInteger id;
 
     @Id
@@ -42,16 +41,16 @@ public class AmzOrderMain implements Serializable {
     @Column(name = "last_updated_date")
     private LocalDateTime lastUpdatedDate;
 
-    @Column(name = "order_status",columnDefinition = "char")
+    @Column(name = "order_status", columnDefinition = "char")
     private String orderStatus;
 
-    @Column(name = "fulfillment_channel",columnDefinition = "char")
+    @Column(name = "fulfillment_channel", columnDefinition = "char")
     private String fulfillmentChannel;
 
-    @Column(name = "sales_channel",columnDefinition = "char")
+    @Column(name = "sales_channel", columnDefinition = "char")
     private String salesChannel;
 
-    @Column(name = "order_channel",columnDefinition = "char")
+    @Column(name = "order_channel", columnDefinition = "char")
     private String orderChannel;
 
     /**
@@ -63,10 +62,10 @@ public class AmzOrderMain implements Serializable {
     /**
      * 买家收货地址id
      */
-    @Column(name = "buyer_shipping_address_id",columnDefinition = "bigint")
+    @Column(name = "buyer_shipping_address_id", columnDefinition = "bigint")
     private BigInteger buyerShippingAddressId;
 
-    @Column(name = "currency",columnDefinition = "char")
+    @Column(name = "currency", columnDefinition = "char")
     private String currency;
 
     /**
@@ -102,7 +101,7 @@ public class AmzOrderMain implements Serializable {
     @Column(name = "buyer_email")
     private String buyerEmail;
 
-    @Column(name = "buyer_name",columnDefinition = "tinyblob")
+    @Column(name = "buyer_name", columnDefinition = "tinyblob")
     private String buyerName;
 
     /**
@@ -117,10 +116,10 @@ public class AmzOrderMain implements Serializable {
     /**
      * 卖家自定义的配送方式，属于Checkout by Amazon (CBA) 所支持的四种标准配送设置中的一种
      */
-    @Column(name = "CbaDisplayableShippingLabel",columnDefinition = "char")
+    @Column(name = "CbaDisplayableShippingLabel", columnDefinition = "char")
     private String cbaDisplayableShippingLabel;
 
-    @Column(name = "orderType",columnDefinition = "char")
+    @Column(name = "orderType", columnDefinition = "char")
     private String orderType;
 
     @Column(name = "earliestShipDate")
@@ -147,10 +146,10 @@ public class AmzOrderMain implements Serializable {
     @Column(name = "hasItem")
     private Boolean hasItem;
 
-    @Column(name = "marketplaceId",columnDefinition = "char")
+    @Column(name = "marketplaceId", columnDefinition = "char")
     private String marketplaceId;
 
-    @Column(name = "amazonAuthId", nullable = false,columnDefinition = "bigint")
-    private BigInteger  amazonAuthId;
+    @Column(name = "amazonAuthId", nullable = false, columnDefinition = "bigint")
+    private BigInteger amazonAuthId;
 
 }

@@ -1,11 +1,13 @@
 package com.yy.stock.adaptor.amazon.entity;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class OrdersFulfilledShipmentsReportID implements Serializable {
 

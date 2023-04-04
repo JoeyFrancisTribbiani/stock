@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -15,7 +14,12 @@ import java.util.Date;
 /**
  * purchase_order_number
  */
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+
+@Getter
+@Setter
 @Entity
 @Accessors(chain = true)
 @Table(name = "t_orders_report")

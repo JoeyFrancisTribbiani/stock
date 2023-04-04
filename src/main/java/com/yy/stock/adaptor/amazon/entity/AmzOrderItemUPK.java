@@ -7,16 +7,17 @@ import lombok.*;
 import java.io.Serializable;
 
 @Builder
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
 @EqualsAndHashCode
 public class AmzOrderItemUPK implements Serializable {
 
-        @Column(name = "`amazon_order_id`", nullable = false)
-        private String amazonOrderId;
+    @Column(name = "`amazon_order_id`", nullable = false)
+    private String amazonOrderId;
 
-        @Column(name = "`orderItemId`", nullable = false)
-        private String orderItemId;
-    }
+    @Column(name = "`orderItemId`", nullable = false)
+    private String orderItemId;
+}

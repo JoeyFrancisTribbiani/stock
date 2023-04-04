@@ -3,12 +3,14 @@ package com.yy.stock.adaptor.amazon.api.pojo.dto;
 import com.yy.stock.adaptor.amazon.api.pojo.entity.AmazonGroup;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 public class AmazonOrdersListQuery extends BasePageQuery {
 

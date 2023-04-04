@@ -1,7 +1,9 @@
 package com.yy.stock.test;
 
 import cn.hutool.core.lang.Assert;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
+import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.scheduler.StockScheduler;
@@ -12,12 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class StockSchedulerTest {
+    @Autowired
+    private BotFactory botFactory;
     @Autowired
     private OrdersReportService ordersReportService;
 
@@ -35,6 +41,13 @@ class StockSchedulerTest {
         while (!executor.isEmpty()) {
             Thread.sleep(1);
         }
+    }
+
+    @Test
+    void testBotFactory() throws InterruptedException, MalformedURLException, JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        var buyer = buyerAccountService.getById(BigInteger.valueOf(1));
+        var bot = botFactory.getBot(buyer);
+        System.out.println(bot.getBotName());
     }
 
     @Test
@@ -60,10 +73,6 @@ class StockSchedulerTest {
         System.out.println(list.size());
     }
 
-    @Test
-    void testSyncOrderReportXxlJobHandler() throws IOException {
-        stockScheduler.syncOrderReportXxlJobHandler();
-    }
 
     @Test
     void testStockXxlJobHandler() throws InterruptedException {

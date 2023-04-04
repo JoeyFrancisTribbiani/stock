@@ -1,13 +1,17 @@
 package com.yy.stock.vo;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+
+@Getter
+@Setter
 public class StatusVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

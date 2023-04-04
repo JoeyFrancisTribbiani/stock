@@ -1,17 +1,16 @@
 package com.yy.stock.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Date;
 
-/**
- * sync orders
- */
-@Data
+@Getter
+@Setter
 @Entity
 @Accessors(chain = true)
 @Table(name = "sync_order")

@@ -28,8 +28,10 @@ public class AliExpressTrackEngine extends TrackEngine {
         super(coreEngine);
     }
 
+    // q:为什么报错了
+
     @Override
-    public void trackLogisticByStockStatus(StockStatus stockStatus) throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
+    public void trackLogisticByStockStatus(StockStatus stockStatus) throws ParserConfigurationException, IOException, InterruptedException, DatatypeConfigurationException {
         var platformOrderId = stockStatus.getPlatformOrderId();
         if (platformOrderId == null || platformOrderId.equals("")) {
             stockStatus.setLog("状态信息中未保存平台订单ID!");
@@ -38,6 +40,7 @@ public class AliExpressTrackEngine extends TrackEngine {
             log.error(coreEngine.getBotName() + "状态信息中未保存平台订单ID! ");
             return;
         }
+
         var trackNumber = stockStatus.getShipmentTrackNumber();
         if (trackNumber == null || trackNumber == "") {
             log.info(coreEngine.getBotName() + "状态信息中未保存订单追踪号");
@@ -46,7 +49,6 @@ public class AliExpressTrackEngine extends TrackEngine {
             if (!fetched) {
                 return;
             } else {
-                // submit feed to amazon update order fulfillment
                 log.info(coreEngine.getBotName() + "成功获取到订单追踪号, 开始提交feed给亚马逊更新订单物流信息" + stockStatus.getShipmentTrackNumber());
                 orderFulfillmentSubmitFeedService.submit(stockStatus);
             }
@@ -54,72 +56,22 @@ public class AliExpressTrackEngine extends TrackEngine {
 
         log.info(coreEngine.getBotName() + "开始获取订单物流信息");
         trackNumber = stockStatus.getShipmentTrackNumber();
-        var modules = getCainiaoTrackInfo(trackNumber);
-        var module = modules.get(0);
-        Thread.sleep(1000L);
-        var city = getCainiaoCityInfo(trackNumber);
-        module.setDestCity(city);
-        var json = new ObjectMapper().writer().writeValueAsString(module);
-        log.info(coreEngine.getBotName() + "获取到订单物流信息: " + json);
+        var json = trackCainiao(trackNumber);
         stockStatus.setShipment(json);
         stockStatus.setLastShipmentTrackTime(LocalDateTime.now());
         stockStatusService.save(stockStatus);
     }
 
-    public String getCainiaoCityInfo(String trackNumber) {
-        var url = "https://global.cainiao.com/global/getCity.json?lang=en-US&language=en-US&mailNo=" + trackNumber;
-        HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
 
-        try {
-            HttpEntity<CainiaoGlobalLogisticCityResponseModel> response = resterEngine.getRestTemplate().exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-            });
-            return response.getBody().getModule();
-        } catch (Exception ex) {
-            log.error(coreEngine.getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
-        }
-        return "";
-    }
-
-    public List<Module> getCainiaoTrackInfo(String trackNumber) {
-        var url = coreEngine.urls.cainiaoGlobalTrackApi + trackNumber;
-        return getCainiaoTrackInfoByUrl(url);
-    }
-
-    public List<Module> getCainiaoTrackInfoByUrl(String url) {
-        HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
-
-        try {
-            HttpEntity<CainiaoGlobalLogisticDetailResponseModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-            });
-            return response.getBody().getModule();
-        } catch (Exception ex) {
-            log.error(coreEngine.getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
-        }
-        return null;
-    }
-
-    public boolean refetchShipmentTrackNumber(StockStatus stockStatus) throws JsonProcessingException, InterruptedException {
+    private boolean refetchShipmentTrackNumber(StockStatus stockStatus) throws JsonProcessingException, InterruptedException {
         String shipTrackNumber = null;
 
         try {
-            if (!logined) {
-//                if (!canLoginUseBuyerCookie()) {
-                if (!login()) {
-                    return false;
-                }
-//                }
-            }
-            getDriver().get("https://track.aliexpress.com/logisticsdetail.htm?tradeId=" + stockStatus.getPlatformOrderId());
-            var noDiv = SeleniumHelper.getByClassName(getDriver(), "tracking-no");
+            loginEngine.login();
+            driverEngine.getDriver().get("https://track.aliexpress.com/logisticsdetail.htm?tradeId=" + stockStatus.getPlatformOrderId());
+            var noDiv = driverEngine.getExecutor().getByClassName("tracking-no");
             shipTrackNumber = noDiv.getText();
 
-//            updateCookiesInHeaders(chromeDriverManager.getDriverCookies());
-//
-//            HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
-//            var url = urls.logisticDetailApi + stockStatus.getPlatformOrderId();
-//            HttpEntity<LogisticDetailResponseModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-//            });
-//            shipTrackNumber = Objects.requireNonNull(response.getBody()).getData().getPackages().get(0).getLogisticsNo();
             if (shipTrackNumber != null) {
                 stockStatus.setShipmentTrackNumber(shipTrackNumber);
                 stockStatus.setShipmentTrackUrl("https://global.cainiao.com/newDetail.htm?mailNoList=" + shipTrackNumber);
@@ -133,25 +85,54 @@ public class AliExpressTrackEngine extends TrackEngine {
             log.info(coreEngine.getBotName() + "拉取物流追踪号失败! statusID:" + stockStatus.getId() + "ex:" + ex.getMessage());
             return false;
         } finally {
-            quitDriver();
+//            quitDriver();
         }
         return false;
     }
 
-
-    public String trackLogistic(String fulfillmentOrderId, String fulfillmentOrderPackageId) {
-        HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
-        HttpEntity<String> response = restTemplate.exchange(
-                urls.logisticViewPage + "?fulfillmentOrderId=" + fulfillmentOrderId + "&fulfillmentOrderPackageId=" + fulfillmentOrderPackageId,
-                HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<>() {
-                });
-        String html = response.getBody();
-        // todo
-        return html;
+    private String trackCainiao(String trackNumber) throws InterruptedException, JsonProcessingException {
+        var modules = getCainiaoTrackInfo(trackNumber);
+        var module = modules.get(0);
+        Thread.sleep(1000L);
+        var city = getCainiaoCityInfo(trackNumber);
+        module.setDestCity(city);
+        var json = new ObjectMapper().writer().writeValueAsString(module);
+        log.info(coreEngine.getBotName() + "获取到订单物流信息: " + json);
+        return json;
     }
 
+
+    private String getCainiaoCityInfo(String trackNumber) {
+        var url = "https://global.cainiao.com/global/getCity.json?lang=en-US&language=en-US&mailNo=" + trackNumber;
+        HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
+
+        try {
+            HttpEntity<CainiaoGlobalLogisticCityResponseModel> response = resterEngine.getRestTemplate().exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+            });
+            return response.getBody().getModule();
+        } catch (Exception ex) {
+            log.error(coreEngine.getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
+        }
+        return "";
+    }
+
+    private List<Module> getCainiaoTrackInfo(String trackNumber) {
+        var url = coreEngine.urls.cainiaoGlobalTrackApi + trackNumber;
+        return getCainiaoTrackInfoByUrl(url);
+    }
+
+    private List<Module> getCainiaoTrackInfoByUrl(String url) {
+        HttpEntity<String> entity = new HttpEntity<>(getCainiaoGlobalHeaders());
+
+        try {
+            HttpEntity<CainiaoGlobalLogisticDetailResponseModel> response = resterEngine.getRestTemplate().exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+            });
+            return response.getBody().getModule();
+        } catch (Exception ex) {
+            log.error(coreEngine.getBotName() + "拉取菜鸟物流追踪信息出错! trackUrl:" + url + "ex:" + ex.getMessage());
+        }
+        return null;
+    }
 
     private HttpHeaders getCainiaoGlobalHeaders() {
         HttpHeaders headers = new HttpHeaders();

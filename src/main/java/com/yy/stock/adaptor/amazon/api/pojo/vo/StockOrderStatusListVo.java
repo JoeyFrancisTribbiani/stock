@@ -5,9 +5,11 @@ import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.Supplier;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class StockOrderStatusListVo extends AmazonOrdersVo {
     Supplier supplier;
     Platform platform;

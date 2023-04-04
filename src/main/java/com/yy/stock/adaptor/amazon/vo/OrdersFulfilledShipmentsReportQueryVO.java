@@ -1,13 +1,15 @@
 package com.yy.stock.adaptor.amazon.vo;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class OrdersFulfilledShipmentsReportQueryVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

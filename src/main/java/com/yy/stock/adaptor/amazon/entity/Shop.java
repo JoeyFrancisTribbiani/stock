@@ -1,18 +1,17 @@
 package com.yy.stock.adaptor.amazon.entity;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 
-/**
- * 店铺
- */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "t_shop")
 @Accessors(chain = true)

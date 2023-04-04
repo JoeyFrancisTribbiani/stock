@@ -1,7 +1,13 @@
 package com.yy.stock.bot.aliexpressbot.engine.fetcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.helper.RestTemplateHelper;
-import com.yy.stock.config.GlobalVariables;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
@@ -9,18 +15,17 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class AliExpressFetcherEngine {
-
-
-    private String reqeustHtml(String url) throws IOException {
+public class AliExpressFetcherEngine extends FetcherEngine {
+    protected String fetchHtml(String url) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<>(savedHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(resterEngine.getBotHeaders());
         HttpEntity<byte[]> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 entity,
                 byte[].class
         );
+
         byte[] data = RestTemplateHelper.unGZip(new ByteArrayInputStream(response.getBody()));
 
         var result = new String(data, "UTF-8");
@@ -28,21 +33,57 @@ public class AliExpressFetcherEngine {
         return result;
     }
 
-    public String getProductHtmlSource(String url) throws IOException, InterruptedException {
-        var cookieSet = getBuyerAccountCookie();
-        updateCookiesInHeaders(cookieSet);
-        var html = reqeustHtml(url);
-        if (html.contains("imageModule")) {
-            updateLoginTime();
-            return html;
-        }
-        if (html.contains("Page Not Found")) {
-            return GlobalVariables.PRODUCT_PAGE_NOT_FOUND;
-        }
-
-        login();
-        getDriver().get(url);
-        return getDriver().getPageSource();
-//        return reqeustHtml(url);
+    /**
+     * @param html
+     * @return
+     */
+    @Override
+    protected boolean verifyHtml(String html) {
+        return html.contains("imageModule");
     }
+
+    /**
+     * @param html
+     * @return
+     */
+    @Override
+    protected boolean verifyPageNotFound(String html) {
+        return html.contains("Page Not Found");
+    }
+
+    /**
+     * @param html
+     * @return
+     */
+    @Override
+    protected String fetchSkuProperties(String html) throws JsonProcessingException {
+        var jsonStr = "";
+        Document doc = Jsoup.parse(html);
+        Elements tds = doc.getElementsByTag("script"); // 标识获取html中第一个<script>标签
+        for (var element : tds) {
+            var content = element.data();
+            content = content.trim();
+            if (content.startsWith("window.runParams")) {
+                jsonStr = content.split("window.runParams = \\{")[1];
+                jsonStr = jsonStr.trim();
+                jsonStr = content.split("data: ")[1];
+                jsonStr = jsonStr.split("csrfToken: ")[0];
+                jsonStr = jsonStr.trim();
+                jsonStr = StringUtils.removeEnd(jsonStr, ",");
+                System.out.println("json:" + jsonStr);
+            }
+        }
+        if (jsonStr.equals("")) {
+            return "";
+        }
+        var platfromJsonStr = new ObjectMapper().writeValueAsString(coreEngine.getBuyerAccount().getPlatform());
+        platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
+        var sb = new StringBuilder(jsonStr);
+        var i = jsonStr.indexOf("{");
+        sb.insert(i + 1, platfromJsonStr);
+        jsonStr = sb.toString();
+        return jsonStr;
+    }
+
+
 }

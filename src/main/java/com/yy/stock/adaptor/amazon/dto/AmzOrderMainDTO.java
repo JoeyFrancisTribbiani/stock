@@ -1,6 +1,5 @@
 package com.yy.stock.adaptor.amazon.dto;
 
-import com.yy.stock.adaptor.amazon.entity.AmzOrderMain;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,9 +7,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-/**
- * A DTO for the {@link AmzOrderMain} entity
- */
 @Data
 public class AmzOrderMainDTO implements Serializable {
     private final BigInteger id;

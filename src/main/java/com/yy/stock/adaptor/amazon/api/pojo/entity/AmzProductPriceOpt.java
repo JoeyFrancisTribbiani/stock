@@ -3,14 +3,17 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_amz_pdt_price_opt")
 @ApiModel(value = "AmzProductPriceOpt对象", description = "改价操作记录")

@@ -1,11 +1,13 @@
 package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class AmazonGroup {
     private static final long serialVersionUID = 4632144329348858750L;
     @ApiModelProperty(value = "匹配的利润计算方案ID")

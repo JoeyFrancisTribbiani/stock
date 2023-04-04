@@ -1,6 +1,7 @@
 package com.yy.stock.bot.aliexpressbot.engine.stocker;
 
 import cn.hutool.core.date.DateTime;
+import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.stocker.StockEngine;
 import com.yy.stock.common.exception.OverTopShipFeeException;
 import com.yy.stock.common.exception.PayFailedException;
@@ -20,6 +21,11 @@ public class AliExpressStockEngine extends StockEngine {
     protected PlatformService platformService;
     @Autowired
     protected StockStatusService stockStatusService;
+
+    public AliExpressStockEngine(CoreEngine coreEngine) {
+        super(coreEngine);
+    }
+
 
     private String generPlatformOrderPageUrl(String platformOrderId) {
         return "https://www.aliexpress.com/p/order/detail.html?orderId=" + platformOrderId;

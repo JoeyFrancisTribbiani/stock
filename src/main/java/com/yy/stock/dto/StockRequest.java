@@ -5,10 +5,13 @@ import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.Supplier;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @AllArgsConstructor
-@Data
+
+@Getter
+@Setter
 public class StockRequest {
     private StockStatus stockStatus;
     private OrderItemAdaptorInfoDTO orderInfo;

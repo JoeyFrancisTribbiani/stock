@@ -5,23 +5,32 @@ import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.driver.InstructionExecutor;
 import com.yy.stock.bot.engine.email.EmailEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
-import jakarta.annotation.Resource;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 
+import lombok.Getter;
+
+import lombok.Setter;
+
+@Getter
+@Setter
+@Accessors(chain = true)
 public abstract class LoginEngine {
     protected CoreEngine coreEngine;
-    @Resource
     protected EmailEngine emailEngine;
-    @Resource(name = "driverEngine")
     protected GridDriverEngine driverEngine;
-    @Resource
     protected ResterEngine resterEngine;
     protected InstructionExecutor instructionExecutor;
 
     public LoginEngine(CoreEngine coreEngine) {
         this.coreEngine = coreEngine;
+        this.driverEngine = coreEngine.getDriverEngine();
+        this.emailEngine = coreEngine.getEmailEngine();
+        this.resterEngine = coreEngine.getResterEngine();
         this.instructionExecutor = driverEngine.getExecutor();
     }
 
@@ -31,7 +40,7 @@ public abstract class LoginEngine {
     }
 
 
-    public void Login() throws IOException, InterruptedException, MessagingException {
+    public void login() throws IOException, InterruptedException, MessagingException {
         if (isLogined()) {
             return;
         }

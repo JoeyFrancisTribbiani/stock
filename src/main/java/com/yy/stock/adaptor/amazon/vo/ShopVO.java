@@ -1,12 +1,15 @@
 package com.yy.stock.adaptor.amazon.vo;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 import java.io.Serializable;
 
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class ShopVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -13,7 +13,11 @@ import java.util.List;
  * @author json.cn (i@json.cn)
  * @website http://www.json.cn/java2pojo/
  */
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class Module {
     private String destCity;
     private String mailNo;

@@ -1,13 +1,15 @@
 package com.yy.stock.adaptor.amazon.api.pojo.vo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class AmzProductListVo {
     String id;
     String msku;

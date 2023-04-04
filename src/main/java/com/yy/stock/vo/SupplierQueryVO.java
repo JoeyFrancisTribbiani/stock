@@ -1,12 +1,14 @@
 package com.yy.stock.vo;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 
-@Data
+@Getter
+@Setter
 public class SupplierQueryVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

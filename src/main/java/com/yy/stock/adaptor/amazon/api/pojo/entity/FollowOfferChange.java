@@ -12,7 +12,11 @@ import lombok.EqualsAndHashCode;
 
 
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_amz_follow_offerchange")
 @ApiModel(value="FollowOffer对象", description="FollowOffer")

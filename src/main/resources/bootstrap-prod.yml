@@ -94,17 +94,18 @@ xxl:
     executor:
       appname: stock-executor
       port: 30888
-      ip: 192.168.50.238
+      ip: 192.168.50.231
       logpath: /tmp/applogs/xxl-job/jobhandler
       logretentiondays: 30
     accessToken: default_token
 thread:
   pool:
     stockPool:
-      coreSize: 8
-      maxSize: 8
+      coreSize: 9
+      maxSize: 9
       queueSize: 0
       threadNamePrefix: stock-job-async
 bot:
   gridhub:
-    url: http://115.159.45.30:26666
+    statusUrl: http://115.159.45.30:26666/status
+    registerUrl: http://115.159.45.30:26666

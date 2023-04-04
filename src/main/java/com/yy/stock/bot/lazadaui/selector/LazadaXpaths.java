@@ -1,13 +1,15 @@
 package com.yy.stock.bot.lazadaui.selector;
 
 import com.yy.stock.common.util.YamlSourceFactory;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@Data
+@Getter
+@Setter
 @PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称
 //@EnableConfigurationProperties(LazadaXpaths.class)        // 开启对应配置类的属性注入功能
 //@EnableConfigurationProperties(LazadaXpaths.class)        // 开启对应配置类的属性注入功能

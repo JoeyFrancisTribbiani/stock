@@ -6,49 +6,65 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.aliexpressbot.engine.tracker.AliExpressTrackEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
+import com.yy.stock.bot.engine.email.EmailEngine;
 import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
+import com.yy.stock.bot.engine.stocker.AddressUnit;
 import com.yy.stock.bot.engine.stocker.StockEngine;
 import com.yy.stock.bot.selector.BaseClassSelector;
 import com.yy.stock.bot.selector.BaseUrls;
 import com.yy.stock.bot.selector.BaseXpaths;
+import com.yy.stock.common.util.SpringUtil;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.service.BuyerAccountService;
-import jakarta.annotation.Resource;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.mail.MessagingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.Currency;
 import java.util.Locale;
 
-public abstract class CoreEngine {
+@Accessors(chain = true)
+@Getter
+@Setter
+public class CoreEngine {
     private final BuyerAccount buyerAccount;
     public BaseUrls urls;
     public BaseXpaths xpaths;
     public BaseClassSelector classSelector;
-    @Resource
     protected GridDriverEngine driverEngine;
     protected ResterEngine resterEngine;
     protected LoginEngine loginEngine;
+    protected EmailEngine emailEngine;
     protected StockEngine stockEngine;
+    protected AddressUnit addressUnit;
     protected AliExpressTrackEngine trackEngine;
     protected FetcherEngine fetcherEngine;
     private BuyerAccountService buyerAccountService;
     private BotStatus botStatus = BotStatus.IDLE;
 
-    public CoreEngine(BuyerAccount buyerAccount) throws JsonProcessingException {
+    public CoreEngine(BuyerAccount buyerAccount) throws JsonProcessingException, MalformedURLException {
         this.buyerAccount = buyerAccount;
-        initialBotCookie();
+        this.driverEngine = new GridDriverEngine();
+        this.emailEngine = new EmailEngine();
+        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
+//        this.driverEngine = SpringUtil.getBean(GridDriverEngine.class);
+//        initialBotCookie();
     }
 
     public String getBotName() {
-        var head = this.getClass().getName() + " IN " + getBotStatus() + " ";
+        //获取非全限定类名
+        //return this.getClass().getSimpleName();
+        var head = this.getClass().getSimpleName() + " IN " + getBotStatus() + " ";
         switch (getBotStatus()) {
             case TRACKING:
                 return head + trackEngine.getAmazonOrderId();
@@ -85,7 +101,7 @@ public abstract class CoreEngine {
         buyerAccountService.save(buyerAccount);
     }
 
-    private void initialBotCookie() throws JsonProcessingException {
+    public void initialBotCookie() throws JsonProcessingException {
         var cookies = getLoginCookie();
         goHome();
         driverEngine.setOriginCookie(cookies);
@@ -115,7 +131,7 @@ public abstract class CoreEngine {
 
     public void login() throws InterruptedException, IOException, MessagingException {
         setBotStatus(BotStatus.LOGINING);
-        loginEngine.Login();
+        loginEngine.login();
         setBotStatus(BotStatus.IDLE);
     }
 
@@ -135,7 +151,7 @@ public abstract class CoreEngine {
         setBotStatus(BotStatus.IDLE);
     }
 
-    public String fetch(String url) throws InterruptedException {
+    public String fetch(String url) throws InterruptedException, MessagingException, IOException {
         setBotStatus(BotStatus.FETCHING);
         var html = fetcherEngine.fetch(url);
         setBotStatus(BotStatus.IDLE);
@@ -165,7 +181,9 @@ public abstract class CoreEngine {
         return new BigDecimal(text);
     }
 
-    public abstract BigDecimal parseMoney(String text);
+    public BigDecimal parseMoney(String text) {
+        return parseUSDMoney(text);
+    }
 
     private MyCookie[] getLoginCookie() throws JsonProcessingException {
         String cookiesStr = buyerAccount.getLoginCookie();
@@ -187,4 +205,6 @@ public abstract class CoreEngine {
         }
     }
 
+    public void byebye() {
+    }
 }

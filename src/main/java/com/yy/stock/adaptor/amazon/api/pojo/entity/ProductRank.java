@@ -1,32 +1,25 @@
 package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.yy.stock.adaptor.amazon.api.pojo.entity.BaseEntity;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author wimoor team
- * @since 2022-07-21
- */
-@Data
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_product_rank")
-@ApiModel(value="ProductRank对象", description="")
+@ApiModel(value = "ProductRank对象", description = "")
 public class ProductRank extends BaseEntity implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-    private LocalDateTime  byday;
+    private LocalDateTime byday;
 
     @TableField("categoryId")
     private String categoryid;

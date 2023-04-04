@@ -8,7 +8,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class AmzOrderRemoveReportVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -20,7 +20,11 @@ import lombok.EqualsAndHashCode;
  * @author wimoor team
  * @since 2022-06-17
  */
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_amz_product_refresh")
 @ApiModel(value="AmzProductRefresh对象", description="")

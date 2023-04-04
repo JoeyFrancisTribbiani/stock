@@ -27,6 +27,60 @@ public class FTPServerUtil {
         }
     }
 
+
+    //    @XxlJob(value = "syncOrderReportJobHandler")
+//    public void syncOrderReportXxlJobHandler() throws IOException {
+//        List<SyncOrder> providers = syncOrderService.getOpeningServers();
+//        for (var provider : providers) {
+//            FtpUtil f = new FtpUtil(true);
+//            if (f.login(provider.getSyncHost(), provider.getSyncPort(), "anonymous", null)) {
+//                f.List("/", "txt");
+//            }
+//            List<FTPFile> toSync = new ArrayList<>();
+//            BigInteger lastUpdateTimeStamp;
+//            for (var ftpFile : f.remoteFiles) {
+//
+//                // 判断哪些远程文件需要读取
+//                // 文件名：前缀-时间戳.txt
+//                String[] nameWords = getTimestampFromName(ftpFile);
+//                if (nameWords[0].equals(provider.getReportNamePrefix())) {
+//                    var timeStamp = new BigInteger(nameWords[1]);
+//                    lastUpdateTimeStamp = provider.getLastUpdateTimestamp();
+//                    if (timeStamp.compareTo(lastUpdateTimeStamp) == 1) {
+//                        toSync.add(ftpFile);
+//                    }
+//                }
+//            }
+//            for (var sFile : toSync) {
+//                Closeable closeThis = null;
+//                try {
+//                    InputStream inputStream = f.ftp.retrieveFileStream(sFile.getName());
+//                    closeThis = inputStream;
+//                    var charset = StandardCharsets.UTF_8;
+//                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, charset);
+//                    closeThis = inputStreamReader;
+//                    BufferedReader br = new BufferedReader(inputStreamReader);
+//
+//                    ordersReportService.treatReportTxt(provider, br);
+//
+//                    String[] nameWords = getTimestampFromName(sFile);
+//                    lastUpdateTimeStamp = new BigInteger(nameWords[1]);
+//                    provider.setLastUpdateTimestamp(lastUpdateTimeStamp);
+//                    syncOrderService.save(provider);
+//                    inputStream.close();
+//                    f.ftp.completePendingCommand();
+//
+//                } catch (Exception ex) {
+//                    log.error("");
+//
+//                } finally {
+//                    closeThis.close();
+//                }
+//            }
+//            f.disConnection();
+//
+//        }
+//    }
     public FTPClient getFTPClient() throws SocketException, IOException {
         String ftpHost = "47.112.0.222";
         String ftpUserName = "pwftp";

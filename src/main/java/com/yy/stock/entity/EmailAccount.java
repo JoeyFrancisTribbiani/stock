@@ -1,12 +1,14 @@
 package com.yy.stock.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Accessors(chain = true)
 @Table(name = "email_account")

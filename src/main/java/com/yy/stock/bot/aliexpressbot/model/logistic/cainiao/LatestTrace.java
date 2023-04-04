@@ -3,15 +3,11 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.logistic.cainiao;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-/**
- * Auto-generated: 2023-03-05 13:31:43
- *
- * @author json.cn (i@json.cn)
- * @website http://www.json.cn/java2pojo/
- */
-@Data
+@Getter
+@Setter
 public class LatestTrace {
 
     private long time;

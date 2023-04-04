@@ -8,7 +8,11 @@ import java.io.Serializable;
 /**
  * @author haoxr
  **/
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T> implements Serializable {
 

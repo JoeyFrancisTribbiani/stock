@@ -2,7 +2,6 @@ package com.yy.stock.bot.aliexpressbot.brazilbot;
 
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.stocker.AddressUnit;
-import com.yy.stock.dto.StockRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Keys;
 
@@ -12,11 +11,9 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class AliExpressAddressBRUnit extends AddressUnit {
-    private CoreEngine coreEngine;
 
-    public AliExpressAddressBRUnit(StockRequest stockRequest, CoreEngine coreEngine) {
-        super(stockRequest);
-        this.coreEngine = coreEngine;
+    public AliExpressAddressBRUnit(CoreEngine coreEngine) {
+        super(coreEngine);
     }
 
     @Override

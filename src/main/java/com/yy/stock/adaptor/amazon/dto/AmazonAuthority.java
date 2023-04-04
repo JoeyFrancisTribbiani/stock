@@ -1,14 +1,16 @@
 package com.yy.stock.adaptor.amazon.dto;
 
 import com.yy.stock.adaptor.amazon.entity.Marketplace;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 public class AmazonAuthority implements Serializable {
     /**

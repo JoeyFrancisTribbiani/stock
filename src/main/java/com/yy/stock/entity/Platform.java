@@ -1,19 +1,19 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
-/**
- * stock record from supplier
- */
-@Data
+@Getter
+@Setter
 @Entity
 @Accessors(chain = true)
 @Table(name = "platform")
@@ -47,6 +47,7 @@ public class Platform implements Serializable {
 
     @OneToMany
     @JoinColumn(name = "platform_id")
+    @JsonIgnoreProperties({"platform"})
     private List<BuyerAccount> buyerAccounts;
 
 }

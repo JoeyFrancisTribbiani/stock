@@ -1,28 +1,30 @@
 package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.yy.stock.adaptor.amazon.api.pojo.entity.BaseEntity;
+import lombok.Getter;
 
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-@Data
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_product_price")
-@ApiModel(value="ProductPrice对象", description="产品价格信息")
-public class ProductPrice  extends BaseEntity{
- 
+@ApiModel(value = "ProductPrice对象", description = "产品价格信息")
+public class ProductPrice extends BaseEntity {
+
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4083893893436761564L;
+     *
+     */
+    private static final long serialVersionUID = 4083893893436761564L;
 
-	private String marketplaceid;
+    private String marketplaceid;
 
     private String asin;
 
@@ -53,5 +55,5 @@ public class ProductPrice  extends BaseEntity{
     private String sellerid;
 
     private String sellersku;
-  
+
 }

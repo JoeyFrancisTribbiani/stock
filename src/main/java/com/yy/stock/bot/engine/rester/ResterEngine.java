@@ -23,11 +23,11 @@ public abstract class ResterEngine {
         return restTemplate;
     }
 
-    protected abstract void initBotHeaders();
-
-    public void updateHeaders(HttpHeaders headers) {
-        savedHeaders = headers;
+    public HttpHeaders getBotHeaders() {
+        return savedHeaders;
     }
+
+    protected abstract void initBotHeaders();
 
     public void updateCookie(MyCookie[] cookies) {
         StringBuilder builder = new StringBuilder();
@@ -43,14 +43,17 @@ public abstract class ResterEngine {
         savedHeaders.set("Cookie", builder.toString());
     }
 
-    private void updateHeaders(String key, String value) {
-        savedHeaders.set(key, value);
-    }
-
     public String getStringResponse(String url) {
         HttpEntity entity = new HttpEntity<>(savedHeaders);
         HttpEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
         });
+        return response.getBody();
+    }
+
+    //q:将下面的方法改为返回泛型方法
+    public <T> T httpGetWithBotHeaders(String url, Class<T> clazz) {
+        HttpEntity entity = new HttpEntity<>(savedHeaders);
+        HttpEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, entity, clazz);
         return response.getBody();
     }
 }

@@ -8,7 +8,11 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class AmzOrderItemDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private BigInteger id;

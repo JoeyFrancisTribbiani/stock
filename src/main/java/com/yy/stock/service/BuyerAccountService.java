@@ -1,9 +1,13 @@
 package com.yy.stock.service;
 
+import com.yy.stock.bot.engine.core.BotStatus;
+import com.yy.stock.common.exception.NoIdelBuyerAccountException;
 import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.entity.Platform;
 import com.yy.stock.repository.BuyerAccountRepository;
 import com.yy.stock.vo.BuyerAccountQueryVO;
 import com.yy.stock.vo.BuyerAccountUpdateVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 public class BuyerAccountService {
 
@@ -38,19 +43,22 @@ public class BuyerAccountService {
         return original;
     }
 
-    public BuyerAccount getLeastOrderCountAndNotBuyingBuyer(BigInteger platformId) {
-        BuyerAccount original = buyerAccountRepository.findBuyerAccountByLeastOrderCountAndNotBuying(platformId);
-        return original;
+    public void setBuyerBotStatus(BuyerAccount buyerAccount, BotStatus botStatus) {
+        buyerAccount.setBotStatus(botStatus.name());
+        buyerAccountRepository.save(buyerAccount);
     }
 
-    public BuyerAccount getLatestLoginedBuyer(BigInteger platformId) {
-        BuyerAccount original = buyerAccountRepository.findBuyerAccountByLatestLoginTime(platformId);
-        return original;
+    public BuyerAccount getLeastOrderCountAndIdleBuyer(Platform platform) throws NoIdelBuyerAccountException {
+        return buyerAccountRepository.findBuyerAccountByLeastOrderCountAndIdle(platform.getId());
+
     }
 
-    public BuyerAccount getEarliestLoginedBuyer(BigInteger platformId) {
-        BuyerAccount original = buyerAccountRepository.findBuyerAccountByEarliestLoginTime(platformId);
-        return original;
+    public BuyerAccount getLatestLoginedIdleBuyer(BigInteger platformId) {
+        return buyerAccountRepository.findBuyerAccountByLatestLoginTimeAndIdle(platformId);
+    }
+
+    public BuyerAccount getEarliestLoginedIdleBuyer(BigInteger platformId) {
+        return buyerAccountRepository.findBuyerAccountByEarliestLoginTimeAndIdle(platformId);
     }
 
     public Long count() {

@@ -1,12 +1,14 @@
 package com.yy.stock.adaptor.amazon.dto;
 
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class AmzOrdersAddressDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String amazonOrderId;

@@ -9,7 +9,11 @@ import com.yy.stock.adaptor.amazon.api.pojo.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_product_in_presale")
 public class ProductInPresale extends BaseEntity{

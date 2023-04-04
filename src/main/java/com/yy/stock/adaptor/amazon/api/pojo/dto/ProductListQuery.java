@@ -3,12 +3,15 @@ package com.yy.stock.adaptor.amazon.api.pojo.dto;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "ProductListQueryDTO对象", description = "获取商品列表")
 public class ProductListQuery extends BasePageQuery {

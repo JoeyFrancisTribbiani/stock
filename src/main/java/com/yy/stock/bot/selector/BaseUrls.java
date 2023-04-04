@@ -1,9 +1,10 @@
 package com.yy.stock.bot.selector;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-//@Configuration        // 自定义配置类
-@Data
+@Getter
+@Setter
 public class BaseUrls {
     public String homePage;
     public String testLogin;
@@ -22,4 +23,5 @@ public class BaseUrls {
     public String logisticDetailApi;
     public String logisticViewPage;
     public String cartCountApi;
+    public String cainiaoGlobalTrackApi;
 }

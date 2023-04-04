@@ -3,9 +3,11 @@
  */
 package com.yy.stock.bot.lazadaui.model.address;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+import lombok.Setter;
+@Getter
+@Setter
 public class CreateAddressRespModel {
 
     private long addressId;

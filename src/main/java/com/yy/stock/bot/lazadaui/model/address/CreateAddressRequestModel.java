@@ -2,7 +2,11 @@ package com.yy.stock.bot.lazadaui.model.address;
 
 import lombok.Data;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 public class CreateAddressRequestModel {
     /**
      * Copyright 2023 json.cn

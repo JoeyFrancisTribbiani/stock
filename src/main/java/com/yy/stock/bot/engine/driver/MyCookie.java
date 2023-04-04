@@ -1,10 +1,12 @@
 package com.yy.stock.bot.engine.driver;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class MyCookie {
     public String name;
     public String value;

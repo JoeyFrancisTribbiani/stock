@@ -7,6 +7,9 @@ import com.yy.stock.common.util.GeneralUtil;
 import feign.FeignException;
 import lombok.Getter;
 
+import lombok.Getter;
+
+import lombok.Setter;
 @Getter
 public class BizException extends RuntimeException {
 

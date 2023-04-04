@@ -1,14 +1,16 @@
 package com.yy.stock.adaptor.amazon.dto;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 public class OrdersReportDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;

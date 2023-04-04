@@ -5,7 +5,8 @@ import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import com.yy.stock.common.exception.SupplierUnavailableException;
 import com.yy.stock.dto.StockRequest;
-import jakarta.annotation.Resource;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -13,8 +14,9 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 
 @Slf4j
+@Getter
+@Setter
 public abstract class StockEngine {
-    @Resource
     protected GridDriverEngine driverEngine;
     protected CoreEngine coreEngine;
     protected LoginEngine loginEngine;
@@ -25,8 +27,11 @@ public abstract class StockEngine {
     @Value("${bot.paySwitch}")
     protected boolean paySwitch;
 
-    public void doStock() {
-
+    public StockEngine(CoreEngine coreEngine) {
+        this.coreEngine = coreEngine;
+        this.driverEngine = coreEngine.getDriverEngine();
+        this.loginEngine = coreEngine.getLoginEngine();
+        this.addressUnit = coreEngine.getAddressUnit();
     }
 
     public void stock(StockRequest stockRequest) throws MessagingException, IOException, InterruptedException {
@@ -39,7 +44,7 @@ public abstract class StockEngine {
             throw new SupplierUnavailableException();
         }
 
-        loginEngine.Login();
+        loginEngine.login();
         addressUnit.addNewAddress();
         clickBuyNow();
         checkout();

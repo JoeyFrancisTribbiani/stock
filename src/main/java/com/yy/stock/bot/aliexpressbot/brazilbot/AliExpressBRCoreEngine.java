@@ -5,9 +5,10 @@ import com.yy.stock.bot.aliexpressbot.engine.core.AliExpressCoreEngine;
 import com.yy.stock.entity.BuyerAccount;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 
 public class AliExpressBRCoreEngine extends AliExpressCoreEngine {
-    public AliExpressBRCoreEngine(BuyerAccount buyerAccount) throws JsonProcessingException {
+    public AliExpressBRCoreEngine(BuyerAccount buyerAccount) throws JsonProcessingException, MalformedURLException {
         super(buyerAccount);
     }
 

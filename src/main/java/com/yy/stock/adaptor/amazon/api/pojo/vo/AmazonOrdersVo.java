@@ -2,13 +2,15 @@ package com.yy.stock.adaptor.amazon.api.pojo.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "AmazonOrdersVo对象", description = "订单列表对象")

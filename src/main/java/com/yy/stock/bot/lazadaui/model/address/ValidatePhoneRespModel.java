@@ -3,9 +3,11 @@
  */
 package com.yy.stock.bot.lazadaui.model.address;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ValidatePhoneRespModel {
 
     private boolean isValid;

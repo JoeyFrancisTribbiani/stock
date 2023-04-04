@@ -3,19 +3,18 @@ package com.yy.stock.bot.engine.stocker;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.dto.StockRequest;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AddressUnit {
-    @Resource
     protected GridDriverEngine driverEngine;
-    @Resource
     protected CoreEngine coreEngine;
     protected StockRequest stockRequest;
 
-    public AddressUnit(StockRequest stockRequest) {
-        this.stockRequest = stockRequest;
+    public AddressUnit(CoreEngine coreEngine) {
+        this.coreEngine = coreEngine;
+        this.driverEngine = coreEngine.getDriverEngine();
+        this.stockRequest = coreEngine.getStockEngine().getStockRequest();
     }
 
     public void addNewAddress() throws InterruptedException {

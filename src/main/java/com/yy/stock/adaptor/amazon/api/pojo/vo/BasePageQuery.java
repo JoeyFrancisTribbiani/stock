@@ -7,16 +7,15 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.pojo.entity.BizException;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/**
- * @desc 基础分页请求对象
- */
-@Data
+@Getter
+@Setter
 public class BasePageQuery {
 
     @ApiModelProperty(value = "当前页", example = "1")

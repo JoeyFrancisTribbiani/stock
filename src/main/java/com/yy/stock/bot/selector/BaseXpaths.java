@@ -1,8 +1,10 @@
 package com.yy.stock.bot.selector;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class BaseXpaths {
     // 登录相关
     public String loginTopButton;

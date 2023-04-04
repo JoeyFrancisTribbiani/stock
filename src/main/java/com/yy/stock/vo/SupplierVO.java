@@ -1,13 +1,14 @@
 package com.yy.stock.vo;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 
-
-@Data
+@Getter
+@Setter
 public class SupplierVO implements Serializable {
     private static final long serialVersionUID = 1L;
 

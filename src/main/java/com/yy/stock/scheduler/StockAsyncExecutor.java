@@ -3,6 +3,8 @@ package com.yy.stock.scheduler;
 import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.bot.Bot;
+import com.yy.stock.bot.engine.core.BotStatus;
+import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.exception.NoIdelBuyerAccountException;
 import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.config.StatusEnum;
@@ -27,6 +29,8 @@ import java.util.Arrays;
 @Slf4j
 public class StockAsyncExecutor {
     @Autowired
+    protected BotFactory botFactory;
+    @Autowired
     protected RedissonDistributedLocker distributedLocker;
     @Autowired
     private StockStatusService stockStatusService;
@@ -38,7 +42,6 @@ public class StockAsyncExecutor {
     private SupplierService supplierService;
     @Autowired
     private PlatformService platformService;
-
 
     @Async("asyncServiceExecutor")
     public void startStockAsync(OrderItemAdaptorInfoDTO orderToStock, StockStatus stockStatus) {
@@ -53,14 +56,14 @@ public class StockAsyncExecutor {
             Supplier supplier = supplierService.getByAmazonOrderInfo(orderToStock);
             platform = platformService.getById(supplier.getPlatformId());
 
+
             buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
             distributedLocker.lock(buyerLockKey);
             log.info(getExecutorName(orderToStock) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号下单");
 
             try {
-                buyer = buyerAccountService.getLeastOrderCountAndNotBuyingBuyer(platform.getId());
-                buyer.setInBuying(true);
-                buyerAccountService.save(buyer);
+                buyer = buyerAccountService.getLeastOrderCountAndIdleBuyer(platform);
+                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.STOCKING);
             } catch (Exception exx) {
                 log.info(getExecutorName(orderToStock) + " 未找到空闲买家账号.");
                 throw new NoIdelBuyerAccountException(getExecutorName(orderToStock) + " 未找到空闲买家账号.");
@@ -69,7 +72,7 @@ public class StockAsyncExecutor {
                 log.info(getExecutorName(orderToStock) + "平台" + platform.getName() + "解锁，买家账号为：" + (buyer != null ? buyer.getEmail() : "空"));
             }
 
-            bot = BotFactory.getBot(platform, buyer);
+            bot = botFactory.getBot(buyer);
             stockStatus.setBuyerId(buyer.getId())
                     .setSupplierId(supplier.getId())
                     .setOrderItemId(orderToStock.getOrderItemId());
@@ -81,13 +84,10 @@ public class StockAsyncExecutor {
             stockStatus.setLog(ex + Arrays.toString(ex.getStackTrace()));
             stockStatusService.save(stockStatus);
             if (bot != null) {
-                log.info(bot.getBotName() + "开始退出chromedriver.");
-                bot.quitDriver();
+                log.info(bot.getBotName() + "出错了，开始退出购买任务");
             }
             if (buyer != null) {
-                log.info(getExecutorName(orderToStock) + "开始设置buyer的进行状态为false.");
-                buyer.setInBuying(false);
-                buyerAccountService.save(buyer);
+                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.IDLE);
             }
             log.info(getExecutorName(orderToStock) + "bot下单失败,ex:" + ex.getMessage());
         }
@@ -96,6 +96,6 @@ public class StockAsyncExecutor {
 
 
     public String getExecutorName(OrderItemAdaptorInfoDTO orderToStock) {
-        return "ASYNC_EXECUTOR" + "__" + orderToStock.getOrderid() + "__" + orderToStock.getOrderItemId() + "：";
+        return "ASYNC_EXECUTOR" + "__" + orderToStock.getOrderid() + "：";
     }
 }

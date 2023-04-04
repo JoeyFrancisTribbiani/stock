@@ -1,12 +1,11 @@
 package com.yy.stock.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
+import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
 import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.entity.Supplier;
-import com.yy.stock.scheduler.BotFactory;
 import com.yy.stock.scheduler.PlatformFactory;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.PlatformService;
@@ -19,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -27,7 +28,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/v1/supplier")
 public class SupplierController {
-
+    @Autowired
+    private BotFactory botFactory;
     @Autowired
     private SupplierService supplierService;
     @Autowired
@@ -57,30 +59,23 @@ public class SupplierController {
     }
 
     @GetMapping("/skuProperties")
-    public Result<String> getSupplierSkuProperties(@RequestParam("url") String url, @RequestParam("countryCode") String countryCode) throws IOException, InterruptedException {
+    public Result<String> getSupplierSkuProperties(@RequestParam("url") String url, @RequestParam("countryCode") String countryCode) throws IOException, InterruptedException, MessagingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         if (url == null) {
             throw new IllegalArgumentException("url 不能为空");
         }
         var platform = PlatformFactory.getPlatformByUrl(url, countryCode);
-        var buyerAccount = buyerAccountService.getLatestLoginedBuyer(platform.getId());
-        var bot = BotFactory.getBot(platform, buyerAccount);
-        var html = bot.getProductHtmlSource(url);
+        var buyerAccount = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
+        var bot = botFactory.getBot(buyerAccount);
+        var html = bot.fetch(url);
         if (Objects.equals(html, GlobalVariables.PRODUCT_PAGE_NOT_FOUND)) {
-            return Result.success(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
+            return Result.failed(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
         }
-        var jsonStr = bot.getSkuProperties(html);
-        bot.quitDriver();
-        if (jsonStr.equals("")) {
+        if (Objects.equals(html, "")) {
             return Result.failed("抓取失败！请检查链接！");
         }
-        var platfromJsonStr = new ObjectMapper().writeValueAsString(platform);
-        platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
-        var sb = new StringBuilder(jsonStr);
-        var i = jsonStr.indexOf("{");
-        sb.insert(i + 1, platfromJsonStr);
-        jsonStr = sb.toString();
-        return Result.success(jsonStr);
+
+        return Result.success(html);
     }
 
     @PostMapping("/bindSku")

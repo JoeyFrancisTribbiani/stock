@@ -1,8 +1,10 @@
 package com.yy.stock.bot.selector;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class BaseClassSelector {
     // 地址相关
     public String regionCheckListButton;

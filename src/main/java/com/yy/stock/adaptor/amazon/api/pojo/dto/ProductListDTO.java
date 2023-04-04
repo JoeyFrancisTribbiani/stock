@@ -6,7 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Data
+import lombok.Getter;
+
+import lombok.Setter;
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "ProductListDTO对象", description = "获取商品列表")
 public class ProductListDTO extends BasePageQuery {

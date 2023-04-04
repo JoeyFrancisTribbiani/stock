@@ -1,6 +1,9 @@
 package com.yy.stock.bot.engine.driver;
 
 import com.google.common.collect.Lists;
+import com.yy.stock.common.util.SpringUtil;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,8 +11,6 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,14 +21,25 @@ import java.util.Map;
 import java.util.logging.Level;
 
 @Slf4j
-@Component("driverEngine")
+@Getter
+@Setter
 public class GridDriverEngine {
     private CdpRemoteWebDriver driver;
     private InstructionExecutor executor;
-    @Value("${bot.gridhub.url}")
-    private String hubUrl;
+
+    //    @Value("${bot.gridhub.registerurl}")
+//    @Value("${bot.gridhub.registerUrl}")
+    //为什么改成registerurl就获取不到
+    //因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
+//    @Autowired
+    private GridDriverEngineConfig gridDriverEngineConfig;
+    //q:这个配置为什么获取不到
+    //a:因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
+//    private String registerUrl = "http://115.159.45.30:26666";
+
 
     public GridDriverEngine() throws MalformedURLException {
+        gridDriverEngineConfig = SpringUtil.getBean(GridDriverEngineConfig.class);
         this.driver = initChromeDriver();
     }
 
@@ -61,18 +73,11 @@ public class GridDriverEngine {
         }
     }
 
-    private boolean testSessionsFull() {
-        return this.driver.getSessionId() == null;
-    }
+//    private boolean testSessionsFull() {
+//        return this.driver.getSessionId() == null;
+//    }
 
     public CdpRemoteWebDriver getDriver() {
-        if (!testSessionsFull()) {
-            try {
-                this.driver = initChromeDriver();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
         return this.driver;
     }
 
@@ -118,7 +123,12 @@ public class GridDriverEngine {
         logPrefs.enable(LogType.BROWSER, Level.ALL);
         options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 //        CdpRemoteWebDriver driver = new RemoteCdpRemoteWebDriver(new URL(hubUrl), chromeOptions);
-        CdpRemoteWebDriver driver = new CdpRemoteWebDriver(new URL("http://115.159.45.30:26666"), chromeOptions);
+        var registerUrl = gridDriverEngineConfig.getRegisterUrl();
+        CdpRemoteWebDriver driver = new CdpRemoteWebDriver(new URL(registerUrl), chromeOptions);
+        //q:为什么registerUrl的值是null
+        //a:因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
+        //q:为什么在application.yml就能获取到
+        //a:因为在application.yml中，这个配置是在spring.profiles.active: prod中，而不是在spring.profiles.active: dev中
 
         //修改window.navigator.webdirver=undefined，防机器人识别机制
         Map<String, Object> command = new HashMap<>();

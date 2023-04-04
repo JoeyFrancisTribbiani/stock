@@ -15,6 +15,8 @@ import java.util.NoSuchElementException;
 public class EmailAccountService {
 
     @Autowired
+    protected SupplierService supplierService;
+    @Autowired
     private EmailAccountRepository emailAccountRepository;
 
     public Long save(EmailAccount bean) {

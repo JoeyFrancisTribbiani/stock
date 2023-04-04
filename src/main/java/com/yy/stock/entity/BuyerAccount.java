@@ -1,18 +1,18 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
-/**
- * stock record from supplier
- */
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "buyer_account")
 public class BuyerAccount implements Serializable {
@@ -25,10 +25,11 @@ public class BuyerAccount implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
-    @ManyToOne
-    @JoinColumn(name = "platform_id", insertable = false, updatable = false)
-    @Column(name = "platform_id", nullable = false)
-    @JsonSerialize(using = ToStringSerializer.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "platform_id")
+//    @Column(name = "platform_id", nullable = false)
+//    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonIgnoreProperties({"buyerAccounts"})
     private Platform platform;
 
     @Column(name = "email")
