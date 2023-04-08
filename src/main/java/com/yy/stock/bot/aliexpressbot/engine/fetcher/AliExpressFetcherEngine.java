@@ -85,5 +85,4 @@ public class AliExpressFetcherEngine extends FetcherEngine {
         return jsonStr;
     }
 
-
 }

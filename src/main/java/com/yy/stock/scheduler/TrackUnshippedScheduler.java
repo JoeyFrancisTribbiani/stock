@@ -9,6 +9,7 @@ import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.exception.NoIdelBuyerAccountException;
 import com.yy.stock.common.util.RedissonDistributedLocker;
+import com.yy.stock.config.GlobalVariables;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
@@ -97,13 +98,13 @@ public class TrackUnshippedScheduler {
                 Supplier supplier = supplierService.getById(stock.getSupplierId());
                 platform = platformService.getById(supplier.getPlatformId());
 
-                buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
+                buyerLockKey = GlobalVariables.PLATFORM_ALL_BUYERS_LOCK_KEY_HEADER + platform.getId();
                 distributedLocker.lock(buyerLockKey);
                 log.info(getExecutorName(stock) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号下单");
 
                 try {
                     buyer = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
-                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.TRACKING);
+                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.tracking);
                 } catch (Exception exx) {
                     log.info(getExecutorName(stock) + " 未找到空闲买家账号.");
                     throw new NoIdelBuyerAccountException(getExecutorName(stock) + " 未找到空闲买家账号.");

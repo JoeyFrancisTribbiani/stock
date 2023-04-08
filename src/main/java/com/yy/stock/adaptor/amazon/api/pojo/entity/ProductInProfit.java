@@ -3,7 +3,6 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,6 @@ import java.util.Date;
 @Getter
 @Setter
 @TableName("t_product_in_profit")
-@ApiModel(value = "productInfoProfit对象", description = "ProductInfoProfit")
 public class ProductInProfit implements Serializable {
 
 

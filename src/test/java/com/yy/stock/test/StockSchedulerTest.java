@@ -38,9 +38,6 @@ class StockSchedulerTest {
 
     @Test
     void testSchedule() throws InterruptedException {
-        while (!executor.isEmpty()) {
-            Thread.sleep(1);
-        }
     }
 
     @Test
@@ -50,18 +47,6 @@ class StockSchedulerTest {
         System.out.println(bot.getBotName());
     }
 
-    @Test
-    void testMultiTask() throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            if (executor.isFull()) {
-                break;
-            }
-//            stockJob.doStock(i);
-        }
-        while (!executor.isEmpty()) {
-            Thread.sleep(3000);
-        }
-    }
 
     @Test
     void testGet9DaysUnshipped() {
@@ -78,6 +63,5 @@ class StockSchedulerTest {
     void testStockXxlJobHandler() throws InterruptedException {
         stockScheduler.stockXxlJobHandler();
     }
-
 
 }

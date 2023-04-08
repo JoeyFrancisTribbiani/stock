@@ -1,9 +1,8 @@
 package com.yy.stock.bot.engine.driver;
 
 import com.google.common.collect.Lists;
-import com.yy.stock.common.util.SpringUtil;
+import com.yy.stock.common.util.MySpringUtil;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -22,7 +21,6 @@ import java.util.logging.Level;
 
 @Slf4j
 @Getter
-@Setter
 public class GridDriverEngine {
     private CdpRemoteWebDriver driver;
     private InstructionExecutor executor;
@@ -39,7 +37,7 @@ public class GridDriverEngine {
 
 
     public GridDriverEngine() throws MalformedURLException {
-        gridDriverEngineConfig = SpringUtil.getBean(GridDriverEngineConfig.class);
+        gridDriverEngineConfig = MySpringUtil.getBean(GridDriverEngineConfig.class);
         this.driver = initChromeDriver();
     }
 
@@ -110,7 +108,7 @@ public class GridDriverEngine {
 
         List<String> excludeSwitches = Lists.newArrayList("enable-automation");//设置ExperimentalOption
         options.setExperimentalOption("excludeSwitches", excludeSwitches);
-//        options.setExperimentalOption("useAutomationExtension", false);
+        options.setExperimentalOption("useAutomationExtension", false);
         Map<String, Object> prefs = new HashMap();
         prefs.put("credentials_enable_service", false);
         prefs.put("profile.password_manager_enabled", false);

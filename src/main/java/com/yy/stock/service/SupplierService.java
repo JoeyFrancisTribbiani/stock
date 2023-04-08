@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -46,6 +47,11 @@ public class SupplierService {
     public Supplier getBySku(BigInteger amazonAuthId, String marketplaceId, String amazonSku) {
         Supplier supplier = supplierRepository.findByAmazonAuthIdAndMarketplaceIdAndAmazonSku(amazonAuthId, marketplaceId, amazonSku);
         return supplier;
+    }
+
+    public List<Supplier> getBySkus(BigInteger amazonAuthId, String marketplaceId, List<String> amazonSkuList) {
+        var supplierList = supplierRepository.findByAmazonAuthIdAndMarketplaceIdAndAmazonSkuIn(amazonAuthId, marketplaceId, amazonSkuList);
+        return supplierList;
     }
 
     public Supplier createEmptySupplier(BigInteger amazonAuthId, String marketplaceId, String amazonSku) {

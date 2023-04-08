@@ -1,7 +1,7 @@
 package com.yy.stock.service;
 
-import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
+import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.repository.StockStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +47,12 @@ public class StockStatusService {
     public List<StockStatus> getOnTheWayOrders() {
         var statuses = new ArrayList<String>();
 //        statuses.add(StatusEnum.stockedUnshipped.name());
-        statuses.add(StatusEnum.shipped.name());
-        statuses.add(StatusEnum.shippedAskReturn.name());
-        statuses.add(StatusEnum.payedButInfoSaveError.name());
-        statuses.add(StatusEnum.stockedUnshippedAskReturn.name());
-        statuses.add(StatusEnum.deliveredAskReturn.name());
-        statuses.add(StatusEnum.shippedLosed.name());
+        statuses.add(StockStatusEnum.shipped.name());
+        statuses.add(StockStatusEnum.shippedAskReturn.name());
+        statuses.add(StockStatusEnum.payedButInfoSaveError.name());
+        statuses.add(StockStatusEnum.stockedUnshippedAskReturn.name());
+        statuses.add(StockStatusEnum.deliveredAskReturn.name());
+        statuses.add(StockStatusEnum.shippedLosed.name());
         var trackTime = LocalDateTime.now().minusHours(12);
         var oldStockList = statusRepository.findAllByStatusInAndLastShipmentTrackTimeBefore(statuses, trackTime);
         var virgins = statusRepository.findAllByStatusInAndLastShipmentTrackTimeIsNull(statuses);
@@ -61,7 +61,7 @@ public class StockStatusService {
     }
 
     public List<StockStatus> getStockedUnshippedOrders() {
-        return statusRepository.findAllByStatusIs(StatusEnum.stockedUnshipped.name());
+        return statusRepository.findAllByStatusIs(StockStatusEnum.stockedUnshipped.name());
     }
 
 
@@ -74,7 +74,7 @@ public class StockStatusService {
             toCreate.setAmazonAuthId(authId);
             toCreate.setAmazonSku(sku);
             toCreate.setStockful(true);
-            toCreate.setStatus(StatusEnum.unstocked.name());
+            toCreate.setStatus(StockStatusEnum.unstocked.name());
             statusRepository.save(toCreate);
 
             stockStatus = toCreate;

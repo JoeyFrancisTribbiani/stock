@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.pojo.entity.BizException;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,19 +17,14 @@ import java.util.*;
 @Setter
 public class BasePageQuery {
 
-    @ApiModelProperty(value = "当前页", example = "1")
     private int currentpage = 1;
 
-    @ApiModelProperty(value = "每页记录数", example = "10")
     private int pagesize = 1000;
 
-    @ApiModelProperty(value = "排序字段", example = "10")
     private String sort = "";
 
-    @ApiModelProperty(value = "排序类型(desc降序，asc升序)", example = "10")
     private String order = "";
 
-    @ApiModelProperty(value = "追加参数", example = "param.paramother.mykey=xxxx")
     private Map<String, String> paramother = new HashMap<String, String>();
 
     public <T> Page<T> getPage() {

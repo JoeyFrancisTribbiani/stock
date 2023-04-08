@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,6 @@ import java.util.Date;
 
 @Getter
 @Setter
-@ApiModel(value = "productStatus对象", description = "产品销售状态")
 @TableName("t_product_info_status_define")
 public class ProductInfoStatusDefine {
 

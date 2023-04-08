@@ -1,38 +1,25 @@
 package com.yy.stock.bot.engine.loginer;
 
+import com.yy.stock.bot.engine.PluggableEngine;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.driver.InstructionExecutor;
 import com.yy.stock.bot.engine.email.EmailEngine;
+import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-import lombok.Getter;
-
-import lombok.Setter;
-
 @Getter
-@Setter
-@Accessors(chain = true)
-public abstract class LoginEngine {
+public abstract class LoginEngine implements PluggableEngine {
     protected CoreEngine coreEngine;
     protected EmailEngine emailEngine;
     protected GridDriverEngine driverEngine;
     protected ResterEngine resterEngine;
     protected InstructionExecutor instructionExecutor;
-
-    public LoginEngine(CoreEngine coreEngine) {
-        this.coreEngine = coreEngine;
-        this.driverEngine = coreEngine.getDriverEngine();
-        this.emailEngine = coreEngine.getEmailEngine();
-        this.resterEngine = coreEngine.getResterEngine();
-        this.instructionExecutor = driverEngine.getExecutor();
-    }
+    protected FetcherEngine fetcherEngine;
 
     protected boolean isLogined() throws InterruptedException, IOException {
         var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
@@ -60,4 +47,15 @@ public abstract class LoginEngine {
     protected abstract void loginUsePassword() throws InterruptedException, IOException, MessagingException;
 
     protected abstract void whenLoginSuccessfully() throws InterruptedException;
+
+    @Override
+    public void plugIn(CoreEngine plugBaseEngine) {
+        this.coreEngine = plugBaseEngine;
+        this.driverEngine = this.coreEngine.getDriverEngine();
+        this.instructionExecutor = coreEngine.getDriverEngine().getExecutor();
+        this.resterEngine = coreEngine.getResterEngine();
+        this.fetcherEngine = coreEngine.getFetcherEngine();
+        this.emailEngine = coreEngine.getEmailEngine();
+    }
+
 }

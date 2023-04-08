@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticCityResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.CainiaoGlobalLogisticDetailResponseModel;
 import com.yy.stock.bot.aliexpressbot.model.logistic.cainiao.Module;
-import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.tracker.TrackEngine;
-import com.yy.stock.config.StatusEnum;
+import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.entity.StockStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,20 +23,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@Component
+@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
+
 public class AliExpressTrackEngine extends TrackEngine {
-
-    public AliExpressTrackEngine(CoreEngine coreEngine) {
-        super(coreEngine);
-    }
-
-    // q:为什么报错了
-
     @Override
     public void trackLogisticByStockStatus(StockStatus stockStatus) throws ParserConfigurationException, IOException, InterruptedException, DatatypeConfigurationException {
         var platformOrderId = stockStatus.getPlatformOrderId();
         if (platformOrderId == null || platformOrderId.equals("")) {
             stockStatus.setLog("状态信息中未保存平台订单ID!");
-            stockStatus.setStatus(StatusEnum.payedButInfoSaveError.name());
+            stockStatus.setStatus(StockStatusEnum.payedButInfoSaveError.name());
             stockStatusService.save(stockStatus);
             log.error(coreEngine.getBotName() + "状态信息中未保存平台订单ID! ");
             return;
@@ -75,7 +72,7 @@ public class AliExpressTrackEngine extends TrackEngine {
             if (shipTrackNumber != null) {
                 stockStatus.setShipmentTrackNumber(shipTrackNumber);
                 stockStatus.setShipmentTrackUrl("https://global.cainiao.com/newDetail.htm?mailNoList=" + shipTrackNumber);
-                stockStatus.setStatus(StatusEnum.shipped.name());
+                stockStatus.setStatus(StockStatusEnum.shipped.name());
                 stockStatusService.save(stockStatus);
                 return true;
             }
@@ -151,4 +148,5 @@ public class AliExpressTrackEngine extends TrackEngine {
         headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
         return headers;
     }
+
 }

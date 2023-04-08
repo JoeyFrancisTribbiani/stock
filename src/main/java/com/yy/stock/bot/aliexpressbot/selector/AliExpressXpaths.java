@@ -10,8 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @EqualsAndHashCode(callSuper = true)
-@Service
-
+@Service("aliExpressXpaths")
 @Getter
 @Setter
 @PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称

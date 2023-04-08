@@ -1,10 +1,12 @@
 package com.yy.stock.bot.aliexpressbot.engine.rester;
 
 import com.yy.stock.bot.engine.rester.ResterEngine;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
 public class AliExpressResterEngine extends ResterEngine {
     public AliExpressResterEngine() {
         super();

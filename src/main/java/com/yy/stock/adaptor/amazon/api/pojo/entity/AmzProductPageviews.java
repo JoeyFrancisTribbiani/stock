@@ -2,8 +2,6 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +14,6 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_amz_product_pageviews_download")
-@ApiModel(value = "AmzProductPageviews对象", description = "流量报表")
 public class AmzProductPageviews extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -34,15 +31,12 @@ public class AmzProductPageviews extends BaseEntity {
 
     private String childAsin;
 
-    @ApiModelProperty(value = "访问量（点击量）")
     @TableField("Sessions")
     private Integer sessions;
 
-    @ApiModelProperty(value = "访问比例")
     @TableField("Session_Percentage")
     private BigDecimal sessionPercentage;
 
-    @ApiModelProperty(value = "浏览量")
     @TableField("Page_Views")
     private Integer pageViews;
 
@@ -52,7 +46,6 @@ public class AmzProductPageviews extends BaseEntity {
     @TableField("Buy_Box_Percentage")
     private BigDecimal buyBoxPercentage;
 
-    @ApiModelProperty(value = "销量")
     @TableField("Units_Ordered")
     private Integer unitsOrdered;
 

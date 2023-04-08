@@ -1,28 +1,26 @@
 package com.yy.stock.bot.engine.core;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.extra.spring.SpringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yy.stock.bot.aliexpressbot.engine.tracker.AliExpressTrackEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.engine.email.EmailEngine;
 import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
-import com.yy.stock.bot.engine.stocker.AddressUnit;
+import com.yy.stock.bot.engine.stocker.AddressEngine;
 import com.yy.stock.bot.engine.stocker.StockEngine;
+import com.yy.stock.bot.engine.tracker.TrackEngine;
 import com.yy.stock.bot.selector.BaseClassSelector;
 import com.yy.stock.bot.selector.BaseUrls;
 import com.yy.stock.bot.selector.BaseXpaths;
-import com.yy.stock.common.util.SpringUtil;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.service.BuyerAccountService;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import javax.mail.MessagingException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -33,11 +31,13 @@ import java.net.MalformedURLException;
 import java.util.Currency;
 import java.util.Locale;
 
-@Accessors(chain = true)
+//@Accessors(chain = true)
 @Getter
-@Setter
-public class CoreEngine {
-    private final BuyerAccount buyerAccount;
+//@Setter
+//@Component
+//@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
+
+public abstract class CoreEngine {
     public BaseUrls urls;
     public BaseXpaths xpaths;
     public BaseClassSelector classSelector;
@@ -46,33 +46,33 @@ public class CoreEngine {
     protected LoginEngine loginEngine;
     protected EmailEngine emailEngine;
     protected StockEngine stockEngine;
-    protected AddressUnit addressUnit;
-    protected AliExpressTrackEngine trackEngine;
+    protected AddressEngine addressEngine;
+    protected TrackEngine trackEngine;
     protected FetcherEngine fetcherEngine;
+    private BuyerAccount buyerAccount;
     private BuyerAccountService buyerAccountService;
-    private BotStatus botStatus = BotStatus.IDLE;
+    private BotStatus botStatus = BotStatus.idle;
 
-    public CoreEngine(BuyerAccount buyerAccount) throws JsonProcessingException, MalformedURLException {
-        this.buyerAccount = buyerAccount;
-        this.driverEngine = new GridDriverEngine();
-        this.emailEngine = new EmailEngine();
-        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
+//    public CoreEngine() throws JsonProcessingException, MalformedURLException {
+//        this.driverEngine = new GridDriverEngine();
+//        this.buyerAccountService = new BuyerAccountService();
+//        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
 //        this.driverEngine = SpringUtil.getBean(GridDriverEngine.class);
 //        initialBotCookie();
-    }
+//    }
 
     public String getBotName() {
         //获取非全限定类名
         //return this.getClass().getSimpleName();
         var head = this.getClass().getSimpleName() + " IN " + getBotStatus() + " ";
         switch (getBotStatus()) {
-            case TRACKING:
+            case tracking:
                 return head + trackEngine.getAmazonOrderId();
-            case STOCKING:
+            case stocking:
                 return head + stockEngine.getAmazonOrderId();
-            case LOGINING:
+            case logining:
                 return head + getBuyerInfo();
-            case FETCHING: {
+            case fetching: {
                 return head + fetcherEngine.getFetchingUrl();
             }
             default:
@@ -130,31 +130,31 @@ public class CoreEngine {
 
 
     public void login() throws InterruptedException, IOException, MessagingException {
-        setBotStatus(BotStatus.LOGINING);
+        setBotStatus(BotStatus.logining);
         loginEngine.login();
-        setBotStatus(BotStatus.IDLE);
+        setBotStatus(BotStatus.idle);
     }
 
     public void stock(StockRequest stockRequest) throws InterruptedException, IOException, MessagingException {
-        setBotStatus(BotStatus.STOCKING);
+//        setBotStatus(BotStatus.STOCKING);
 
         stockEngine.stock(stockRequest);
 
         buyerAccount.setOrderCount(buyerAccount.getOrderCount() + 1);
         buyerAccountService.save(buyerAccount);
-        setBotStatus(BotStatus.IDLE);
+        setBotStatus(BotStatus.idle);
     }
 
     public void track(TrackRequest trackRequest) throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
-        setBotStatus(BotStatus.STOCKING);
+        setBotStatus(BotStatus.stocking);
         trackEngine.track(trackRequest);
-        setBotStatus(BotStatus.IDLE);
+        setBotStatus(BotStatus.idle);
     }
 
     public String fetch(String url) throws InterruptedException, MessagingException, IOException {
-        setBotStatus(BotStatus.FETCHING);
+        setBotStatus(BotStatus.fetching);
         var html = fetcherEngine.fetch(url);
-        setBotStatus(BotStatus.IDLE);
+        setBotStatus(BotStatus.idle);
         return html;
     }
 
@@ -172,7 +172,8 @@ public class CoreEngine {
     public String locateCountryCurrency() {
         var platform = getBuyerAccount().getPlatform();
         var code = platform.getCountry();
-        return Currency.getInstance(code).getDisplayName(new Locale("en", code));
+//        return Currency.getInstance(code).getDisplayName(new Locale("en", code));
+        return Currency.getInstance(new Locale("en", code)).getCurrencyCode();
     }
 
     public BigDecimal parseUSDMoney(String text) {
@@ -194,17 +195,48 @@ public class CoreEngine {
     }
 
 
-    private void closeAdPop() {
+    public void closeAdPop() {
         try {
             Thread.sleep(2000L);
             var closeBtn = driverEngine.getExecutor().getByClassName(classSelector.homePageAdCloseButton);
             closeBtn.click();
             Thread.sleep(1000L);
         } catch (Exception ex) {
-
+            System.out.println("No green ad pop");
+            try {
+                var closeBtn = driverEngine.getExecutor().getByXpath("//div[text()='Claim Now']");
+                closeBtn.click();
+                Thread.sleep(1000L);
+            } catch (Exception ex2) {
+                System.out.println("No claim now pop");
+            }
         }
     }
 
     public void byebye() {
     }
+
+    public void assemble() {
+        resterEngine.plugIn(this);
+        loginEngine.plugIn(this);
+        stockEngine.plugIn(this);
+        trackEngine.plugIn(this);
+        fetcherEngine.plugIn(this);
+        addressEngine.plugIn(this);
+    }
+
+    /**
+     * @param buyerAccount
+     */
+    public void init(BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
+        this.buyerAccount = buyerAccount;
+        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
+        this.driverEngine = new GridDriverEngine();
+        assemble();
+        initialBotCookie();
+    }
+
+    public abstract void solveLoginCaptcha() throws InterruptedException;
+
+    public abstract void solvePayCaptcha() throws InterruptedException;
 }

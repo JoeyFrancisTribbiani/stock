@@ -4,13 +4,11 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel(value = "Material对象", description = "产品物流对象")
 @TableName("t_product_category")
 public class ProductCategory {
 

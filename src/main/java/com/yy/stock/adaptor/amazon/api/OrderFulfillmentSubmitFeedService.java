@@ -76,10 +76,10 @@ public class OrderFulfillmentSubmitFeedService {
 
         Element fulfillmentData = orderFulfillment.addElement("FulfillmentData");
         Element carrierCode = fulfillmentData.addElement("CarrierName");
-        var deliverySupplierId = "CainiaoGlobal";
+        var deliverySupplierId = "Global Cainiao";
         carrierCode.setText(deliverySupplierId);
         Element shippingMethod = fulfillmentData.addElement("ShippingMethod");
-        shippingMethod.setText("0");//发货方式  0=自己联系、10=仓发货, 默认值为10
+        shippingMethod.setText("Standard");//配送服务
         Element shipperTrackingNumber = fulfillmentData.addElement("ShipperTrackingNumber");
         shipperTrackingNumber.setText(stockStatus.getShipmentTrackNumber());//运单号
 

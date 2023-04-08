@@ -2,7 +2,6 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_product_rank")
-@ApiModel(value = "ProductRank对象", description = "")
 public class ProductRank extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

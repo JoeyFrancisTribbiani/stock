@@ -2,6 +2,9 @@ package com.yy.stock.service;
 
 import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.common.exception.NoIdelBuyerAccountException;
+import com.yy.stock.common.util.RedissonDistributedLocker;
+import com.yy.stock.config.GlobalVariables;
+import com.yy.stock.dto.BuyerStatusEnum;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.repository.BuyerAccountRepository;
@@ -21,7 +24,33 @@ import java.util.NoSuchElementException;
 public class BuyerAccountService {
 
     @Autowired
+    protected RedissonDistributedLocker distributedLocker;
+    @Autowired
     private BuyerAccountRepository buyerAccountRepository;
+
+    public BuyerAccount getTrackableBuyerAccount(BigInteger id) throws NoIdelBuyerAccountException {
+        var buyerLockKey = GlobalVariables.BUYERACCOUNT_LOCK_KEY_HEADER + id.toString();
+        distributedLocker.lock(buyerLockKey);
+        log.info("BuyerService:" + "买家账号" + id.toString() + "加锁成功，开始设置买家账号状态为跟踪中");
+
+        BuyerAccount buyerAccount = null;
+        try {
+            buyerAccount = requireOne(id);
+            if (buyerAccount.getStatus().equals(BuyerStatusEnum.active.name()) && buyerAccount.getBotStatus().equals(BotStatus.idle.name())) {
+                buyerAccount.setBotStatus(BotStatus.tracking.name());
+                buyerAccountRepository.save(buyerAccount);
+                log.info("BuyerService:" + "买家账号" + id.toString() + "设置买家账号状态为跟踪中成功");
+                return buyerAccount;
+            }
+        } catch (Exception exx) {
+            log.info("BuyerService:" + " 未找到空闲买家账号.");
+            throw new NoIdelBuyerAccountException("BuyerService:" + " 未找到空闲买家账号.");
+        } finally {
+            distributedLocker.unlock(buyerLockKey);
+            log.info("BuyerService:" + "解锁，买家账号为：" + (buyerAccount != null ? buyerAccount.getEmail() : "空"));
+        }
+        return null;
+    }
 
     public BigInteger save(BuyerAccount b) {
         buyerAccountRepository.save(b);
@@ -36,6 +65,10 @@ public class BuyerAccountService {
         BuyerAccount bean = requireOne(id);
         BeanUtils.copyProperties(vO, bean);
         buyerAccountRepository.save(bean);
+    }
+
+    public void update(BuyerAccount buyerAccount) {
+        buyerAccountRepository.save(buyerAccount);
     }
 
     public BuyerAccount getById(BigInteger id) {

@@ -1,16 +1,13 @@
 package com.yy.stock.adaptor.amazon.api.pojo.vo;
 
 
-import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
-import lombok.Getter;
-
-import lombok.Setter;
 @Getter
 @Setter
-@ApiModel(value = "ProductPriceVo对象", description = "价格调价列表")
 public class ProductPriceVo {
     String gname;
     String mname;

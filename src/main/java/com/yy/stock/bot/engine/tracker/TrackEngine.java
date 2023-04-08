@@ -1,6 +1,8 @@
 package com.yy.stock.bot.engine.tracker;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.yy.stock.adaptor.amazon.api.OrderFulfillmentSubmitFeedService;
+import com.yy.stock.bot.engine.PluggableEngine;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
@@ -8,28 +10,27 @@ import com.yy.stock.bot.engine.rester.ResterEngine;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.service.StockStatusService;
-import jakarta.annotation.Resource;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
-public abstract class TrackEngine {
-    protected final CoreEngine coreEngine;
+//@Component
+//@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
+public abstract class TrackEngine implements PluggableEngine {
+    protected CoreEngine coreEngine;
     protected GridDriverEngine driverEngine;
-    @Resource
-    protected OrderFulfillmentSubmitFeedService orderFulfillmentSubmitFeedService;
     protected ResterEngine resterEngine;
     protected LoginEngine loginEngine;
-    protected TrackRequest trackRequest;
-    @Resource
-    protected StockStatusService stockStatusService;
 
-    public TrackEngine(CoreEngine coreEngine) {
-        this.coreEngine = coreEngine;
-        this.driverEngine = coreEngine.getDriverEngine();
-        this.resterEngine = coreEngine.getResterEngine();
-        this.loginEngine = coreEngine.getLoginEngine();
+    protected StockStatusService stockStatusService;
+    protected OrderFulfillmentSubmitFeedService orderFulfillmentSubmitFeedService;
+
+    protected TrackRequest trackRequest;
+
+    public TrackEngine() {
+        this.stockStatusService = SpringUtil.getBean(StockStatusService.class);
+        this.orderFulfillmentSubmitFeedService = SpringUtil.getBean(OrderFulfillmentSubmitFeedService.class);
     }
 
     public void track(TrackRequest trackRequest) throws IOException, DatatypeConfigurationException, InterruptedException, ParserConfigurationException {
@@ -41,5 +42,13 @@ public abstract class TrackEngine {
 
     public String getAmazonOrderId() {
         return trackRequest.getStockStatus().getAmazonOrderId();
+    }
+
+    @Override
+    public void plugIn(CoreEngine plugBaseEngine) {
+        this.coreEngine = plugBaseEngine;
+        this.loginEngine = coreEngine.getLoginEngine();
+        this.driverEngine = coreEngine.getDriverEngine();
+        this.resterEngine = coreEngine.getResterEngine();
     }
 }

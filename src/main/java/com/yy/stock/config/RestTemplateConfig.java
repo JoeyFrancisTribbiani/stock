@@ -1,12 +1,18 @@
 package com.yy.stock.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+
 @Configuration
+@Slf4j
 public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
@@ -30,6 +36,18 @@ public class RestTemplateConfig {
         //a:通过@Bean注解，这个注解会告诉spring，这个方法会返回一个对象，然后spring会把这个对象放到容器里面，然后我们就可以通过@Autowired注解来获取这个对象
         //q:这个工厂内部使用了什么模式
         //a:工厂模式
-        return new RestTemplate(factory);
+        RestTemplate restTemplate = new RestTemplate(factory);
+        restTemplate.setErrorHandler(new ResponseErrorHandler() {
+            @Override
+            public boolean hasError(ClientHttpResponse clientHttpResponse) throws IOException {
+                return false;
+            }
+
+            @Override
+            public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
+                log.info("some error!");
+            }
+        });
+        return restTemplate;
     }
 }

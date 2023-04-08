@@ -2,7 +2,6 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_product_in_tags")
-@ApiModel(value = "ProductInTags对象", description = "产品标签对象")
 public class ProductInTags implements Serializable {
     /**
      *

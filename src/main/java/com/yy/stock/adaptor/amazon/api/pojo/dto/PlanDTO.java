@@ -1,7 +1,6 @@
 package com.yy.stock.adaptor.amazon.api.pojo.dto;
 
 import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
-import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "ShipPlanDTO对象", description = "发货计划")
 public class PlanDTO extends BasePageQuery {
     String groupid;
     String warehouseid;

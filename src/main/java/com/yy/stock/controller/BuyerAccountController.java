@@ -1,9 +1,10 @@
 package com.yy.stock.controller;
 
+import com.yy.stock.bot.factory.BotFactory;
+import com.yy.stock.dto.BuyerStatusEnum;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.vo.BuyerAccountQueryVO;
-import com.yy.stock.vo.BuyerAccountUpdateVO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class BuyerAccountController {
 
     @Autowired
     private BuyerAccountService buyerAccountService;
+    @Autowired
+    private BotFactory botFactory;
 
     @PostMapping
     public String save(@Valid @RequestBody BuyerAccount vO) {
@@ -32,10 +35,13 @@ public class BuyerAccountController {
     }
 
     @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") BigInteger id,
-                       @Valid @RequestBody BuyerAccountUpdateVO vO) {
-        buyerAccountService.update(id, vO);
+    public void update(@Valid @RequestBody BuyerAccount vO) {
+        if (vO.getStatus().equals(BuyerStatusEnum.active.name())) {
+            botFactory.removeBot(vO);
+        }
+        buyerAccountService.update(vO);
     }
+
 
     @GetMapping("/{id}")
     public BuyerAccount getById(@Valid @NotNull @PathVariable("id") BigInteger id) {

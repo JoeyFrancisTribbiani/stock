@@ -1,6 +1,5 @@
 package com.yy.stock.bot.aliexpressbot.engine.loginer;
 
-import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.TimeoutException;
@@ -12,10 +11,6 @@ import java.util.List;
 
 @Slf4j
 public class AliExpressLoginEngine extends LoginEngine {
-    public AliExpressLoginEngine(CoreEngine coreEngine) {
-        super(coreEngine);
-    }
-
     @Override
     protected boolean testLoginedHtml(String html) throws InterruptedException, IOException {
         if (html.contains("imageList\":[")) {
@@ -34,12 +29,19 @@ public class AliExpressLoginEngine extends LoginEngine {
                 if (html.contains("You are now signed in to your account")) {
                     var accessNowButton = instructionExecutor.getByXpath(coreEngine.xpaths.loginAccessNowButton);
                     accessNowButton.click();
-                    Thread.sleep(500);
+                    Thread.sleep(2000);
+                    // todo 滑块验证
+                    try {
+                        coreEngine.solveLoginCaptcha();
+                        accessNowButton.click();
+                        Thread.sleep(500);
+                    } catch (Exception e) {
+                        log.error("滑块验证失败", e);
+                    }
                     html = instructionExecutor.getPageSource();
                     if (html.contains("Your account name or password is incorrect.")) {
                         return false;
                     }
-                    // todo 滑块验证
 
                     instructionExecutor.waitForUrl(coreEngine.urls.homePage, 18);
                     return true;
@@ -57,7 +59,6 @@ public class AliExpressLoginEngine extends LoginEngine {
         }
     }
 
-
     @Override
     protected void loginUsePassword() throws InterruptedException, IOException, MessagingException {
         coreEngine.goHome();
@@ -67,6 +68,7 @@ public class AliExpressLoginEngine extends LoginEngine {
                 loginTopButton.click();
                 Thread.sleep((long) (Math.random() * 3000));
 
+//                instructionExecutor.waitForUrl(coreEngine.urls.homePage, 30);
                 while (instructionExecutor.getCurrentUrl().equals(coreEngine.urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
                     Thread.sleep(1000);
                     // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
@@ -78,11 +80,12 @@ public class AliExpressLoginEngine extends LoginEngine {
                 verifyLoginByEmail();
             } else {
                 inputAccountAndPassword();
-                while (!instructionExecutor.getCurrentUrl().equals(coreEngine.urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
-                    // todo
-                    Thread.sleep(1000);
-                    // 页面没有跳转就让他等待，等待自己重定向到登录后的页面，然后再获取cookie时就是正确的cookie
-                }
+
+                instructionExecutor.waitForUrl(coreEngine.urls.homePage, 30);
+//                while (!instructionExecutor.getCurrentUrl().equals(coreEngine.urls.homePage)) {// 不断的获取地址判断一下，地址有没有变
+//                    Thread.sleep(1000);
+//                }
+                coreEngine.closeAdPop();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,9 +200,10 @@ public class AliExpressLoginEngine extends LoginEngine {
         cyButton.click();
         Thread.sleep(1000L);
         var cyLis = instructionExecutor.listByRelativeXpath(currencySwitcher, ".//a");
+        var localeCurrency = coreEngine.locateCountryCurrency();
         for (var a : cyLis) {
             var aText = a.getAttribute("data-currency");
-            if (aText != null && aText.equals("USD")) {
+            if (aText != null && aText.equals(localeCurrency)) {
                 a.click();
                 break;
             }
@@ -256,8 +260,18 @@ public class AliExpressLoginEngine extends LoginEngine {
         instructionExecutor.clearAndType(password_input, coreEngine.getBuyerAccount().getPassword());
         Thread.sleep((long) (Math.random() * 3000));
 
-        WebElement login_button = instructionExecutor.getByXpath(coreEngine.xpaths.getLoginButton());
-        login_button.click();
+        WebElement loginButton = instructionExecutor.getByXpath(coreEngine.xpaths.getLoginButton());
+        loginButton.click();
+        Thread.sleep(2000);
+
+        // todo 滑块验证
+        try {
+            coreEngine.solveLoginCaptcha();
+            loginButton.click();
+        } catch (Exception e) {
+            log.error("滑块验证失败", e);
+        }
+
         Thread.sleep(8888);
     }
 }

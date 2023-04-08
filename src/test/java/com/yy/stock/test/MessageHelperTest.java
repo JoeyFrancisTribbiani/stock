@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -203,5 +205,24 @@ class MessageHelperTest {
         headers.add("Accept-Encoding", "gzip, deflate, br");
         headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
         return headers;
+    }
+
+    @Test
+    void testCurrency() {
+        var code = "BR";
+//        var c = Currency.getInstance(code);
+        var c = Currency.getInstance(new Locale("en", code)).getCurrencyCode();
+//        var n = c.getDisplayName(new Locale("en", code));
+        //q:Currency.getInstance(code)应该传什么参数？
+        //a:传入的参数是国家代码，不是货币代码
+        //q:举个例子
+        //a:Currency.getInstance("CN")，返回的是人民币
+        //q:那么如何获取货币代码？
+        //a:Currency.getInstance("CNY")
+        //q:如何通过国家代码获取货币代码？
+        //a:Currency.getInstance(new Locale("en", "CN")).getCurrencyCode();
+        //q:巴西的国家代码是多少？
+        //a:BR
+        System.out.println(c);
     }
 }

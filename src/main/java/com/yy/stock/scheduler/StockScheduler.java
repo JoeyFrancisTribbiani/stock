@@ -1,15 +1,14 @@
 package com.yy.stock.scheduler;
 
-import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
 import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import com.yy.stock.config.GlobalVariables;
-import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockInfoDTO;
+import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +56,7 @@ public class StockScheduler {
         return nameWords;
     }
 
-    @XxlJob(value = "stockJobHandler")
+    //    @XxlJob(value = "stockJobHandler")
     public void stockXxlJobHandler() throws InterruptedException {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         log.info("本线程 加锁成功，开始选择订单");
@@ -119,14 +118,14 @@ public class StockScheduler {
                 continue;
             }
 
-            if (stockStatus.getStatus().equals(StatusEnum.unstocked.name()) ||
-                    stockStatus.getStatus().equals(StatusEnum.stockFailed.name())) {
+            if (stockStatus.getStatus().equals(StockStatusEnum.unstocked.name()) ||
+                    stockStatus.getStatus().equals(StockStatusEnum.stockFailed.name())) {
                 count++;
                 if (count > capacity()) {
                     break;
                 }
 
-                stockStatus.setStatus(StatusEnum.stocking.name());
+                stockStatus.setStatus(StockStatusEnum.stocking.name());
                 stockStatusService.save(stockStatus);
 
                 StockInfoDTO stockInfo = new StockInfoDTO();

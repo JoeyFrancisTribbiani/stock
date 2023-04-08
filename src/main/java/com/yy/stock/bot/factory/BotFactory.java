@@ -3,6 +3,7 @@ package com.yy.stock.bot.factory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.seleniumgrid.model.GridStatusResponseModel;
 import com.yy.stock.bot.Bot;
+import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.entity.BuyerAccount;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -44,10 +45,32 @@ public class BotFactory {
 //        Class<?> clazz = Class.forName("com.yy.stock.bot.factory." + className);
         Class<?> clazz = Class.forName(className);
         //通过反射获取类的实例
-        var coreEngineFactory = (CoreEngineFactory) clazz.getConstructor(BuyerAccount.class).newInstance(buyerAccount);
-        var bot = new Bot(coreEngineFactory);
+        var coreEngine = (CoreEngine) clazz.getConstructor().newInstance();
+//        var coreEngine = (PlugBaseEngine) SpringUtil.getBean(clazz);
+//        coreEngine.init(buyerAccount);
+        var bot = new Bot(coreEngine, buyerAccount);
         runningBotPool.add(bot);
         return bot;
+    }
+
+    public void keepSessionsAlive() {
+        for (Bot bot : runningBotPool) {
+            try {
+                bot.keepSessionAlive();
+            } catch (Exception e) {
+                e.printStackTrace();
+                runningBotPool.remove(bot);
+            }
+        }
+    }
+
+    public void removeBot(BuyerAccount buyerAccount) {
+        for (Bot bot : runningBotPool) {
+            if (bot.getBotBuyer().getId().equals(buyerAccount.getId())) {
+                runningBotPool.remove(bot);
+                return;
+            }
+        }
     }
 
     public int getEmptySlotsCount() {

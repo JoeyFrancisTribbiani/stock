@@ -1,6 +1,8 @@
 package com.yy.stock.bot.engine.email;
 
 import com.sun.mail.imap.IMAPMessage;
+import com.yy.stock.bot.engine.PluggableEngine;
+import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.common.email.EmailServiceGmailImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
@@ -8,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -21,8 +22,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-@Component
-public class EmailEngine {
+//@Component
+//@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
+public class EmailEngine implements PluggableEngine {
+    protected CoreEngine coreEngine;
+
     /**
      * 删除邮件
      *
@@ -384,5 +388,13 @@ public class EmailEngine {
         String cssSelector = "body > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > font";
         String code = EmailServiceGmailImpl.getHtmlTagContent(content, cssSelector);
         return code;
+    }
+
+    /**
+     * @param coreEngine
+     */
+    @Override
+    public void plugIn(CoreEngine coreEngine) {
+        this.coreEngine = coreEngine;
     }
 }

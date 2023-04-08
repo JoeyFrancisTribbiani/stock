@@ -1,21 +1,21 @@
 package com.yy.stock.bot.engine.rester;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.yy.stock.bot.engine.PluggableEngine;
+import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Component
-public abstract class ResterEngine {
-    @Autowired
+public abstract class ResterEngine implements PluggableEngine {
     protected RestTemplate restTemplate;
     protected HttpHeaders savedHeaders;
 
     public ResterEngine() {
+        restTemplate = SpringUtil.getBean(RestTemplate.class);
         initBotHeaders();
     }
 
@@ -55,5 +55,10 @@ public abstract class ResterEngine {
         HttpEntity entity = new HttpEntity<>(savedHeaders);
         HttpEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, entity, clazz);
         return response.getBody();
+    }
+
+    @Override
+    public void plugIn(CoreEngine plugBaseEngine) {
+
     }
 }

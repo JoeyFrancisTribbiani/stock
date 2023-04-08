@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UUIDUtil {
     public static String getUUIDshort() {
-        JdbcTemplate us = SpringUtil.getBean("jdbcTemplate");
+        JdbcTemplate us = MySpringUtil.getBean("jdbcTemplate");
         List<String> bigid = us.query("select uuid_short()", new BeanPropertyRowMapper<String>(String.class));
         if (bigid.size() > 0) {
             return bigid.get(0);
@@ -18,7 +18,7 @@ public class UUIDUtil {
     }
 
     public static BigInteger getBigIntUUIDshort() {
-        JdbcTemplate us = SpringUtil.getBean("jdbcTemplate");
+        JdbcTemplate us = MySpringUtil.getBean("jdbcTemplate");
         List<String> bigid = us.query("select uuid_short()", new BeanPropertyRowMapper<String>(String.class));
         if (bigid.size() > 0) {
             return new BigInteger(bigid.get(0));

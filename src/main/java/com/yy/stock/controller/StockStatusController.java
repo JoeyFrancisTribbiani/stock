@@ -3,6 +3,7 @@ package com.yy.stock.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.amazon.api.AmazonClientOneFeign;
+import com.yy.stock.adaptor.amazon.api.OrderFulfillmentSubmitFeedService;
 import com.yy.stock.adaptor.amazon.api.pojo.dto.AmazonOrdersListQuery;
 import com.yy.stock.adaptor.amazon.api.pojo.dto.ProductListQuery;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.AmazonOrdersVo;
@@ -11,7 +12,9 @@ import com.yy.stock.adaptor.amazon.api.pojo.vo.StockOrderStatusListVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
 import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
+import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
+import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
@@ -39,6 +42,8 @@ public class StockStatusController {
     private AmzOrdersAddressService amzOrdersAddressService;
     @Autowired
     private BuyerAccountService buyerAccountService;
+    @Autowired
+    private BotFactory botFactory;
 
     @Autowired
     private AmazonClientOneFeign amazonClientOneFeign;
@@ -48,6 +53,8 @@ public class StockStatusController {
     private PlatformService platformService;
     @Autowired
     private StockStatusService stockStatusService;
+    @Autowired
+    private OrderFulfillmentSubmitFeedService orderFulfillmentSubmitFeedService;
 
     @PostMapping
     public String save(@Valid @RequestBody StockStatus vO) {
@@ -101,13 +108,20 @@ public class StockStatusController {
         if (Result.isSuccess(result) && result.getData() != null) {
             var gotPage = result.getData();
             List<StockOrderStatusListVo> list = new ArrayList<>();
-            for (var orderVo : result.getData().getRecords()) {
+            var order1 = result.getData().getRecords().get(0);
+            var skuList = result.getData().getRecords().stream().map(AmazonOrdersVo::getSku).toList();
+            var supplierList = supplierService.getBySkus(new BigInteger(order1.getAuthid()), order1.getMarketplaceId(), skuList);
+
+            //改为fori
+            for (int i = 0; i < result.getData().getRecords().size(); i++) {
+                var orderVo = result.getData().getRecords().get(i);
                 StockOrderStatusListVo vo = new StockOrderStatusListVo();
                 BeanUtils.copyProperties(orderVo, vo);
                 var authId = orderVo.getAuthid();
                 var sku = orderVo.getSku();
                 var marketplaceId = orderVo.getMarketplaceId();
-                var supplier = supplierService.getBySku(new BigInteger(authId), marketplaceId, sku);
+//                var supplier = supplierService.getBySku(new BigInteger(authId), marketplaceId, sku);
+                var supplier = supplierList.get(i);
 
                 Platform platform;
                 if (supplier == null) {
@@ -153,6 +167,32 @@ public class StockStatusController {
     public Result<Boolean> saveOrderStockStatusAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
         try {
             stockStatusService.save(stockStatus);
+            return Result.success(true);
+        } catch (Exception ex) {
+            return Result.failed();
+        }
+    }
+
+    @PostMapping("/postShipTrackNumber2Amazon")
+    public Result<Boolean> postShipTrackNumber2AmazonAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
+        try {
+            orderFulfillmentSubmitFeedService.submit(stockStatus);
+            stockStatus.setRemarks("已人工提交跟踪号:" + stockStatus.getShipmentTrackNumber());
+            stockStatus.setShipmentTrackNumber("");
+            stockStatusService.save(stockStatus);
+            return Result.success(true);
+        } catch (Exception ex) {
+            return Result.failed();
+        }
+    }
+
+    @PostMapping("/reTrackShipmentNumber")
+    public Result<Boolean> reTrackShipmentNumberAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
+        try {
+            var buyer = buyerAccountService.getTrackableBuyerAccount(stockStatus.getBuyerId());
+            var bot = botFactory.getBot(buyer);
+            var trackRequest = new TrackRequest(stockStatus);
+            bot.track(trackRequest);
             return Result.success(true);
         } catch (Exception ex) {
             return Result.failed();

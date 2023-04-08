@@ -1,31 +1,33 @@
 package com.yy.stock.bot.aliexpressbot.engine.stocker;
 
 import cn.hutool.core.date.DateTime;
-import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.stocker.StockEngine;
 import com.yy.stock.common.exception.OverTopShipFeeException;
 import com.yy.stock.common.exception.PayFailedException;
 import com.yy.stock.common.exception.WrongStockPriceException;
-import com.yy.stock.config.StatusEnum;
+import com.yy.stock.common.util.MySpringUtil;
+import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.service.PlatformService;
 import com.yy.stock.service.StockStatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebElement;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
 @Slf4j
+//@Component
+//@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
 public class AliExpressStockEngine extends StockEngine {
-    @Autowired
     protected PlatformService platformService;
-    @Autowired
     protected StockStatusService stockStatusService;
+//    protected AliExpressBrCoreEngine coreEngine;
+//    protected AliExpressLoginEngine loginEngine;
+//    protected AliExpressBrAddressEngine addressUnit;
 
-    public AliExpressStockEngine(CoreEngine coreEngine) {
-        super(coreEngine);
+    public AliExpressStockEngine() {
+        this.stockStatusService = MySpringUtil.getBean(StockStatusService.class);
+        this.platformService = MySpringUtil.getBean(PlatformService.class);
     }
-
 
     private String generPlatformOrderPageUrl(String platformOrderId) {
         return "https://www.aliexpress.com/p/order/detail.html?orderId=" + platformOrderId;
@@ -41,7 +43,7 @@ public class AliExpressStockEngine extends StockEngine {
             stockStatusService.save(stockStatus);
         } catch (Exception ex) {
             stockStatus.setLog("付款后保存订单ID时出错!ex:" + ex.getMessage());
-            stockStatus.setStatus(StatusEnum.payedButInfoSaveError.name());
+            stockStatus.setStatus(StockStatusEnum.payedButInfoSaveError.name());
             stockStatusService.save(stockStatus);
             log.error("付款后保存订单ID时出错! statusID:" + stockStatus.getId());
         }
@@ -155,7 +157,7 @@ public class AliExpressStockEngine extends StockEngine {
                 Thread.sleep(1000);
             }
             log.info(coreEngine.getBotName() + "付款成功！");
-            stockRequest.getStockStatus().setStatus(StatusEnum.stockedUnshipped.name());
+            stockRequest.getStockStatus().setStatus(StockStatusEnum.stockedUnshipped.name());
             stockRequest.getStockStatus().setStockTime(DateTime.now());
             stockRequest.getStockStatus().setQuantity(stockRequest.getOrderInfo().getQuantity());
             stockRequest.getStockStatus().setTotalPrice(totalPrice);

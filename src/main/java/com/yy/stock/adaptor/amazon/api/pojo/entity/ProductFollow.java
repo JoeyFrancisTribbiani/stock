@@ -2,7 +2,6 @@ package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value = "ProductFollow对象", description = "商品更买")
 @TableName("t_product_follow")
 public class ProductFollow extends BaseEntity {
 

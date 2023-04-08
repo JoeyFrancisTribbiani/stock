@@ -1,29 +1,18 @@
 package com.yy.stock.adaptor.amazon.api.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Date;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author wimoor team
- * @since 2022-11-28
- */
-import lombok.Getter;
-
-import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
 @TableName("t_amz_product_sales_plan")
-@ApiModel(value = "AmzProductSalesPlan对象", description = "")
 public class AmzProductSalesPlan extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

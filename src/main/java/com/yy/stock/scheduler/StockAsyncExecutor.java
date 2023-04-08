@@ -7,9 +7,9 @@ import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.exception.NoIdelBuyerAccountException;
 import com.yy.stock.common.util.RedissonDistributedLocker;
-import com.yy.stock.config.StatusEnum;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockRequest;
+import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
@@ -20,7 +20,6 @@ import com.yy.stock.service.StockStatusService;
 import com.yy.stock.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -43,7 +42,7 @@ public class StockAsyncExecutor {
     @Autowired
     private PlatformService platformService;
 
-    @Async("asyncServiceExecutor")
+    //    @Async("asyncServiceExecutor")
     public void startStockAsync(OrderItemAdaptorInfoDTO orderToStock, StockStatus stockStatus) {
         log.info(getExecutorName(orderToStock) + " 进入 asyncServiceExecutor进行多线程下单");
         Bot bot = null;
@@ -63,7 +62,7 @@ public class StockAsyncExecutor {
 
             try {
                 buyer = buyerAccountService.getLeastOrderCountAndIdleBuyer(platform);
-                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.STOCKING);
+                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.stocking);
             } catch (Exception exx) {
                 log.info(getExecutorName(orderToStock) + " 未找到空闲买家账号.");
                 throw new NoIdelBuyerAccountException(getExecutorName(orderToStock) + " 未找到空闲买家账号.");
@@ -80,14 +79,14 @@ public class StockAsyncExecutor {
             stockRequest = new StockRequest(stockStatus, orderToStock, platform, supplier, ordersAddress);
             bot.stock(stockRequest);
         } catch (Exception ex) {
-            stockStatus.setStatus(StatusEnum.stockFailed.name());
+            stockStatus.setStatus(StockStatusEnum.stockFailed.name());
             stockStatus.setLog(ex + Arrays.toString(ex.getStackTrace()));
             stockStatusService.save(stockStatus);
             if (bot != null) {
                 log.info(bot.getBotName() + "出错了，开始退出购买任务");
             }
             if (buyer != null) {
-                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.IDLE);
+                buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
             }
             log.info(getExecutorName(orderToStock) + "bot下单失败,ex:" + ex.getMessage());
         }

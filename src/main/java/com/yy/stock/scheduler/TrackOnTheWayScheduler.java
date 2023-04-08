@@ -104,7 +104,7 @@ public class TrackOnTheWayScheduler {
 
                 try {
                     buyer = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
-                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.TRACKING);
+                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.tracking);
                 } catch (Exception exx) {
                     log.info(getExecutorName(stock) + " 未找到空闲买家账号.");
                     throw new NoIdelBuyerAccountException(getExecutorName(stock) + " 未找到空闲买家账号.");

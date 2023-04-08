@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @PropertySource(value = "classpath:configs/aliexpress.yml", factory = YamlSourceFactory.class)    // 指定自定义配置文件位置和名称
 @ConfigurationProperties(prefix = "aliurls")        // 指定配置文件注入属性前缀
-@Component
+@Component("aliExpressUrls")
 public class AliExpressUrls extends BaseUrls {
 //    public String homePage;
 //    public String loginPage;

@@ -3,11 +3,10 @@ package com.yy.stock.bot;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.engine.core.CoreEngine;
-import com.yy.stock.bot.factory.CoreEngineFactory;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
-import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -15,13 +14,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-@SuperBuilder
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@Slf4j
 public class Bot {
     protected CoreEngine coreEngine;
 
-    public Bot(CoreEngineFactory coreEngineFactory) throws MalformedURLException, JsonProcessingException {
-        coreEngine = coreEngineFactory.create();
+    public Bot(CoreEngine coreEngine, BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
+        this.coreEngine = coreEngine;
+        this.coreEngine.init(buyerAccount);
+//        coreEngine.assemble();
     }
 
     public String getBotName() {
@@ -62,5 +62,10 @@ public class Bot {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void keepSessionAlive() {
+        var curTitle = coreEngine.getDriverEngine().getDriver().getTitle();
+        log.info(getBotName() + "Current title: {}", curTitle);
     }
 }

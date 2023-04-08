@@ -1,9 +1,11 @@
 package com.yy.stock.bot.engine.driver;
 
 import com.yy.stock.bot.helper.MessageHelper;
+import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -157,5 +159,24 @@ public class InstructionExecutor {
 
     public WebElement getById(String s) {
         return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS)).until(d -> d.findElement(By.id(s)));
+    }
+
+    public void dragAndDropBy(WebElement capButton, int[] xs, int[] ys) throws InterruptedException {
+        Actions action = new Actions(driver);
+//        action.dragAndDropBy(capButton, slidingDistance, i).build().perform();
+        action.clickAndHold(capButton);
+        for (int j = 0; j < xs.length; j++) {
+            action.moveByOffset(xs[j], ys[j]);
+            Thread.sleep(RandomUtils.nextInt(100, 500));
+        }
+        action.release().build().perform();
+    }
+
+    public void switchToFrame(String s) {
+        driver.switchTo().frame(s);
+    }
+
+    public void switchToDefaultContent() {
+        driver.switchTo().defaultContent();
     }
 }
