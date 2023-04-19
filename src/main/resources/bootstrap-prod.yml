@@ -62,7 +62,7 @@ spring:
       connectionTimeout: 10000
   jpa:
     stock:
-      show-sql: true
+      show-sql: false
       generate-ddl: false
       hibernate:
         ddl-auto: none
@@ -72,7 +72,7 @@ spring:
           enable_lazy_load_no_trans: true
       open-in-view: true
     amazon:
-      show-sql: true
+      show-sql: false
       generate-ddl: false
       hibernate:
         ddl-auto: none

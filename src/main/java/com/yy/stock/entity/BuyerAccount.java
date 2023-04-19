@@ -69,4 +69,6 @@ public class BuyerAccount implements Serializable {
     private String status;
     @Column(name = "role")
     private String role;
+    @Column(name = "credit_card")
+    private String creditCard;
 }

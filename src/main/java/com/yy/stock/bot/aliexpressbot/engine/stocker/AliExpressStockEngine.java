@@ -159,16 +159,15 @@ public abstract class AliExpressStockEngine extends StockEngine {
 
             try {
                 selectPaymentMethod();
-
                 payNowButton.click();
             } catch (Exception e) {
-                log.error("select payment method failed", e);
+                log.error("选择付款方式出错！", e);
             }
             try {
                 coreEngine.solveLoginCaptcha();
                 payNowButton.click();
             } catch (Exception e) {
-                log.error("solve captcha failed", e);
+                log.error("付款滑块验证失败", e);
             }
 
 //            payNowButton.click();

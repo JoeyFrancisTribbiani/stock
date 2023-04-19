@@ -12,8 +12,8 @@ import org.springframework.retry.annotation.EnableRetry;
 @EnableRetry
 public class StockApplication {
     public static void main(String[] args) {
-        System.out.println("欢迎来到 YY Stock 系统！");
         SpringApplication.run(StockApplication.class, args);
+        System.out.println("欢迎来到 YY Stock 系统！");
     }
 
 }
