@@ -36,7 +36,6 @@ public class BasePageQuery {
 
     // 将where解析成预定义的筛选条件对象(代码在下文给出)
     public QueryConditions parseWhere() {
-        System.out.println(JSON.toJSONString(where));
         return JSON.parseObject(JSON.toJSONString(where), QueryConditions.class);
     }
 

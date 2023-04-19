@@ -81,7 +81,7 @@ public class RegisterScheduler {
                 bot.register(emailAccount);
             } catch (Exception ex) {
                 log.info(getExecutorName(platform) + "__过程遇到错误:");
-                ex.printStackTrace();
+
             }
         }
     }

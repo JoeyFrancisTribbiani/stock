@@ -23,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 @Service
 @Slf4j
 public class StockAsyncExecutor {
@@ -81,15 +79,11 @@ public class StockAsyncExecutor {
             bot.stock(stockRequest);
         } catch (Exception ex) {
             stockStatus.setStatus(StockStatusEnum.stockFailed.name());
-            stockStatus.setLog(ex + Arrays.toString(ex.getStackTrace()));
+            stockStatus.setLog(ex.getMessage());
             stockStatusService.save(stockStatus);
-            if (bot != null) {
-                log.info(bot.getBotName() + "出错了，开始退出购买任务");
-            }
             if (buyer != null) {
                 buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
             }
-            ex.printStackTrace();
             log.info(getExecutorName(orderToStock) + "bot下单失败,ex:" + ex.getMessage());
         }
 

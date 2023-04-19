@@ -100,7 +100,7 @@ public class TrackOnTheWayScheduler {
 
                 buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
                 distributedLocker.lock(buyerLockKey);
-                log.info(getExecutorName(stock) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号下单");
+                log.info(getExecutorName(stock) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号追踪");
 
                 try {
                     buyer = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
@@ -123,6 +123,9 @@ public class TrackOnTheWayScheduler {
                 stockStatusService.save(stock);
                 if (bot != null) {
                     log.info(bot.getBotName() + "开始退出chromedriver.");
+                }
+                if (buyer != null) {
+                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
                 }
             }
         }

@@ -242,13 +242,13 @@ public abstract class CoreEngine {
             closeBtn.click();
             Thread.sleep(1000L);
         } catch (Exception ex) {
-            System.out.println("No green ad pop");
+            log.debug("首页弹窗检测：未找到广告弹窗.");
             try {
                 var closeBtn = driverEngine.getExecutor().getByXpath("//div[text()='Claim Now']");
                 closeBtn.click();
                 Thread.sleep(1000L);
             } catch (Exception ex2) {
-                System.out.println("No claim now pop");
+                log.debug("首页弹窗检测：未找到折扣弹窗.");
             }
         }
     }

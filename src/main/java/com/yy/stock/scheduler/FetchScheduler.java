@@ -113,8 +113,11 @@ public class FetchScheduler {
                 }
 
             } catch (Exception ex) {
+                if (buyer != null) {
+                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
+                }
                 log.info(getExecutorName(fetchable) + "fetch过程遇到错误:");
-                ex.printStackTrace();
+
 //                stock.setStatus(StatusEnum.stockFailed.name());
 //                fetchable.setLog(ex + Arrays.toString(ex.getStackTrace()));
 //                stockStatusService.save(fetchable);

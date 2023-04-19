@@ -78,7 +78,6 @@ public class AliExpressFetcherEngine extends FetcherEngine {
                 jsonStr = jsonStr.split("csrfToken: ")[0];
                 jsonStr = jsonStr.trim();
                 jsonStr = StringUtils.removeEnd(jsonStr, ",");
-                System.out.println("json:" + jsonStr);
             }
         }
         if (jsonStr.equals("")) {
