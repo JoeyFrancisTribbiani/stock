@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 ;
@@ -87,42 +86,44 @@ public class TrackOnTheWayScheduler {
         log.info("追踪订单个数：" + toTrack.size());
         log.info("开始依次追踪...");
         var buyerLockKey = "";
-        for (var stock : toTrack) {
-            log.info("亚马逊订单号：" + stock.getAmazonOrderId());
+        for (var track : toTrack) {
+            log.info("亚马逊订单号：" + track.getAmazonOrderId());
 
             Bot bot = null;
             BuyerAccount buyer = null;
-            Platform platform = null;
+            Platform platform;
 
             try {
-                Supplier supplier = supplierService.getById(stock.getSupplierId());
+                Supplier supplier = supplierService.getById(track.getSupplierId());
                 platform = supplier.getPlatform();
 
                 buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
                 distributedLocker.lock(buyerLockKey);
-                log.info(getExecutorName(stock) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号追踪");
+                log.info(getExecutorName(track) + "平台" + platform.getName() + "买家账号加锁成功，开始选择空闲的买家账号追踪");
 
                 try {
-                    buyer = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
-                    buyerAccountService.setBuyerBotStatus(buyer, BotStatus.tracking);
+                    buyer = buyerAccountService.getById(track.getBuyer().getId());
+                    if (buyer.getBotStatus().equals(BotStatus.idle.name())) {
+                        buyerAccountService.setBuyerBotStatus(buyer, BotStatus.tracking);
+                    } else {
+                        throw new NoIdelBuyerAccountException("买家账号" + buyer.getEmail() + "不是空闲状态，无法追踪");
+                    }
                 } catch (Exception exx) {
-                    log.info(getExecutorName(stock) + " 未找到空闲买家账号.");
-                    throw new NoIdelBuyerAccountException(getExecutorName(stock) + " 未找到空闲买家账号.");
+                    log.info(getExecutorName(track) + " 未找到空闲买家账号.");
+                    throw exx;
                 } finally {
                     distributedLocker.unlock(buyerLockKey);
-                    log.info(getExecutorName(stock) + "平台" + platform.getName() + "解锁，买家账号为：" + (buyer != null ? buyer.getEmail() : "空"));
+                    log.info(getExecutorName(track) + "平台" + platform.getName() + "解锁，买家账号为：" + (buyer != null ? buyer.getEmail() : "空"));
                 }
 
-
                 bot = botFactory.getBot(buyer);
-                var trackRequest = new TrackRequest(stock);
+                var trackRequest = new TrackRequest(track);
                 bot.track(trackRequest);
             } catch (Exception ex) {
-//                stock.setStatus(StatusEnum.stockFailed.name());
-                stock.setLog(ex + Arrays.toString(ex.getStackTrace()));
-                stockStatusService.save(stock);
+                track.setLog(ex.getMessage());
+                stockStatusService.save(track);
                 if (bot != null) {
-                    log.info(bot.getBotName() + "开始退出chromedriver.");
+                    log.info(bot.getBotName() + "开始退出本次追踪任务.");
                 }
                 if (buyer != null) {
                     buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
