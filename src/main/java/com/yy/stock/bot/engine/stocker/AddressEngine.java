@@ -13,7 +13,6 @@ public abstract class AddressEngine implements PluggableEngine {
     protected StockRequest stockRequest;
 
     public void addNewAddress() throws InterruptedException {
-        this.stockRequest = stockRequest;
         log.info(coreEngine.getBotName() + "开始添加新地址.");
         log.info(coreEngine.getBotName() + "删除旧地址.");
         deleteOldAddress();

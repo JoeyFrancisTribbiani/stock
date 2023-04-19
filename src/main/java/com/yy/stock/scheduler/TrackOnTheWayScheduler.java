@@ -96,7 +96,7 @@ public class TrackOnTheWayScheduler {
 
             try {
                 Supplier supplier = supplierService.getById(stock.getSupplierId());
-                platform = platformService.getById(supplier.getPlatformId());
+                platform = supplier.getPlatform();
 
                 buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
                 distributedLocker.lock(buyerLockKey);

@@ -61,7 +61,7 @@ public class KeepSessionsAliveScheduler {
             log.info("保活任务开始.");
             botFactory.keepSessionsAlive();
         } catch (Exception ex) {
-            log.info("追踪任务过程中报错,ex:" + ex.getMessage());
+            log.info("保活任务过程中报错,ex:" + ex.getMessage());
         } finally {
             isBusy = false;
         }

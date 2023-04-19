@@ -17,20 +17,28 @@ import java.io.IOException;
 
 public class AliExpressFetcherEngine extends FetcherEngine {
     protected String fetchHtml(String url) throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> entity = new HttpEntity<>(resterEngine.getBotHeaders());
-        HttpEntity<byte[]> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                byte[].class
-        );
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> entity = new HttpEntity<>(resterEngine.getBotHeaders());
+            HttpEntity<byte[]> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    byte[].class
+            );
 
-        byte[] data = RestTemplateHelper.unGZip(new ByteArrayInputStream(response.getBody()));
+            byte[] data = RestTemplateHelper.unGZip(new ByteArrayInputStream(response.getBody()));
 
-        var result = new String(data, "UTF-8");
+            return new String(data, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
-        return result;
+    @Override
+    public String fetchHtmlByDriver(String url) throws IOException {
+        return this.driverEngine.getHtml(url);
     }
 
     /**
@@ -74,7 +82,7 @@ public class AliExpressFetcherEngine extends FetcherEngine {
             }
         }
         if (jsonStr.equals("")) {
-            return "";
+            return html;
         }
         var platfromJsonStr = new ObjectMapper().writeValueAsString(coreEngine.getBuyerAccount().getPlatform());
         platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";

@@ -48,9 +48,9 @@ public class StockStatus {
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger supplierId;
 
-    @Column(name = "buyer_id")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private BigInteger buyerId;
+    @OneToOne
+    @JoinColumn(name = "buyer_id")
+    private BuyerAccount buyer;
 
     @Column(name = "platform_order_id")
     private String platformOrderId;
@@ -83,4 +83,6 @@ public class StockStatus {
     private Boolean stockful;
     @Column(name = "remarks")
     private String remarks;
+    @Column(name = "last_stock_try_time")
+    private LocalDateTime lastStockTryTime;
 }

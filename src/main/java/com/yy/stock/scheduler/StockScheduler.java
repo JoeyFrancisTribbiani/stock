@@ -1,5 +1,6 @@
 package com.yy.stock.scheduler;
 
+import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
@@ -56,7 +57,7 @@ public class StockScheduler {
         return nameWords;
     }
 
-    //    @XxlJob(value = "stockJobHandler")
+    @XxlJob(value = "stockJobHandler")
     public void stockXxlJobHandler() throws InterruptedException {
         distributedLocker.lock(GlobalVariables.SCHEDULE_ORDER_LOCK_KEY);
         log.info("本线程 加锁成功，开始选择订单");
@@ -139,6 +140,17 @@ public class StockScheduler {
     }
 
     public void schedule(List<StockInfoDTO> toStock) {
+        toStock.sort((o1, o2) -> {
+            var o1StockStatus = o1.getStockStatus().getLastStockTryTime();
+            var o2StockStatus = o2.getStockStatus().getLastStockTryTime();
+            if (o1StockStatus == null) {
+                return -1;
+            }
+            if (o2StockStatus == null) {
+                return 1;
+            }
+            return o1StockStatus.compareTo(o2StockStatus);
+        });
         for (StockInfoDTO stockInfo : toStock) {
             stockAsyncExecutor.startStockAsync(stockInfo.getOrderItemAdaptorInfoDTO(), stockInfo.getStockStatus());
         }

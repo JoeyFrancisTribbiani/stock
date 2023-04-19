@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.math.BigInteger;
 
 public interface PlatformRepository extends JpaRepository<Platform, BigInteger>, JpaSpecificationExecutor<Platform> {
-    public Platform findFirstByNameAndCountry(String name, String country);
+    public Platform findFirstByCodeAndCountryCode(String name, String country);
 
 }

@@ -3,9 +3,11 @@ package com.yy.stock.test;
 import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.aliexpressbot.engine.email.AliExpressEmailEngine;
 import com.yy.stock.bot.engine.driver.ChromeDriverEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.helper.MessageHelper;
+import com.yy.stock.common.util.PasswordGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,6 +47,25 @@ class MessageHelperTest {
         }
     }
 
+    @Test
+    void testPasswordGenerator() {
+        var pass = PasswordGenerator.randomPassword(16);
+        System.out.println(pass);
+    }
+
+    @Test
+    void testEmailVerify() throws MessagingException, IOException {
+        var emailEngine = new AliExpressEmailEngine();
+        var code = emailEngine.getRegisterEmailVerifyCode("sa6842946@gmail.com", "qaynjtlduaramgmx");
+        System.out.println(code);
+    }
+
+    @Test
+    void testLoginEmailVerify() throws MessagingException, IOException {
+        var emailEngine = new AliExpressEmailEngine();
+        var code = emailEngine.getLoginEmailVerifyCode("sa6842946@gmail.com", "qaynjtlduaramgmx");
+        System.out.println(code);
+    }
 
     @Test
     void testChromeDiver() throws InterruptedException {
@@ -224,5 +246,16 @@ class MessageHelperTest {
         //q:巴西的国家代码是多少？
         //a:BR
         System.out.println(c);
+    }
+
+    @Test
+    void testCountryName() {
+
+        var l = new Locale("en", "BR");
+        var c = l.getCountry();
+        var b = l.getDisplayCountry();
+        var d = l.getDisplayCountry(new Locale("en", "BR"));
+        System.out.println(l);
+
     }
 }

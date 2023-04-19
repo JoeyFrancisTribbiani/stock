@@ -11,7 +11,7 @@ public class PlatformFactory {
     public static Platform getPlatformByUrl(String url, String countryCode) {
         PlatformService platformService = MySpringUtil.getBean("platformService");
         if (url.contains("aliexpress")) {
-            return platformService.getByNameAndCountryCode("Aliexpress.com", countryCode);
+            return platformService.getByCodeAndCountryCode("aliexpress", countryCode);
         }
         return null;
     }

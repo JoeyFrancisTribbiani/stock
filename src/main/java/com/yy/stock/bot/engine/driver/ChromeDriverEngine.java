@@ -2,6 +2,7 @@ package com.yy.stock.bot.engine.driver;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
@@ -76,6 +77,7 @@ public class ChromeDriverEngine {
 
     public MyCookie[] getDriverCookies() {
         var cookies = getDriver().manage().getCookies();
+        getDriver().manage().addCookie(new Cookie("test", "test"));
         List<MyCookie> list = new ArrayList<>();
         MyCookie[] res = new MyCookie[]{};
         for (var ck : cookies) {

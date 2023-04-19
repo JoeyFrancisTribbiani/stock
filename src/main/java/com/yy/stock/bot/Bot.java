@@ -6,6 +6,7 @@ import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.entity.EmailAccount;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
@@ -21,7 +22,20 @@ public class Bot {
     public Bot(CoreEngine coreEngine, BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
         this.coreEngine = coreEngine;
         this.coreEngine.init(buyerAccount);
-//        coreEngine.assemble();
+    }
+
+    public Bot(CoreEngine coreEngine) throws MalformedURLException, JsonProcessingException {
+        this.coreEngine = coreEngine;
+    }
+
+    public boolean testAvailable() {
+        try {
+            var title = coreEngine.getDriverEngine().getDriver().getTitle();
+            log.debug("bot测试可用性：true, title: {}", title);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getBotName() {
@@ -40,20 +54,50 @@ public class Bot {
         return coreEngine.urls.homePage;
     }
 
+    public void register(EmailAccount emailAccount) throws InterruptedException, IOException, MessagingException {
+        try {
+            coreEngine.register(emailAccount);
+        } catch (Exception e) {
+            coreEngine.setBotStatus(BotStatus.idle);
+            throw e;
+        }
+    }
+
     public void login() throws InterruptedException, IOException, MessagingException {
-        coreEngine.login();
+        try {
+            coreEngine.login();
+        } catch (Exception e) {
+            coreEngine.setBotStatus(BotStatus.idle);
+            throw e;
+        }
     }
 
     public void stock(StockRequest stockRequest) throws InterruptedException, IOException, MessagingException {
-        coreEngine.stock(stockRequest);
+        try {
+            coreEngine.stock(stockRequest);
+        } catch (Exception e) {
+            coreEngine.setBotStatus(BotStatus.idle);
+            throw e;
+        }
     }
 
     public void track(TrackRequest trackRequest) throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
-        coreEngine.track(trackRequest);
+        try {
+            coreEngine.track(trackRequest);
+        } catch (Exception e) {
+            coreEngine.setBotStatus(BotStatus.idle);
+            throw e;
+        }
     }
 
     public String fetch(String url) throws InterruptedException, MessagingException, IOException {
-        return coreEngine.fetch(url);
+        try {
+            return coreEngine.fetch(url);
+        } catch (Exception e) {
+            coreEngine.setBotStatus(BotStatus.idle);
+            log.debug("fetch error: {}", e.getMessage());
+            return "";
+        }
     }
 
     public void bye() {

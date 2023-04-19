@@ -38,7 +38,7 @@ public class CdpRemoteWebDriver extends RemoteWebDriver {
     public Map<String, Object> executeCdpCommand(String commandName, Map<String, Object> parameters) {
         Objects.requireNonNull(commandName, "Command name must be set.");
         Objects.requireNonNull(parameters, "Parameters for command must be set.");
-        Map<String, Object> toReturn = (Map) this.getExecuteMethod().execute("executeCdpCommand", ImmutableMap.of("cmd", commandName, "params", parameters));
+        Map toReturn = (Map) this.getExecuteMethod().execute("executeCdpCommand", ImmutableMap.of("cmd", commandName, "params", parameters));
         return ImmutableMap.copyOf(toReturn);
     }
 

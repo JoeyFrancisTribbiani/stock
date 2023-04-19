@@ -1,14 +1,13 @@
 package com.yy.stock.vo;
 
+import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
 import jakarta.persistence.Column;
 import lombok.EqualsAndHashCode;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
-public class EmailAccountListQuery extends PageRequest {
+public class EmailAccountListQuery extends BasePageQuery {
     @Column(name = "email")
     private String email;
 
@@ -36,7 +35,4 @@ public class EmailAccountListQuery extends PageRequest {
     @Column(name = "mobile")
     private String mobile;
 
-    protected EmailAccountListQuery(int page, int size, Sort sort) {
-        super(page, size, sort);
-    }
 }

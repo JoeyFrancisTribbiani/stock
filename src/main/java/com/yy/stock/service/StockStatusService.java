@@ -1,5 +1,6 @@
 package com.yy.stock.service;
 
+import com.yy.stock.adaptor.amazon.api.pojo.vo.AmazonOrdersVo;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.dto.StockStatusEnum;
 import com.yy.stock.entity.StockStatus;
@@ -64,6 +65,34 @@ public class StockStatusService {
         return statusRepository.findAllByStatusIs(StockStatusEnum.stockedUnshipped.name());
     }
 
+    public List<StockStatus> getByAmazonOrderList(BigInteger authId, String marketpalceId, List<AmazonOrdersVo> amazonOrderVoList) {
+        var orderIdList = amazonOrderVoList.stream().map(AmazonOrdersVo::getOrderid).toList();
+        var stockStatusList = statusRepository.findAllByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdIn(authId, marketpalceId, orderIdList);
+        if (stockStatusList.size() == 0) {
+            return null;
+        }
+        List<StockStatus> notCreated = new ArrayList<>();
+        for (AmazonOrdersVo amazonOrderVo : amazonOrderVoList) {
+            var orderid = amazonOrderVo.getOrderid();
+            var sku = amazonOrderVo.getSku();
+            var stockStatus = stockStatusList.stream().filter(s -> s.getAmazonOrderId().equals(orderid) && s.getAmazonSku().equals(sku)).findFirst().orElse(null);
+            if (stockStatus == null) {
+                StockStatus toCreate = new StockStatus();
+                toCreate.setMarketplaceId(marketpalceId);
+                toCreate.setAmazonOrderId(orderid);
+                toCreate.setAmazonAuthId(authId);
+                toCreate.setAmazonSku(sku);
+                toCreate.setStockful(true);
+                toCreate.setStatus(StockStatusEnum.unstocked.name());
+                notCreated.add(toCreate);
+            }
+        }
+        if (notCreated.size() > 0) {
+            statusRepository.saveAll(notCreated);
+            stockStatusList.addAll(notCreated);
+        }
+        return stockStatusList;
+    }
 
     public StockStatus getOrCreateByOrderItemSku(BigInteger authId, String marketpalceId, String orderId, String sku) {
         StockStatus stockStatus = statusRepository.findFirstByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdAndAmazonSku(authId, marketpalceId, orderId, sku);

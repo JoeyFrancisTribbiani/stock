@@ -3,8 +3,10 @@ package com.yy.stock.bot.factory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.seleniumgrid.model.GridStatusResponseModel;
 import com.yy.stock.bot.Bot;
+import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.entity.Platform;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -31,23 +33,35 @@ public class BotFactory {
         runningBotPool = new ArrayList<>();
     }
 
+    public Bot getRegisterBot(Platform platform) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, MalformedURLException, JsonProcessingException {
+        var className = platform.getBotBean();
+        Class<?> clazz = Class.forName(className);
+        //通过反射获取类的实例
+        var coreEngine = (CoreEngine) clazz.getConstructor().newInstance();
+//        var coreEngine = (PlugBaseEngine) SpringUtil.getBean(clazz);
+//        coreEngine.init(buyerAccount);
+        var bot = new Bot(coreEngine);
+        return bot;
+    }
+
     public Bot getBot(BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         for (Bot bot : runningBotPool) {
             if (bot.getBotBuyer().getId().equals(buyerAccount.getId())) {
-                return bot;
+                if (!bot.testAvailable()) {
+                    runningBotPool.remove(bot);
+                    bot.bye();
+                    return getBot(buyerAccount);
+                } else {
+                    return bot;
+                }
             }
         }
         if (getEmptySlotsCount() == 0) {
             throw new RuntimeException("No empty slots in grid hub");
         }
         var className = buyerAccount.getPlatform().getBotBean();
-        //通过jdk的反射获取类
-//        Class<?> clazz = Class.forName("com.yy.stock.bot.factory." + className);
         Class<?> clazz = Class.forName(className);
-        //通过反射获取类的实例
         var coreEngine = (CoreEngine) clazz.getConstructor().newInstance();
-//        var coreEngine = (PlugBaseEngine) SpringUtil.getBean(clazz);
-//        coreEngine.init(buyerAccount);
         var bot = new Bot(coreEngine, buyerAccount);
         runningBotPool.add(bot);
         return bot;
@@ -56,10 +70,13 @@ public class BotFactory {
     public void keepSessionsAlive() {
         for (Bot bot : runningBotPool) {
             try {
-                bot.keepSessionAlive();
+                if (bot.getBotStatus().equals(BotStatus.idle)) {
+                    bot.keepSessionAlive();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 runningBotPool.remove(bot);
+                bot.bye();
             }
         }
     }

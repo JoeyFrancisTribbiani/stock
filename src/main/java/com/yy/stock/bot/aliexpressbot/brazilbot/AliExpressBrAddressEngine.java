@@ -28,9 +28,13 @@ public class AliExpressBrAddressEngine extends AddressEngine {
     @Override
     protected void inputAddressInfo() throws InterruptedException {
 //        var confirmDeleteAddressButton = driverEngine.getExecutor().getByXpath( coreEngine.xpaths.confirmDeleteAddressButton);
-        var addAddressButton = driverEngine.getExecutor().getByXpath(coreEngine.xpaths.addAddressButton);
-        addAddressButton.click();
-        Thread.sleep(6666);
+        try {
+            var addAddressButton = driverEngine.getExecutor().getByXpath(coreEngine.xpaths.addAddressButton);
+            addAddressButton.click();
+            Thread.sleep(6666);
+        } catch (Exception ex) {
+            log.info(coreEngine.getBotName() + "未找到添加地址按钮，默认为无任何地址，直接添加信息.");
+        }
 
 
         var nameInput = driverEngine.getExecutor().getByXpath(coreEngine.xpaths.addressNameInput);

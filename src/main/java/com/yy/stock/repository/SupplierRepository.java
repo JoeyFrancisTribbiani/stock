@@ -12,4 +12,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, BigInteger>,
 
     public List<Supplier> findByAmazonAuthIdAndMarketplaceIdAndAmazonSkuIn(BigInteger amazonAuthId, String marketplaceId, List<String> amazonSkuList);
 
+    public List<Supplier> findByAvailableIsTrue();
 }

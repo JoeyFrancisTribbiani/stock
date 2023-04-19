@@ -60,7 +60,6 @@ public class SupplierService {
                 .setMarketplaceId(marketplaceId)
                 .setAmazonSku(amazonSku)
                 .setName("")
-                .setPlatformId(new BigInteger("0"))
                 .setAmazonName("")
                 .setAvailable(false)
                 .setPrice("0")
@@ -76,5 +75,9 @@ public class SupplierService {
     private Supplier requireOne(BigInteger id) {
         return supplierRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+    }
+
+    public List<Supplier> getAllAvailableSuppliers() {
+        return supplierRepository.findByAvailableIsTrue();
     }
 }

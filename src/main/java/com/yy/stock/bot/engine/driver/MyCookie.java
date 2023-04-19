@@ -16,4 +16,12 @@ public class MyCookie {
     public boolean secure;
     public boolean httpOnly;
     public String sameSite;
+
+    public MyCookie(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public MyCookie() {
+    }
 }

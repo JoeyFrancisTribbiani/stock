@@ -14,9 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -61,6 +63,10 @@ public class BuyerAccountService {
         buyerAccountRepository.deleteById(id);
     }
 
+    public void batchDelete(List<BuyerAccount> list) {
+        buyerAccountRepository.deleteAllInBatch(list);
+    }
+
     public void update(BigInteger id, BuyerAccountUpdateVO vO) {
         BuyerAccount bean = requireOne(id);
         BeanUtils.copyProperties(vO, bean);
@@ -94,6 +100,10 @@ public class BuyerAccountService {
         return buyerAccountRepository.findBuyerAccountByEarliestLoginTimeAndIdle(platformId);
     }
 
+    public BuyerAccount getFetcherAccount(BigInteger platformId) {
+        return buyerAccountRepository.findFetcherBuyerAccount(platformId);
+    }
+
     public Long count() {
         return buyerAccountRepository.count();
     }
@@ -104,6 +114,9 @@ public class BuyerAccountService {
     }
 
     public Page<BuyerAccount> query(BuyerAccountQueryVO vO) {
-        return null;
+        Specification<BuyerAccount> specification = vO.toSpecification();
+        var pageRequest = vO.toPageRequest();
+        var queryPage = buyerAccountRepository.findAll(specification, pageRequest);
+        return queryPage;
     }
 }

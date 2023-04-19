@@ -96,7 +96,7 @@ public class TrackUnshippedScheduler {
 
             try {
                 Supplier supplier = supplierService.getById(stock.getSupplierId());
-                platform = platformService.getById(supplier.getPlatformId());
+                platform = supplier.getPlatform();
 
                 buyerLockKey = GlobalVariables.PLATFORM_ALL_BUYERS_LOCK_KEY_HEADER + platform.getId();
                 distributedLocker.lock(buyerLockKey);

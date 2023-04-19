@@ -29,9 +29,11 @@ public class Platform implements Serializable {
 
     @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "code", nullable = false)
+    private String code;
 
-    @Column(name = "country", nullable = false)
-    private String country;
+    @Column(name = "country_code", nullable = false)
+    private String countryCode;
 
     @Column(name = "bot_bean")
     private String botBean;
@@ -50,4 +52,8 @@ public class Platform implements Serializable {
     @JsonIgnoreProperties({"platform"})
     private List<BuyerAccount> buyerAccounts;
 
+    @OneToMany
+    @JoinColumn(name = "platform_id")
+    @JsonIgnoreProperties({"platform"})
+    private List<Supplier> suppliers;
 }

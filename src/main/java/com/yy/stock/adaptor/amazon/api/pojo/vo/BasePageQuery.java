@@ -2,12 +2,18 @@ package com.yy.stock.adaptor.amazon.api.pojo.vo;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yy.stock.adaptor.amazon.api.pojo.entity.BizException;
+import com.yy.stock.vo.QueryConditions;
+import com.yy.stock.vo.QueryUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,8 +30,44 @@ public class BasePageQuery {
     private String sort = "";
 
     private String order = "";
+    private Object where;
 
     private Map<String, String> paramother = new HashMap<String, String>();
+
+    // 将where解析成预定义的筛选条件对象(代码在下文给出)
+    public QueryConditions parseWhere() {
+        System.out.println(JSON.toJSONString(where));
+        return JSON.parseObject(JSON.toJSONString(where), QueryConditions.class);
+    }
+
+    // 将where解析成JPA支持的Specification对象
+    public <T> Specification<T> toSpecification() {
+        return QueryUtil.parse(parseWhere()); // QueryUtil是关键代码，下文亦给出
+    }
+
+    public PageRequest toPageRequest() {
+        PageRequest pageRequest = PageRequest.of(currentpage - 1, pagesize);
+
+        if (StrUtil.isNotBlank(sort)) {
+            if (StrUtil.isBlank(order)) {
+                order = "asc";
+            }
+            List<Sort.Order> orderList = new ArrayList<>();
+            String[] sortarray = sort.split(",");
+            String[] orderarray = order.split(",");
+            for (int i = 0; i < sortarray.length; i++) {
+                String msort = sortarray[i];
+                String morder = "asc";
+                if (i < orderarray.length) {
+                    morder = orderarray[i];
+                }
+                Sort.Order order = new Sort.Order("asc".equals(morder.toLowerCase()) ? Sort.Direction.ASC : Sort.Direction.DESC, msort);
+                orderList.add(order);
+            }
+            pageRequest = PageRequest.of(currentpage - 1, pagesize, Sort.by(orderList));
+        }
+        return pageRequest;
+    }
 
     public <T> Page<T> getPage() {
         Page<T> page = new Page<T>(currentpage, pagesize);
@@ -108,4 +150,5 @@ public class BasePageQuery {
         }
         return result;
     }
+
 }

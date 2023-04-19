@@ -1,15 +1,21 @@
 package com.yy.stock.bot.engine.driver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.yy.stock.bot.engine.driver.model.ChromePerformanceLogRequestWillBeSent.ChromePerformanceLogRequestWillBeSent;
+import com.yy.stock.bot.engine.driver.model.ChromePerformanceLogRequestWillBeSentExtraInfo.ChromePerformanceLogRequestWillBeSentExtraInfo;
 import com.yy.stock.common.util.MySpringUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpHeaders;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,24 +31,55 @@ public class GridDriverEngine {
     private CdpRemoteWebDriver driver;
     private InstructionExecutor executor;
 
-    //    @Value("${bot.gridhub.registerurl}")
-//    @Value("${bot.gridhub.registerUrl}")
-    //为什么改成registerurl就获取不到
-    //因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
-//    @Autowired
     private GridDriverEngineConfig gridDriverEngineConfig;
-    //q:这个配置为什么获取不到
-    //a:因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
-//    private String registerUrl = "http://115.159.45.30:26666";
-
 
     public GridDriverEngine() throws MalformedURLException {
         gridDriverEngineConfig = MySpringUtil.getBean(GridDriverEngineConfig.class);
         this.driver = initChromeDriver();
     }
 
-    public void setOriginCookie(MyCookie[] originCookie) {
-        addCookie(originCookie);
+    public CdpRemoteWebDriver getDriver() {
+        return this.driver;
+    }
+
+    public HttpHeaders getHeadersDontWork(String requestUrl) throws JsonProcessingException {
+        driver.get(requestUrl);
+        var logs = driver.manage().logs().get(LogType.PERFORMANCE);
+        var requestId = "";
+        for (var log : logs) {
+            var message = log.getMessage();
+            if (message.contains("Network.requestWillBeSent") && message.contains(requestUrl)) {
+                System.out.println(message);
+                try {
+                    ChromePerformanceLogRequestWillBeSent model = new ObjectMapper().readValue(message, ChromePerformanceLogRequestWillBeSent.class);
+                    if (model.getMessage().getParams().getRequest().getUrl().contains(requestUrl)) {
+                        requestId = model.getMessage().getParams().getRequestId();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for (var log : logs) {
+            var message = log.getMessage();
+            if (message.contains("Network.requestWillBeSentExtraInfo")) {
+                System.out.println(message);
+                try {
+                    ChromePerformanceLogRequestWillBeSentExtraInfo model = new ObjectMapper().readValue(message, ChromePerformanceLogRequestWillBeSentExtraInfo.class);
+                    if (model.getMessage().getParams().getRequestId().equals(requestId)) {
+                        var h = model.getMessage().getParams().getHeaders();
+                        var headers = new HttpHeaders();
+                        for (var key : h.keySet()) {
+                            headers.add(key, h.get(key));
+                        }
+                        return headers;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 
     public MyCookie[] getCookie() {
@@ -57,7 +94,7 @@ public class GridDriverEngine {
         return list.toArray(res);
     }
 
-    public void addCookie(MyCookie[] cookie) {
+    public void setCookie(MyCookie[] cookie) {
         for (var myCookie : cookie) {
             var c = new Cookie(myCookie.name, myCookie.value);
             driver.manage().addCookie(c);
@@ -71,12 +108,9 @@ public class GridDriverEngine {
         }
     }
 
-//    private boolean testSessionsFull() {
-//        return this.driver.getSessionId() == null;
-//    }
-
-    public CdpRemoteWebDriver getDriver() {
-        return this.driver;
+    public String getHtml(String url) {
+        driver.get(url);
+        return driver.getPageSource();
     }
 
     public InstructionExecutor getExecutor() {
@@ -86,16 +120,18 @@ public class GridDriverEngine {
         return executor;
     }
 
-    public void quitDriver() {
+    public void byebye() {
         if (this.driver != null) {
             this.driver.close();
             this.driver.quit();
+            this.driver = null;
+            log.info("Driver now close, byebye");
         }
     }
 
     private CdpRemoteWebDriver initChromeDriver() throws MalformedURLException {
         log.info("开始初始化remoteChromeDriver");
-        ChromeOptions chromeOptions = new ChromeOptions();
+//        ChromeOptions chromeOptions = new ChromeOptions();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         options.addArguments("--disable-popup-blocking"); // 禁用阻止弹出窗口
@@ -116,17 +152,25 @@ public class GridDriverEngine {
 
         // set performance logger
         // this sends Network.enable to chromedriver
+
+
+        Map<String, Object> networkPrefs = new HashMap();
+        networkPrefs.put("enableNetwork", true);
+        networkPrefs.put("enablePage", false);
+//        networkPrefs.put("enableTimeline", false);
+        options.setExperimentalOption("perfLoggingPrefs", networkPrefs);
         LoggingPreferences logPrefs = new LoggingPreferences();
         logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        logPrefs.enable(LogType.BROWSER, Level.ALL);
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+//        logPrefs.enable(LogType.BROWSER, Level.ALL);
+        options.setCapability("goog:loggingPrefs", logPrefs);
+//        options.setCapability("perfLoggingPrefs", networkPrefs);
+        options.setCapability("goog:perfLoggingPrefs", networkPrefs);
+//        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+
 //        CdpRemoteWebDriver driver = new RemoteCdpRemoteWebDriver(new URL(hubUrl), chromeOptions);
         var registerUrl = gridDriverEngineConfig.getRegisterUrl();
-        CdpRemoteWebDriver driver = new CdpRemoteWebDriver(new URL(registerUrl), chromeOptions);
-        //q:为什么registerUrl的值是null
-        //a:因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
-        //q:为什么在application.yml就能获取到
-        //a:因为在application.yml中，这个配置是在spring.profiles.active: prod中，而不是在spring.profiles.active: dev中
+        CdpRemoteWebDriver driver = new CdpRemoteWebDriver(new URL(registerUrl), options);
+        driver.manage().window().maximize();
 
         //修改window.navigator.webdirver=undefined，防机器人识别机制
         Map<String, Object> command = new HashMap<>();
@@ -136,4 +180,13 @@ public class GridDriverEngine {
         return driver;
     }
 
+    public String getBrowserInfo() {
+        Capabilities cap = driver.getCapabilities();
+
+        String browserName = cap.getBrowserName();
+        String browserVersion = (String) cap.getCapability("browserVersion");
+        String osName = Platform.fromString((String) cap.getCapability("platformName")).name().toLowerCase();
+
+        return browserName + browserVersion + "-" + osName;
+    }
 }

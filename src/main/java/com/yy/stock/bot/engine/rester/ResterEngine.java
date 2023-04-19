@@ -43,6 +43,10 @@ public abstract class ResterEngine implements PluggableEngine {
         savedHeaders.set("Cookie", builder.toString());
     }
 
+//    public void updateHeaders(HttpHeaders headers) {
+//        savedHeaders = headers;
+//    }
+
     public String getStringResponse(String url) {
         HttpEntity entity = new HttpEntity<>(savedHeaders);
         HttpEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {

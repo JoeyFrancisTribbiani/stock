@@ -1,7 +1,10 @@
 package com.yy.stock.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.seleniumgrid.model.GridStatusResponseModel;
+import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -33,6 +36,77 @@ class WebDriverTest {
 //            dList.get(i).quit();
 //            Thread.sleep(5000L);
 //        }
+    }
+
+    public int getCusorWidth() {
+        return 16;
+    }
+
+    @Test
+    public void solveChickenCaptcha() throws InterruptedException, JsonProcessingException {
+        var driverEngine = new DebugChromeDriverEngine();
+        var ulr = "https://passport.aliexpress.com/";
+        var testUrl = "https://passport.aliexpress.com/ac/pc_r_open.htm?fromSite=13";
+//        if (!driverEngine.getExecutor().getCurrentUrl().contains(ulr)) {
+//            return;
+//        }
+//        Thread.sleep(5000);
+//        driverEngine.getExecutor().switchToFrame("baxia-dialog-content");
+        driverEngine.getDriver().get(testUrl);
+        Thread.sleep(5000);
+        var headers = driverEngine.getHeaders("passport.aliexpress.com");
+
+        JavascriptExecutor executor = driverEngine.getDriver();
+        executor.executeScript(listenMouseMove(), "");
+        var chickenIconsClassName = "nc-scrape-icon";
+        var chickenIcons = driverEngine.getExecutor().listByClassName(chickenIconsClassName);
+        var bgCanvas = driverEngine.getExecutor().getById("nc_1_canvas");
+        var chickenIcon = chickenIcons.get(0);
+        var chickenIconHeight = chickenIcon.getSize().getHeight();
+        var chickenIconX = chickenIcon.getLocation().getX();
+        var chickenIconY = chickenIcon.getLocation().getY();
+        var xs = new int[]{chickenIconX + 8, 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0};
+        var ys = new int[]{chickenIconY, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight};
+        driverEngine.getExecutor().moveToAndDropAndDropBy(xs, ys);
+        Thread.sleep(1000);
+
+
+        chickenIcon = chickenIcons.get(1);
+        chickenIconHeight = chickenIcon.getSize().getHeight();
+        chickenIconX = chickenIcon.getLocation().getX() - chickenIconX - (4 * getCusorWidth());
+        chickenIconY = chickenIcon.getLocation().getY() - chickenIconY - chickenIconHeight;
+        xs = new int[]{chickenIconX - 8, 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, -8 * getCusorWidth()};
+        ys = new int[]{chickenIconY - 6, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, -chickenIconHeight};
+        driverEngine.getExecutor().moveToAndDropAndDropBy(xs, ys);
+        Thread.sleep(3000);
+        var submitButton = driverEngine.getExecutor().getById("submitBtn");
+        submitButton.click();
+        Thread.sleep(1000);
+    }
+
+    private String listenMouseMove() {
+        return """
+                document.addEventListener('mousemove', function (e) {
+                    console.log(e.clientX, e.clientY);
+                });
+                """;
+    }
+
+    private String moveCusor(int x1, int y1, int x2, int y2) {
+        return """
+                var event = new MouseEvent('mousemove', {
+                  clientX: 582,
+                  clientY: 359
+                });
+                document.dispatchEvent(event);                
+                console.log("move to 12,16");
+                var event = new MouseEvent('mousemove', {
+                  clientX: 562,
+                  clientY:380 
+                });
+                document.dispatchEvent(event);                
+                console.log("move to 22,26");
+                """;
     }
 
     @Test

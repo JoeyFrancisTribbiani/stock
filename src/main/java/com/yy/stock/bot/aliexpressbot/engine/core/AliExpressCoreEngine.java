@@ -4,7 +4,7 @@ import com.yy.stock.bot.engine.core.CoreEngine;
 
 public abstract class AliExpressCoreEngine extends CoreEngine {
     public void solveLoginCaptcha() throws InterruptedException {
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         driverEngine.getExecutor().switchToFrame("baxia-dialog-content");
         var capButtonXpath = "nc_1_n1z";
         var capButton = driverEngine.getExecutor().getById(capButtonXpath);
@@ -17,11 +17,12 @@ public abstract class AliExpressCoreEngine extends CoreEngine {
         driverEngine.getExecutor().dragAndDropBy(capButton, xs, ys);
         Thread.sleep(1000);
         driverEngine.getExecutor().switchToDefaultContent();
+        Thread.sleep(1000);
     }
+
 
     @Override
     public void solvePayCaptcha() throws InterruptedException {
         solveLoginCaptcha();
     }
-
 }

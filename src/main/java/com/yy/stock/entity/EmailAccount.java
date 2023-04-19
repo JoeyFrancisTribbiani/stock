@@ -24,6 +24,8 @@ public class EmailAccount {
 
     @Column(name = "password")
     private String password;
+    @Column(name = "third_app_login_password")
+    private String thirdAppLoginPassword;
 
     @Column(name = "login_url")
     private String loginUrl;
@@ -46,4 +48,7 @@ public class EmailAccount {
     @Column(name = "mobile")
     private String mobile;
 
+    @OneToOne
+    @JoinColumn(name = "buyer_account_id")
+    private BuyerAccount buyerAccount;
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
-@RequestMapping("/syncOrder")
+@RequestMapping("/api/v1/syncOrder")
 public class SyncOrderController {
 
     @Autowired

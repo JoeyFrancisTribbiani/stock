@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -25,10 +26,8 @@ public class BuyerAccount implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne
     @JoinColumn(name = "platform_id")
-//    @Column(name = "platform_id", nullable = false)
-//    @JsonSerialize(using = ToStringSerializer.class)
     @JsonIgnoreProperties({"buyerAccounts"})
     private Platform platform;
 
@@ -57,17 +56,17 @@ public class BuyerAccount implements Serializable {
 
     @Column(name = "verify_email")
     private String verifyEmail;
-
     @Column(name = "verify_email_password")
     private String verifyEmailPassword;
     @Column(name = "last_login_time")
     private Date lastLoginTime;
     @Column(name = "last_pay_time")
     private Date lastPayTime;
-    @Column(name = "bot_status", columnDefinition = "varchar(18) default 'IDLE'")
+    @Column(name = "bot_status")
+    @ColumnDefault("'idle'")
     private String botStatus;
     @Column(name = "status")
     private String status;
-//    @Column(name = "in_buying")
-//    private boolean inBuying;
+    @Column(name = "role")
+    private String role;
 }

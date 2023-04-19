@@ -65,7 +65,7 @@ public class SupplierController {
             throw new IllegalArgumentException("url 不能为空");
         }
         var platform = PlatformFactory.getPlatformByUrl(url, countryCode);
-        var buyerAccount = buyerAccountService.getEarliestLoginedIdleBuyer(platform.getId());
+        var buyerAccount = buyerAccountService.getFetcherAccount(platform.getId());
         var bot = botFactory.getBot(buyerAccount);
         var html = bot.fetch(url);
         if (Objects.equals(html, GlobalVariables.PRODUCT_PAGE_NOT_FOUND)) {
@@ -86,7 +86,7 @@ public class SupplierController {
                 supplier = vo.getSupplier();
                 supplier.setAmazonSku(vo.getSku())
                         .setAmazonAuthId(new BigInteger(vo.getAmazonAuthId()))
-                        .setPlatformId(vo.getPlatform().getId())
+                        .setPlatform(vo.getPlatform())
                         .setMarketplaceId(vo.getMarketplaceid())
                         .setAmazonName(vo.getName())
                         .setAmazonAsin(vo.getAsin());

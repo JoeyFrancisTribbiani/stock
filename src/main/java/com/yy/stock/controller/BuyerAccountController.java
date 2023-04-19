@@ -1,6 +1,7 @@
 package com.yy.stock.controller;
 
 import com.yy.stock.bot.factory.BotFactory;
+import com.yy.stock.common.result.Result;
 import com.yy.stock.dto.BuyerStatusEnum;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.service.BuyerAccountService;
@@ -13,10 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/buyerAccount")
+@RequestMapping("/api/v1/buyerAccount")
 public class BuyerAccountController {
 
     @Autowired
@@ -24,19 +26,21 @@ public class BuyerAccountController {
     @Autowired
     private BotFactory botFactory;
 
-    @PostMapping
-    public String save(@Valid @RequestBody BuyerAccount vO) {
-        return buyerAccountService.save(vO).toString();
+    @PostMapping("/save")
+    public Result<String> save(@Valid @RequestBody BuyerAccount vO) {
+        return Result.success(buyerAccountService.save(vO).toString());
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") BigInteger id) {
-        buyerAccountService.delete(id);
+    @PostMapping("delete")
+//    @DeleteMapping
+    public Result<String> batchDelete(@Valid @RequestBody List<BuyerAccount> list) {
+        buyerAccountService.batchDelete(list);
+        return Result.success("success");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public void update(@Valid @RequestBody BuyerAccount vO) {
-        if (vO.getStatus().equals(BuyerStatusEnum.active.name())) {
+        if (vO.getStatus().equals(BuyerStatusEnum.inactive.name())) {
             botFactory.removeBot(vO);
         }
         buyerAccountService.update(vO);
@@ -48,8 +52,9 @@ public class BuyerAccountController {
         return buyerAccountService.getById(id);
     }
 
-    @GetMapping
-    public Page<BuyerAccount> query(@Valid BuyerAccountQueryVO vO) {
-        return buyerAccountService.query(vO);
+    @PostMapping("/list")
+    public Result<Page<BuyerAccount>> query(@Valid @RequestBody BuyerAccountQueryVO vO) {
+        var pageble = buyerAccountService.query(vO);
+        return Result.success(pageble);
     }
 }

@@ -20,6 +20,7 @@ import com.yy.stock.service.StockStatusService;
 import com.yy.stock.service.SupplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class StockAsyncExecutor {
     @Autowired
     private PlatformService platformService;
 
-    //    @Async("asyncServiceExecutor")
+    @Async("asyncServiceExecutor")
     public void startStockAsync(OrderItemAdaptorInfoDTO orderToStock, StockStatus stockStatus) {
         log.info(getExecutorName(orderToStock) + " 进入 asyncServiceExecutor进行多线程下单");
         Bot bot = null;
@@ -53,7 +54,7 @@ public class StockAsyncExecutor {
         try {
             AmzOrdersAddress ordersAddress = amzOrdersAddressService.getByOrderInfo(orderToStock);
             Supplier supplier = supplierService.getByAmazonOrderInfo(orderToStock);
-            platform = platformService.getById(supplier.getPlatformId());
+            platform = supplier.getPlatform();
 
 
             buyerLockKey = "BUYER_LOCK_KEY-PLATFORM_ID-" + platform.getId();
@@ -72,7 +73,7 @@ public class StockAsyncExecutor {
             }
 
             bot = botFactory.getBot(buyer);
-            stockStatus.setBuyerId(buyer.getId())
+            stockStatus.setBuyer(buyer)
                     .setSupplierId(supplier.getId())
                     .setOrderItemId(orderToStock.getOrderItemId());
             stockStatusService.save(stockStatus);
@@ -88,6 +89,7 @@ public class StockAsyncExecutor {
             if (buyer != null) {
                 buyerAccountService.setBuyerBotStatus(buyer, BotStatus.idle);
             }
+            ex.printStackTrace();
             log.info(getExecutorName(orderToStock) + "bot下单失败,ex:" + ex.getMessage());
         }
 

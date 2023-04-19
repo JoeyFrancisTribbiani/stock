@@ -3,6 +3,7 @@ package com.yy.stock.bot.engine.driver;
 import com.yy.stock.bot.helper.MessageHelper;
 import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
@@ -35,11 +37,22 @@ public class InstructionExecutor {
         return driver.getPageSource();
     }
 
+
+    public String getBrowserInfo() {
+        Capabilities cap = driver.getCapabilities();
+
+        String browserName = cap.getBrowserName();
+        String browserVersion = (String) cap.getCapability("browserVersion");
+        String osName = cap.getCapability("platformName").toString().toLowerCase();
+
+        return browserName + browserVersion + "-" + osName;
+    }
+
     public void clearAndType(WebElement field, String text) {
         field.clear();
         field.click();
         if (!field.getAttribute("value").equals("")) {
-            var os = System.getProperty("os.name");
+            var os = getBrowserInfo();
             if (os != null) {
                 os = os.toLowerCase();
                 if (os.contains("mac")) {
@@ -108,6 +121,11 @@ public class InstructionExecutor {
                 .until(d -> el.findElement(By.tagName(tagName)));
     }
 
+    public WebElement getByTagName(String tagName) {
+        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
+                .until(d -> d.findElement(By.tagName(tagName)));
+    }
+
     public List<WebElement> listByTagName(WebElement el, String tagName) {
         return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
                 .until(d -> el.findElements(By.tagName(tagName)));
@@ -172,11 +190,100 @@ public class InstructionExecutor {
         action.release().build().perform();
     }
 
+    public void moveToAndDropAndDropBy(WebElement backCanvas, int[] xs, int[] ys) throws InterruptedException {
+        Actions action = new Actions(driver);
+//        action.dragAndDropBy(capButton, slidingDistance, i).build().perform();
+        action.moveToElement(backCanvas);
+        Thread.sleep(1000);
+        action.moveByOffset(xs[0], ys[0]);
+        Thread.sleep(1000);
+        action.clickAndHold();
+        for (int j = 1; j < xs.length; j++) {
+            action.moveByOffset(xs[j], ys[j]);
+            Thread.sleep(RandomUtils.nextInt(100, 500));
+        }
+        action.release().build().perform();
+    }
+
     public void switchToFrame(String s) {
         driver.switchTo().frame(s);
+    }
+
+    public void switchToFrame(int i) {
+        driver.switchTo().frame(i);
     }
 
     public void switchToDefaultContent() {
         driver.switchTo().defaultContent();
     }
+
+    public void moveToAndDropAndDropBy(int[] xs, int[] ys) throws InterruptedException {
+        Actions action = new Actions(driver);
+        action.moveByOffset(xs[0], ys[0]).perform();
+        action.click().perform();
+        Thread.sleep(1000);
+        action.clickAndHold().perform();
+        for (int j = 1; j < xs.length; j++) {
+            var pointsX = getTrack(xs[j]);
+            var pointsY = getTrack(ys[j]);
+            if (pointsX.size() != pointsY.size()) {
+                if (pointsX.size() > pointsY.size()) {
+                    pointsY = new ArrayList<>(pointsX.size());
+                    for (int i = 0; i < pointsX.size(); i++) {
+                        pointsY.add(0);
+                    }
+                } else {
+                    pointsX = new ArrayList<>(pointsY.size());
+                    for (int i = 0; i < pointsY.size(); i++) {
+                        pointsX.add(0);
+                    }
+                }
+            }
+            for (int k = 0; k < pointsX.size(); k++) {
+                action.moveByOffset(pointsX.get(k), pointsY.get(k)).perform();
+            }
+        }
+    }
+
+    public List<Integer> getTrack(int distance) {
+        // 移动轨迹
+        List<Integer> track = new ArrayList<>();
+        // 当前位移
+        int current = 0;
+        // 减速阈值
+        int mid = Math.abs(distance) * 4 / 5;
+        // 计算间隔
+        double t = 0.5;
+        // 初速度
+        double v = 1;
+
+
+        //distance 求绝对值
+        while (current < Math.abs(distance)) {
+            int a;
+            if (current < mid) {
+                // 加速度为2
+                a = 4;
+            } else {
+                // 加速度为-2
+                a = -3;
+            }
+            double v0 = v;
+            // 当前速度
+            v = v0 + a * t;
+            // 移动距离
+            int move = (int) Math.round(v0 * t + 1.0 / 2 * a * t * t);
+            // 当前位移
+            current += move;
+            // 加入轨迹
+            if (distance < 0) {
+                track.add(-move);
+            } else {
+                track.add(move);
+            }
+//            track.add(move);
+        }
+        return track;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.yy.stock.controller;
 
+import com.yy.stock.common.result.Result;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.service.PlatformService;
 import com.yy.stock.vo.PlatformQueryVO;
@@ -12,18 +13,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/platform")
+@RequestMapping("/api/v1/platform")
 public class PlatformController {
 
     @Autowired
     private PlatformService platformService;
 
-    @PostMapping
-    public String save(@Valid @RequestBody Platform vO) {
-        return platformService.save(vO).toString();
+    @PostMapping("/save")
+    public Result<String> save(@Valid @RequestBody Platform vO) {
+        return Result.success(platformService.save(vO).toString());
     }
 
     @DeleteMapping("/{id}")
@@ -42,8 +44,15 @@ public class PlatformController {
         return platformService.getById(id);
     }
 
-    @GetMapping
-    public Page<Platform> query(@Valid PlatformQueryVO vO) {
-        return platformService.query(vO);
+    @PostMapping("/list")
+    public Result<Page<Platform>> query(@RequestBody PlatformQueryVO vO) {
+        var pageble = platformService.query(vO);
+        return Result.success(pageble);
+    }
+
+    @PostMapping("/allList")
+    public Result<List<Platform>> list() {
+        var pageble = platformService.allList();
+        return Result.success(pageble);
     }
 }

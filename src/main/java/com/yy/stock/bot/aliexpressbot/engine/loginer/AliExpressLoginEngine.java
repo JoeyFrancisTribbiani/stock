@@ -2,6 +2,7 @@ package com.yy.stock.bot.aliexpressbot.engine.loginer;
 
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
@@ -21,29 +22,35 @@ public class AliExpressLoginEngine extends LoginEngine {
 
     @Override
     protected boolean loginUseCookie() {
-        coreEngine.goHome();
+        coreEngine.testGoHome();
         try {
             String currentUrl = instructionExecutor.getCurrentUrl();// 获取跳转后的url地址
             if (currentUrl.startsWith(coreEngine.urls.loginPage)) {
-                var html = instructionExecutor.getPageSource();
-                if (html.contains("You are now signed in to your account")) {
+                var fmLoginSpan = instructionExecutor.getByClassName("fm-logined-name");
+                var text = fmLoginSpan.getText();
+                if (text.equals(coreEngine.getBuyerAccount().getEmail())) {
+//                if (html.contains("You are now signed in to your account")) {
                     var accessNowButton = instructionExecutor.getByXpath(coreEngine.xpaths.loginAccessNowButton);
                     accessNowButton.click();
                     Thread.sleep(2000);
                     // todo 滑块验证
                     try {
                         coreEngine.solveLoginCaptcha();
-                        accessNowButton.click();
+//                        accessNowButton.click();
                         Thread.sleep(500);
                     } catch (Exception e) {
                         log.error("滑块验证失败", e);
                     }
-                    html = instructionExecutor.getPageSource();
-                    if (html.contains("Your account name or password is incorrect.")) {
-                        return false;
+                    try {
+                        var html = instructionExecutor.getPageSource();
+                        if (html.contains("Your account name or password is incorrect.")) {
+                            return false;
+                        }
+                    } catch (Exception e) {
+                        log.error("获取页面源代码失败", e);
                     }
 
-                    instructionExecutor.waitForUrl(coreEngine.urls.homePage, 18);
+                    instructionExecutor.waitForUrl(coreEngine.urls.homePage, 600);
                     return true;
                 } else {
                     return false;
@@ -155,14 +162,13 @@ public class AliExpressLoginEngine extends LoginEngine {
                 Thread.sleep(2000L);
             }
         }
-        var links = instructionExecutor.listByTagName(checkListButton, "a");
+//        var links = instructionExecutor.listByTagName(checkListButton, "a");
+        var links = instructionExecutor.listByClassName("address-select-trigger");
         for (var a : links) {
             var dataRole = a.getAttribute("data-role");
             if (dataRole.equals("country")) {
                 var aText = a.getText();
-                if (aText.contains(countryName)) {
-                    return;
-                } else {
+                if (!aText.contains(countryName)) {
                     a.click();
                     break;
                 }
@@ -170,15 +176,20 @@ public class AliExpressLoginEngine extends LoginEngine {
         }
         Thread.sleep(2000L);
 
-        var selectItemLis = instructionExecutor.listByTagName(checkListButton, "li");
+        var countryNameInput = instructionExecutor.getByTagName(ref.selectDiv, "input");
+        instructionExecutor.clearAndType(countryNameInput, countryName);
+        Thread.sleep(1000L);
+
+        var selectItemLis = instructionExecutor.listByRelativeXpath(ref.selectDiv, "//li[@class='address-select-item ']");
         for (var li : selectItemLis) {
             var dataName = li.getAttribute("data-name");
             if (dataName.equals(countryName)) {
+                log.debug("选择国家:{},点击li", countryName);
                 li.click();
                 break;
             }
         }
-        Thread.sleep(3000L);
+        Thread.sleep(2000L);
 
         var languageSwitcher = instructionExecutor.getByClassName("switcher-language");
         var languageButton = instructionExecutor.getByRelativeXpath(languageSwitcher, ".//span[@class='select-item']");
@@ -238,7 +249,7 @@ public class AliExpressLoginEngine extends LoginEngine {
 
         String accountVerifyEmailAddress = coreEngine.getBuyerAccount().getVerifyEmail();
         String accountVerifyEmailPassword = coreEngine.getBuyerAccount().getVerifyEmailPassword();
-        String code = emailEngine.getEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
+        String code = emailEngine.getRegisterEmailVerifyCode(accountVerifyEmailAddress, accountVerifyEmailPassword);
 
         if (code != "") {
             WebElement email_code_input = instructionExecutor.getByXpath(coreEngine.xpaths.getVerifyEmailCodeInput());
@@ -269,9 +280,93 @@ public class AliExpressLoginEngine extends LoginEngine {
             coreEngine.solveLoginCaptcha();
             loginButton.click();
         } catch (Exception e) {
-            log.error("滑块验证失败", e);
+            log.error("密码登录：滑块验证失败", e);
         }
 
+        try {
+            solveLoginEmailVerifyCode();
+            loginButton.click();
+        } catch (Exception e) {
+            log.error("密码登录：邮箱验证失败", e);
+        }
+
+        try {
+            solveChickenCaptcha();
+            loginButton.click();
+        } catch (Exception e) {
+            log.error("密码登录：小鸡验证失败", e);
+        }
         Thread.sleep(8888);
+    }
+
+    private void solveLoginEmailVerifyCode() throws MessagingException, IOException, InterruptedException {
+        var iframeList = instructionExecutor.listByTagName("iframe");
+        if (iframeList.size() >= 2) {
+            var id2 = iframeList.get(1).getAttribute("id");
+            instructionExecutor.switchToFrame(1);
+        }
+        var input = instructionExecutor.getByClassName("ui-input-checkcode");
+        input.click();
+        var buttonDiv = instructionExecutor.getByClassName("submit");
+        var button = instructionExecutor.getByRelativeXpath(buttonDiv, ".//button");
+
+        var code = emailEngine.getLoginEmailVerifyCode(coreEngine.getBuyerAccount().getVerifyEmail(), coreEngine.getBuyerAccount().getVerifyEmailPassword());
+        if (code != "") {
+            Thread.sleep(1000L);
+            instructionExecutor.clearAndType(input, code);
+            Thread.sleep(1000L);
+            button.click();
+            Thread.sleep(3000L);
+        }
+
+//        driverEngine.getExecutor().switchToDefaultContent();
+        Thread.sleep(1000L);
+    }
+
+    public void solveChickenCaptcha() throws InterruptedException {
+        var ulr = "https://passport.aliexpress.com/";
+//        var testUrl = "https://passport.aliexpress.com/ac/pc_r_open.htm?fromSite=13";
+        if (!driverEngine.getExecutor().getCurrentUrl().contains(ulr)) {
+            return;
+        }
+        Thread.sleep(3000);
+
+        JavascriptExecutor executor = driverEngine.getDriver();
+        executor.executeScript(listenMouseMove(), "");
+        var chickenIconsClassName = "nc-scrape-icon";
+        var chickenIcons = driverEngine.getExecutor().listByClassName(chickenIconsClassName);
+        var chickenIcon = chickenIcons.get(0);
+        var chickenIconHeight = chickenIcon.getSize().getHeight();
+        var chickenIconX = chickenIcon.getLocation().getX();
+        var chickenIconY = chickenIcon.getLocation().getY();
+        var xs = new int[]{chickenIconX + 8, 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0};
+        var ys = new int[]{chickenIconY, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight};
+        driverEngine.getExecutor().moveToAndDropAndDropBy(xs, ys);
+        Thread.sleep(1000);
+
+
+        chickenIcon = chickenIcons.get(1);
+        chickenIconHeight = chickenIcon.getSize().getHeight();
+        chickenIconX = chickenIcon.getLocation().getX() - chickenIconX - (4 * getCusorWidth());
+        chickenIconY = chickenIcon.getLocation().getY() - chickenIconY - chickenIconHeight;
+        xs = new int[]{chickenIconX - 8, 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, getCusorWidth(), 0, -8 * getCusorWidth()};
+        ys = new int[]{chickenIconY - 6, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, 0, -chickenIconHeight, 0, chickenIconHeight, -chickenIconHeight};
+        driverEngine.getExecutor().moveToAndDropAndDropBy(xs, ys);
+        Thread.sleep(3000);
+        var submitButton = driverEngine.getExecutor().getById("submitBtn");
+        submitButton.click();
+        Thread.sleep(5000);
+    }
+
+    private String listenMouseMove() {
+        return """
+                document.addEventListener('mousemove', function (e) {
+                    console.log(e.clientX, e.clientY);
+                });
+                """;
+    }
+
+    public int getCusorWidth() {
+        return 16;
     }
 }

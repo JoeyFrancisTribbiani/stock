@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Slf4j
 //@Component
 //@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
-public class AliExpressStockEngine extends StockEngine {
+public abstract class AliExpressStockEngine extends StockEngine {
     protected PlatformService platformService;
     protected StockStatusService stockStatusService;
 //    protected AliExpressBrCoreEngine coreEngine;
@@ -54,41 +54,51 @@ public class AliExpressStockEngine extends StockEngine {
     public void clickBuyNow() throws InterruptedException {
         var productPage = stockRequest.getSupplier().getUrl();
         driverEngine.getDriver().get(productPage);
-        var styleList = stockRequest.getSupplier().getStyleName().split(",");
-        var skuPanels = driverEngine.getExecutor().listByClassName("product-sku");
-        for (int i = 0; i < styleList.length; i++) {
-            var panel = skuPanels.get(i);
-            var skuImgList = driverEngine.getExecutor().listByRelativeXpath(panel, ".//img");
-            for (var img : skuImgList) {
-                var styleTitle = img.getAttribute("title");
-                if (styleTitle != null & styleTitle.equals(styleList[i])) {
-                    img.click();
-                    boolean isSelected = false;
-                    while (!isSelected) {
-                        var imgParentLi = driverEngine.getExecutor().getByRelativeXpath(img, ".//../..");
-                        var className = imgParentLi.getAttribute("class");
-                        if (className == null) {
-                            continue;
-                        }
-                        if (className.contains("selected")) {
-                            isSelected = true;
-                        } else {
-                            img.click();
+        var html = driverEngine.getDriver().getPageSource();
+        if (html.contains("sku-item--wrap")) {
+            var styleList = stockRequest.getSupplier().getStyleName().split(",");
+            var skuPanels = driverEngine.getExecutor().listByClassName("product-sku");
+        } else {
+            var styleList = stockRequest.getSupplier().getStyleName().split(",");
+            var skuPanels = driverEngine.getExecutor().listByClassName("product-sku");
+            for (int i = 0; i < styleList.length; i++) {
+                if (skuPanels.size() <= i) {
+                    break;
+                }
+
+                var panel = skuPanels.get(i);
+                var skuImgList = driverEngine.getExecutor().listByRelativeXpath(panel, ".//img");
+                for (var img : skuImgList) {
+                    var styleTitle = img.getAttribute("title");
+                    if (styleTitle != null & styleTitle.equals(styleList[i])) {
+                        img.click();
+                        boolean isSelected = false;
+                        while (!isSelected) {
+                            var imgParentLi = driverEngine.getExecutor().getByRelativeXpath(img, ".//../..");
+                            var className = imgParentLi.getAttribute("class");
+                            if (className == null) {
+                                continue;
+                            }
+                            if (className.contains("selected")) {
+                                isSelected = true;
+                            } else {
+                                img.click();
+                            }
                         }
                     }
                 }
             }
+
+            WebElement amountDiv = driverEngine.getExecutor().getByClassName("product-quantity");
+            var amountInput = driverEngine.getExecutor().getByRelativeXpath(amountDiv, ".//input");
+            driverEngine.getExecutor().clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
+            Thread.sleep(2333);
+
+            var buyNowButtonDiv = driverEngine.getExecutor().getByClassName("product-action");
+            var buyNowButton = driverEngine.getExecutor().getByRelativeXpath(buyNowButtonDiv, ".//button");
+            buyNowButton.click();
+            Thread.sleep(2333);
         }
-
-        WebElement amountDiv = driverEngine.getExecutor().getByClassName("product-quantity");
-        var amountInput = driverEngine.getExecutor().getByRelativeXpath(amountDiv, ".//input");
-        driverEngine.getExecutor().clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
-        Thread.sleep(2333);
-
-        var buyNowButtonDiv = driverEngine.getExecutor().getByClassName("product-action");
-        var buyNowButton = driverEngine.getExecutor().getByRelativeXpath(buyNowButtonDiv, ".//button");
-        buyNowButton.click();
-        Thread.sleep(2333);
     }
 
     @Override
@@ -109,8 +119,8 @@ public class AliExpressStockEngine extends StockEngine {
         var supplierPriceOdr = new BigDecimal(stockRequest.getSupplier().getPrice());
         var supplierPriceBuffer = stockRequest.getSupplier().getPriceBuffer();
         var supplierPrice = supplierPriceOdr.add(supplierPriceBuffer);
-        supplierPrice = subTotalPrice.multiply(quantityToBuy);
-        log.info(coreEngine.getBotName() + "供应商价格:$" + supplierPrice);
+        supplierPrice = supplierPrice.multiply(quantityToBuy);
+        log.info(coreEngine.getBotName() + "供应商价格:" + supplierPrice);
         log.info(coreEngine.getBotName() + "本次购买数量:" + quantityToBuy);
         log.info(coreEngine.getBotName() + "页面显示的价格:" + subTotalPrice);
         if (subTotalPrice.compareTo(supplierPrice) > 0) {
@@ -127,7 +137,7 @@ public class AliExpressStockEngine extends StockEngine {
                     var feeDiv = divs.get(1);
 //                    var textDiv = driverEngine.getExecutor().getByRelativeXpath( feeDiv, ".//div");
                     text = feeDiv.getText();
-                    text = text.equals("Free") ? "US $0" : text;
+//                    text = text.equals("Free") ? "US $0" : text;
                     break;
                 }
             }
@@ -146,6 +156,23 @@ public class AliExpressStockEngine extends StockEngine {
 
             WebElement payNowButton = driverEngine.getExecutor().getByXpath(coreEngine.xpaths.payNowButton);
             payNowButton.click();
+
+            try {
+                selectPaymentMethod();
+
+                payNowButton.click();
+            } catch (Exception e) {
+                log.error("select payment method failed", e);
+            }
+            try {
+                coreEngine.solveLoginCaptcha();
+                payNowButton.click();
+            } catch (Exception e) {
+                log.error("solve captcha failed", e);
+            }
+
+//            payNowButton.click();
+
             var succTips = "Payment Successful";
             int waitTick = 0;
             while (!driverEngine.getDriver().getPageSource().contains(succTips)) {
@@ -167,6 +194,7 @@ public class AliExpressStockEngine extends StockEngine {
             throw new PayFailedException("付款开关未打开，实际没有付款！");
         }
     }
+
 
     private String getPlatformOrderId() {
         driverEngine.getDriver().get(coreEngine.urls.orderListPage);

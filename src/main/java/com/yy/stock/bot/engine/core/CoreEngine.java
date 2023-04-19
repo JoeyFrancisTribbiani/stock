@@ -9,6 +9,7 @@ import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.engine.email.EmailEngine;
 import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
+import com.yy.stock.bot.engine.register.RegisterEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
 import com.yy.stock.bot.engine.stocker.AddressEngine;
 import com.yy.stock.bot.engine.stocker.StockEngine;
@@ -19,8 +20,12 @@ import com.yy.stock.bot.selector.BaseXpaths;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
+import com.yy.stock.entity.EmailAccount;
 import com.yy.stock.service.BuyerAccountService;
+import com.yy.stock.service.StockStatusService;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 
 import javax.mail.MessagingException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -31,12 +36,8 @@ import java.net.MalformedURLException;
 import java.util.Currency;
 import java.util.Locale;
 
-//@Accessors(chain = true)
 @Getter
-//@Setter
-//@Component
-//@Scope(value = org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = org.springframework.context.annotation.ScopedProxyMode.TARGET_CLASS)
-
+@Slf4j
 public abstract class CoreEngine {
     public BaseUrls urls;
     public BaseXpaths xpaths;
@@ -44,23 +45,19 @@ public abstract class CoreEngine {
     protected GridDriverEngine driverEngine;
     protected ResterEngine resterEngine;
     protected LoginEngine loginEngine;
+    protected RegisterEngine registerEngine;
     protected EmailEngine emailEngine;
     protected StockEngine stockEngine;
     protected AddressEngine addressEngine;
     protected TrackEngine trackEngine;
     protected FetcherEngine fetcherEngine;
-    private BuyerAccount buyerAccount;
-    private BuyerAccountService buyerAccountService;
-    private BotStatus botStatus = BotStatus.idle;
+    protected BuyerAccount buyerAccount;
+    protected BuyerAccountService buyerAccountService;
+    protected StockStatusService stockStatusService;
+    protected BotStatus botStatus = BotStatus.idle;
 
-//    public CoreEngine() throws JsonProcessingException, MalformedURLException {
-//        this.driverEngine = new GridDriverEngine();
-//        this.buyerAccountService = new BuyerAccountService();
-//        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
-//        this.driverEngine = SpringUtil.getBean(GridDriverEngine.class);
-//        initialBotCookie();
-//    }
-
+    // bot状态
+    // region
     public String getBotName() {
         //获取非全限定类名
         //return this.getClass().getSimpleName();
@@ -90,23 +87,54 @@ public abstract class CoreEngine {
         buyerAccountService.save(buyerAccount);
     }
 
-    public void updateBotCookie() throws JsonProcessingException {
-        var cookies = driverEngine.getCookie();
-        resterEngine.updateCookie(cookies);
-        persistBotCookie(cookies);
-    }
-
     public void updateLoginTime() {
         buyerAccount.setLastLoginTime(DateTime.now());
         buyerAccountService.save(buyerAccount);
     }
 
-    public void initialBotCookie() throws JsonProcessingException {
+    //endregion
+
+
+    public void init(BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
+        this.buyerAccount = buyerAccount;
+        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
+        this.stockStatusService = SpringUtil.getBean(StockStatusService.class);
+        this.driverEngine = new GridDriverEngine();
+        assemble();
+        initialBotCookieAndHeaders();
+    }
+
+    // bot header & cookie
+    // region
+    public void initialBotCookieAndHeaders() throws JsonProcessingException {
         var cookies = getLoginCookie();
-        goHome();
-        driverEngine.setOriginCookie(cookies);
-        goHome();
+        testGoHome();
+        driverEngine.setCookie(cookies);
+        testGoHome();
         resterEngine.updateCookie(cookies);
+    }
+
+    private MyCookie[] getLoginCookie() throws JsonProcessingException {
+        String cookieStr = buyerAccount.getLoginCookie();
+        if (cookieStr != null && !cookieStr.equals("")) {
+            return new ObjectMapper().readValue(cookieStr, MyCookie[].class);
+        }
+        return new MyCookie[]{};
+    }
+
+    private HttpHeaders getLoginHeaders() throws JsonProcessingException {
+        String headersStr = buyerAccount.getLoginCookie();
+        if (headersStr != null && !headersStr.equals("")) {
+            return new ObjectMapper().readValue(headersStr, HttpHeaders.class);
+        }
+        return new HttpHeaders();
+    }
+
+    public void updateBotCookie() throws JsonProcessingException {
+//        var headers = driverEngine.getHeaders(urls.homePage);
+        var cookie = driverEngine.getCookie();
+        resterEngine.updateCookie(cookie);
+        persistBotCookie(cookie);
     }
 
     public void persistBotCookie(MyCookie[] cookies) throws JsonProcessingException {
@@ -114,10 +142,20 @@ public abstract class CoreEngine {
         buyerAccount.setLoginCookie(cookiesStr);
         buyerAccountService.save(buyerAccount);
     }
+//    public void persistBotHeaders(HttpHeaders headers) throws JsonProcessingException {
+//        var cookiesStr = new ObjectMapper().writeValueAsString(headers);
+//        buyerAccount.setLoginCookie(cookiesStr);
+//        buyerAccountService.save(buyerAccount);
+//    }
+    //endregion
 
     public void goHome() {
         driverEngine.getDriver().get(urls.homePage);
         closeAdPop();
+    }
+
+    public void testGoHome() {
+        driverEngine.getDriver().get(urls.homePage);
     }
 
     public BuyerAccount getBuyerAccount() {
@@ -128,6 +166,9 @@ public abstract class CoreEngine {
         return buyerAccount.getPlatform().getName() + " " + buyerAccount.getEmail() + " " + buyerAccount.getNickname();
     }
 
+    public void register(EmailAccount emailAccount) throws MessagingException, IOException, InterruptedException {
+        registerEngine.register(emailAccount);
+    }
 
     public void login() throws InterruptedException, IOException, MessagingException {
         setBotStatus(BotStatus.logining);
@@ -136,7 +177,11 @@ public abstract class CoreEngine {
     }
 
     public void stock(StockRequest stockRequest) throws InterruptedException, IOException, MessagingException {
-//        setBotStatus(BotStatus.STOCKING);
+        setBotStatus(BotStatus.stocking);
+
+        var stockStatus = stockRequest.getStockStatus();
+        stockStatus.setLastStockTryTime(DateTime.now().toLocalDateTime());
+        stockStatusService.save(stockStatus);
 
         stockEngine.stock(stockRequest);
 
@@ -146,7 +191,7 @@ public abstract class CoreEngine {
     }
 
     public void track(TrackRequest trackRequest) throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
-        setBotStatus(BotStatus.stocking);
+        setBotStatus(BotStatus.tracking);
         trackEngine.track(trackRequest);
         setBotStatus(BotStatus.idle);
     }
@@ -160,23 +205,25 @@ public abstract class CoreEngine {
 
     public String getCountryCode() {
         var platform = getBuyerAccount().getPlatform();
-        return platform.getCountry();
+        return platform.getCountryCode();
     }
 
     public String locateCountryName() {
         var platform = getBuyerAccount().getPlatform();
-        var code = platform.getCountry();
-        return new Locale("", code).getDisplayCountry();
+        var code = platform.getCountryCode();
+        return new Locale("en", code).getDisplayCountry(new Locale("en", code));
     }
 
     public String locateCountryCurrency() {
         var platform = getBuyerAccount().getPlatform();
-        var code = platform.getCountry();
+        var code = platform.getCountryCode();
 //        return Currency.getInstance(code).getDisplayName(new Locale("en", code));
         return Currency.getInstance(new Locale("en", code)).getCurrencyCode();
     }
 
     public BigDecimal parseUSDMoney(String text) {
+        if (text == null || text.equals("") || text.toLowerCase().equals("free"))
+            return new BigDecimal(0);
         text = text.substring(4);
         text = text.replace(',', '.');
         return new BigDecimal(text);
@@ -186,16 +233,9 @@ public abstract class CoreEngine {
         return parseUSDMoney(text);
     }
 
-    private MyCookie[] getLoginCookie() throws JsonProcessingException {
-        String cookiesStr = buyerAccount.getLoginCookie();
-        if (cookiesStr != null && !cookiesStr.equals("")) {
-            return new ObjectMapper().readValue(cookiesStr, MyCookie[].class);
-        }
-        return new MyCookie[]{};
-    }
-
 
     public void closeAdPop() {
+        log.debug("开始关闭广告弹窗 ...");
         try {
             Thread.sleep(2000L);
             var closeBtn = driverEngine.getExecutor().getByClassName(classSelector.homePageAdCloseButton);
@@ -214,6 +254,11 @@ public abstract class CoreEngine {
     }
 
     public void byebye() {
+        try {
+            driverEngine.byebye();
+        } catch (Exception ex) {
+            log.info("Driver already closed, byebye");
+        }
     }
 
     public void assemble() {
@@ -223,17 +268,7 @@ public abstract class CoreEngine {
         trackEngine.plugIn(this);
         fetcherEngine.plugIn(this);
         addressEngine.plugIn(this);
-    }
-
-    /**
-     * @param buyerAccount
-     */
-    public void init(BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
-        this.buyerAccount = buyerAccount;
-        this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
-        this.driverEngine = new GridDriverEngine();
-        assemble();
-        initialBotCookie();
+        resterEngine.plugIn(this);
     }
 
     public abstract void solveLoginCaptcha() throws InterruptedException;

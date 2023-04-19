@@ -26,21 +26,33 @@ public abstract class FetcherEngine implements PluggableEngine {
         if (verifyHtml(html)) {
             coreEngine.updateLoginTime();
             String json = fetchSkuProperties(html);
-            return html;
+            return json;
         }
 
         if (verifyPageNotFound(html)) {
             return GlobalVariables.PRODUCT_PAGE_NOT_FOUND;
         }
 
+        driverEngine.getDriver().get(url);
+        html = driverEngine.getDriver().getPageSource();
+        if (verifyHtml(html)) {
+            coreEngine.updateLoginTime();
+            String json = fetchSkuProperties(html);
+            return json;
+        }
+
         loginEngine.login();
         driverEngine.getDriver().get(url);
 
-        return driverEngine.getDriver().getPageSource();
+        html = driverEngine.getDriver().getPageSource();
 
+        String json = fetchSkuProperties(html);
+        return json;
     }
 
     protected abstract String fetchHtml(String url) throws IOException;
+
+    public abstract String fetchHtmlByDriver(String url) throws IOException;
 
     protected abstract boolean verifyHtml(String html);
 

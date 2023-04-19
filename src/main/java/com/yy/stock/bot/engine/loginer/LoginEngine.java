@@ -22,16 +22,20 @@ public abstract class LoginEngine implements PluggableEngine {
     protected FetcherEngine fetcherEngine;
 
     protected boolean isLogined() throws InterruptedException, IOException {
-        var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
+//        var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
+//        return testLoginedHtml(html);
+        var html = fetcherEngine.fetchHtmlByDriver(coreEngine.urls.testLogin);
         return testLoginedHtml(html);
     }
 
 
     public void login() throws IOException, InterruptedException, MessagingException {
         if (isLogined()) {
+            whenLoginSuccessfully();
             return;
         }
         if (loginUseCookie()) {
+            whenLoginSuccessfully();
             return;
         }
         loginUsePassword();

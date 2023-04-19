@@ -1,14 +1,13 @@
 package com.yy.stock.vo;
 
 
+import com.yy.stock.adaptor.amazon.api.pojo.vo.BasePageQuery;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
-public class BuyerAccountQueryVO implements Serializable {
+public class BuyerAccountQueryVO extends BasePageQuery {
     private static final long serialVersionUID = 1L;
 
     private Long id;

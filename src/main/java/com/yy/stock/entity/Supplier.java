@@ -1,5 +1,6 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.*;
@@ -59,9 +60,11 @@ public class Supplier implements Serializable {
     /**
      * 货源平台
      */
-    @Column(name = "platform_id", nullable = false)
-    @JsonSerialize(using = ToStringSerializer.class)
-    private BigInteger platformId;
+
+    @ManyToOne
+    @JoinColumn(name = "platform_id")
+    @JsonIgnoreProperties({"suppliers"})
+    private Platform platform;
 
     /**
      * 货源链接
@@ -121,16 +124,9 @@ public class Supplier implements Serializable {
     private String apiItemId;
     @Column(name = "min_ship_fee")
     private String minShipFee;
-    @Column(name = "ui_style1_xpath")
-    private String uiStyle1Xpath;
-    @Column(name = "ui_style2_xpath")
-    private String uiStyle2Xpath;
-    @Column(name = "ui_style3_xpath")
-    private String uiStyle3Xpath;
-    @Column(name = "ui_amount_xpath")
-    private String uiAmountXpath;
     @Column(name = "image_url")
     private String imageUrl;
     @Column(name = "style_name")
     private String styleName;
 }
+//帮我根据这个实体类生成vue3的表单

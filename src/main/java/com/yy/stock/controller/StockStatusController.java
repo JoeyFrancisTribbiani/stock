@@ -72,21 +72,28 @@ public class StockStatusController {
         if (Result.isSuccess(result) && result.getData() != null) {
             var gotPage = result.getData();
             List<StockStatusListVo> list = new ArrayList<>();
-            for (var product : result.getData().getRecords()) {
+//            for (var product : result.getData().getRecords()) {
+
+            var product0 = result.getData().getRecords().get(0);
+            var authId = product0.getAmazonAuthId();
+            var marketplaceId = product0.getMarketplaceid();
+
+            var skuList = result.getData().getRecords().stream().map(AmzProductListVo::getSku).toList();
+            var supplierList = supplierService.getBySkus(new BigInteger(authId), marketplaceId, skuList);
+
+            for (int i = 0; i < result.getData().getRecords().size(); i++) {
+                var product = result.getData().getRecords().get(i);
+                var supplier = supplierList.stream().filter(s -> s.getAmazonSku().equals(product.getSku())).findFirst().orElse(null);
+
                 StockStatusListVo vo = new StockStatusListVo();
                 BeanUtils.copyProperties(product, vo);
-                var authId = product.getAmazonAuthId();
-                var sku = product.getSku();
-                var marketplaceId = product.getMarketplaceid();
-                var supplier = supplierService.getBySku(new BigInteger(authId), marketplaceId, sku);
 
                 Platform platform = null;
                 if (supplier == null) {
-//                    supplier = supplierService.createEmptySupplier(new BigInteger(authId), marketplaceId, sku);
                     supplier = new Supplier();
                     platform = new Platform();
                 } else {
-                    platform = platformService.getById(supplier.getPlatformId());
+                    platform = supplier.getPlatform();
                 }
                 vo.setSupplier(supplier);
                 vo.setPlatform(platform);
@@ -110,39 +117,47 @@ public class StockStatusController {
             List<StockOrderStatusListVo> list = new ArrayList<>();
             var order1 = result.getData().getRecords().get(0);
             var skuList = result.getData().getRecords().stream().map(AmazonOrdersVo::getSku).toList();
+            var orderIdList = result.getData().getRecords().stream().map(AmazonOrdersVo::getOrderid).toList();
+            var authId = order1.getAuthid();
+            var marketplaceId = order1.getMarketplaceId();
+
             var supplierList = supplierService.getBySkus(new BigInteger(order1.getAuthid()), order1.getMarketplaceId(), skuList);
+            var addressList = amzOrdersAddressService.getByOrderIdList(new BigInteger(authId), marketplaceId, orderIdList);
+            var stockStatusList = stockStatusService.getByAmazonOrderList(new BigInteger(authId), marketplaceId, result.getData().getRecords());
 
             //改为fori
             for (int i = 0; i < result.getData().getRecords().size(); i++) {
                 var orderVo = result.getData().getRecords().get(i);
                 StockOrderStatusListVo vo = new StockOrderStatusListVo();
                 BeanUtils.copyProperties(orderVo, vo);
-                var authId = orderVo.getAuthid();
+                authId = orderVo.getAuthid();
                 var sku = orderVo.getSku();
-                var marketplaceId = orderVo.getMarketplaceId();
+                marketplaceId = orderVo.getMarketplaceId();
 //                var supplier = supplierService.getBySku(new BigInteger(authId), marketplaceId, sku);
-                var supplier = supplierList.get(i);
+                var supplier = supplierList.stream().filter(s -> s.getAmazonSku().equals(sku)).findFirst().orElse(null);
 
                 Platform platform;
                 if (supplier == null) {
                     supplier = new Supplier();
                     platform = new Platform();
                 } else {
-                    platform = platformService.getById(supplier.getPlatformId());
+                    platform = supplier.getPlatform();
                 }
 
-                var stockStatus = stockStatusService.getOrCreateByOrderItemSku(new BigInteger(authId), marketplaceId, orderVo.getOrderid(), orderVo.getSku());
+//                var stockStatus = stockStatusService.getOrCreateByOrderItemSku(new BigInteger(authId), marketplaceId, orderVo.getOrderid(), orderVo.getSku());
+                var stockStatus = stockStatusList.stream().filter(s -> s.getAmazonOrderId().equals(orderVo.getOrderid()) && s.getAmazonSku().equals(orderVo.getSku())).findFirst().orElse(null);
                 BuyerAccount buyerAccount = null;
                 if (stockStatus != null) {
-                    if (stockStatus.getBuyerId() != null) {
-                        buyerAccount = buyerAccountService.getById(stockStatus.getBuyerId());
+                    if (stockStatus.getBuyer() != null) {
+                        buyerAccount = stockStatus.getBuyer();
                     } else {
                         buyerAccount = new BuyerAccount();
                     }
                 } else {
                     stockStatus = new StockStatus();
                 }
-                var address = amzOrdersAddressService.getByOrderInfo(new BigInteger(authId), marketplaceId, orderVo.getOrderid());
+//                var address = amzOrdersAddressService.getByOrderInfo(new BigInteger(authId), marketplaceId, orderVo.getOrderid());
+                var address = addressList.stream().filter(a -> a.getAmazonOrderId().equals(orderVo.getOrderid())).findFirst().orElse(null);
                 if (address == null) {
                     address = new AmzOrdersAddress();
                 }
@@ -189,7 +204,7 @@ public class StockStatusController {
     @PostMapping("/reTrackShipmentNumber")
     public Result<Boolean> reTrackShipmentNumberAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
         try {
-            var buyer = buyerAccountService.getTrackableBuyerAccount(stockStatus.getBuyerId());
+            var buyer = buyerAccountService.getTrackableBuyerAccount(stockStatus.getBuyer().getId());
             var bot = botFactory.getBot(buyer);
             var trackRequest = new TrackRequest(stockStatus);
             bot.track(trackRequest);
@@ -218,12 +233,12 @@ public class StockStatusController {
                     supplier = new Supplier();
                     platform = new Platform();
                 } else {
-                    platform = platformService.getById(supplier.getPlatformId());
+                    platform = supplier.getPlatform();
                 }
                 var stockStatus = stockStatusService.getOrCreateByOrderItemSku(new BigInteger(authId), marketplaceId, orderVo.getOrderid(), orderVo.getSku());
                 BuyerAccount buyerAccount = null;
                 if (stockStatus != null) {
-                    buyerAccount = buyerAccountService.getById(stockStatus.getBuyerId());
+                    buyerAccount = stockStatus.getBuyer();
                 } else {
                     stockStatus = new StockStatus();
                     buyerAccount = new BuyerAccount();

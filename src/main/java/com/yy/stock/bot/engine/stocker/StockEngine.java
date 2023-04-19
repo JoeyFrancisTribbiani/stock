@@ -27,10 +27,11 @@ public abstract class StockEngine implements PluggableEngine {
 
     // 付款开关，打开后才点击付款按钮，否则跳过付款，直接保存状态为已备货
     @Value("${bot.paySwitch}")
-    protected boolean paySwitch;
+    protected boolean paySwitch = true;
 
     public void stock(StockRequest stockRequest) throws MessagingException, IOException, InterruptedException {
         this.stockRequest = stockRequest;
+        this.addressEngine.stockRequest = stockRequest;
         log.info(coreEngine.getBotName() + "开始下单操作.");
 
         var supplier = stockRequest.getSupplier();
@@ -55,6 +56,8 @@ public abstract class StockEngine implements PluggableEngine {
     protected abstract void checkout() throws InterruptedException;
 
     protected abstract void clickBuyNow() throws InterruptedException;
+
+    protected abstract void selectPaymentMethod() throws InterruptedException;
 
     public String getAmazonOrderId() {
         return stockRequest.getOrderInfo().getOrderid();
