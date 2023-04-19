@@ -13,8 +13,8 @@ import com.yy.stock.common.util.MySpringUtil;
 
 import java.math.BigDecimal;
 
-public class AliExpressBrrCoreEngine extends AliExpressCoreEngine {
-    public AliExpressBrrCoreEngine() {
+public class AliExpressBrCoreEngine extends AliExpressCoreEngine {
+    public AliExpressBrCoreEngine() {
         this.xpaths = MySpringUtil.getBean(AliExpressXpaths.class);
         this.urls = MySpringUtil.getBean(AliExpressUrls.class);
         this.classSelector = MySpringUtil.getBean(AliExpressClassSelectors.class);
