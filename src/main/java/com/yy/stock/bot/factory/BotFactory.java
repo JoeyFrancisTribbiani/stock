@@ -70,7 +70,7 @@ public class BotFactory {
     public void keepSessionsAlive() {
         for (Bot bot : runningBotPool) {
             try {
-                if (bot.getBotStatus().equals(BotStatus.idle)) {
+                if (bot.getBotStatus() == BotStatus.idle) {
                     bot.keepSessionAlive();
                 }
             } catch (Exception e) {
