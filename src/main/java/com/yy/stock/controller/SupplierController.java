@@ -64,18 +64,21 @@ public class SupplierController {
         if (url == null) {
             throw new IllegalArgumentException("url 不能为空");
         }
-        var platform = PlatformFactory.getPlatformByUrl(url, countryCode);
-        var buyerAccount = buyerAccountService.getFetcherAccount(platform.getId());
-        var bot = botFactory.getBot(buyerAccount);
-        var html = bot.fetch(url);
-        if (Objects.equals(html, GlobalVariables.PRODUCT_PAGE_NOT_FOUND)) {
-            return Result.failed(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
-        }
-        if (Objects.equals(html, "")) {
+        try {
+            var platform = PlatformFactory.getPlatformByUrl(url, countryCode);
+            var buyerAccount = buyerAccountService.getFetcherAccount(platform.getId());
+            var bot = botFactory.getBot(buyerAccount);
+            var html = bot.fetch(url);
+            if (Objects.equals(html, GlobalVariables.PRODUCT_PAGE_NOT_FOUND)) {
+                return Result.failed(GlobalVariables.PRODUCT_PAGE_NOT_FOUND);
+            }
+            if (Objects.equals(html, "")) {
+                return Result.failed("抓取失败！请检查链接！");
+            }
+            return Result.success(html);
+        } catch (Exception ex) {
             return Result.failed("抓取失败！请检查链接！");
         }
-
-        return Result.success(html);
     }
 
     @PostMapping("/bindSku")
