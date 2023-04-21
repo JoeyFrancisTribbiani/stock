@@ -6,8 +6,6 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PriceModule {
@@ -35,7 +33,7 @@ public class PriceModule {
     private String oddUnitName;
     private boolean preSale;
     private PriceRuleInfo priceRuleInfo;
-    private List<String> promotionSellingPointTags;
+    //    private List<String> promotionSellingPointTags;
     private boolean regularPriceActivity;
     private boolean showActivityMessage;
     private String vatDesc;

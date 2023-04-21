@@ -12,12 +12,12 @@
     "aeOrderFrom": "main_detail",
     "allowVisitorAddCart": true,
     "cartDetailUrl": "//shoppingcart.aliexpress.com/shopcart/shopcartDetail.htm",
-    "categoryId": 200220143,
+    "categoryId": 63705,
     "comingSoon": false,
-    "companyId": 1122168102,
+    "companyId": 1126370122,
     "confirmOrderUrl": "//shoppingcart.aliexpress.com/order/confirm_order.htm",
     "features": {},
-    "freightExt": "{\"itemScene\":\"default\",\"p1\":\"15.65\",\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\"}",
+    "freightExt": "[{\"p0\":\"12000031364931654\",\"p1\":\"4.53\",\"p3\":\"USD\",\"p16\":true,\"p5\":\"50019210197\",\"itemScene\":\"default\",\"p18\":\"default\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $4.53\",\"p10\":[218307,266631,267943,218119,268130,268131,84809,268201,132402,268434,111478,267900,268029,268030,268031,267898]}]",
     "i18nMap": {
       "WISH_MAX_NOTICE": "Oops, it seemed you already reached the list’s maximum.",
       "BUYER_ABLE": "This feature is only available to buyers.",
@@ -32,6 +32,7 @@
       "WL_ERROR": "Network is busy, please try again",
       "WISH_NAME_ALREADY_USE": "This Wish List name is already in use.",
       "WISH_REVISELIST": "Edit Your List",
+      "ADD_TO_MY_PICKS": "",
       "SC_ADD_FAILED": "Failed to add, please refresh the page and re-click the \"Add to Cart\"",
       "SC_HAVE": "You now have {{number}} items in your Shopping Cart.",
       "ADD_TO_CART": "Add to Cart",
@@ -57,20 +58,25 @@
     "invalidBuyNow": false,
     "itemStatus": 0,
     "itemWished": false,
-    "itemWishedCount": 402,
+    "itemWishedCount": 447,
     "localSeller": false,
     "name": "ActionModule",
+    "orderUrl": "https://www.aliexpress.com/p/trade/confirm.html",
     "preSale": false,
-    "productId": 1005005160275897,
-    "rootCategoryId": 15,
+    "productId": 1005005021369239,
+    "rootCategoryId": 44,
+    "shoppingCartUrl": "https://www.aliexpress.com/p/shoppingcart/index.html",
     "showCoinAnim": false,
     "showShareHeader": true,
-    "storeNum": 1100387846,
+    "storeNum": 1102107983,
     "switchInfo": {
+      "allowUSVisitorCart": false,
       "deliveryMigrate": true,
+      "showPropGroups": false,
+      "showPropOuter": false,
       "skuUnavailableRevision": true
     },
-    "totalAvailQuantity": 799
+    "totalAvailQuantity": 9186
   },
   "aePlusModule": {
     "features": {},
@@ -100,12 +106,12 @@
   "commonModule": {
     "activity": true,
     "aePlusTags": [],
-    "buyerAccountId": 3831282040,
-    "buyerAdminSeq": 3831282040,
-    "categoryId": 200220143,
+    "buyerAccountId": 4555024838,
+    "buyerAdminSeq": 4555024838,
+    "categoryId": 63705,
     "choiceProduct": false,
     "crawler": false,
-    "currencyCode": "USD",
+    "currencyCode": "BRL",
     "features": {},
     "gagaDataSite": "en",
     "i18nMap": {},
@@ -113,18 +119,18 @@
     "name": "CommonModule",
     "plaza": false,
     "preSale": false,
-    "productId": 1005005160275897,
-    "productIdStr": "1005005160275897",
+    "productId": 1005005021369239,
+    "productIdStr": "1005005021369239",
     "productTags": {},
     "reminds": [],
-    "sellerAdminSeq": 2661457318,
-    "tradeCurrencyCode": "USD",
+    "sellerAdminSeq": 2669691174,
+    "tradeCurrencyCode": "BRL",
     "userCountryCode": "CN",
     "userCountryName": "China (Mainland)"
   },
   "couponModule": {
-    "buyerAdminSeq": 3831282040,
-    "currencyCode": "USD",
+    "buyerAdminSeq": 4555024838,
+    "currencyCode": "BRL",
     "features": {},
     "i18nMap": {
       "GET_COUPONS": "Get coupons",
@@ -178,10 +184,43 @@
     "name": "CouponModule",
     "webCouponInfo": {
       "couponAttributes": {
-        "couponPackageText": "Check your coupon in our <a href=\"https://www.aliexpress.com/p/my-coupons/index.html\">My coupons</a>"
+        "couponPackageText": "Check your coupon in our <a href=\"https://www.aliexpress.com/p/my-coupons/index.html\">My coupons</a>",
+        "hasPlatformShippingFeeCoupon": "false"
       },
-      "couponList": [],
-      "promotionPanelDTO": {},
+      "couponList": [
+        {
+          "bgColor": "#FFF1F1",
+          "color": "#FF4747",
+          "copy": "R$ 10 off ",
+          "order": 2,
+          "title": "every R$ 100",
+          "type": "acrossStoreFixedDiscount"
+        }
+      ],
+      "promotionPanelDTO": {
+        "acrossStoreFixedDiscount": [
+          {
+            "displayType": "acrossStoreFixedDiscount",
+            "promotionGroupTitle": "Spend & Save",
+            "promotionPanelDetailDTOList": [
+              {
+                "acquirable": false,
+                "actionTips": "Shop more",
+                "attributes": {
+                  "couponCampaignStyle": "new"
+                },
+                "collectLink": "https://m.aliexpress.com/search.htm?priceBreak=3&scene_id=020501&campId=115000000096736024&campBannerText=Order%20R%24%20100%20eligible%20items%20to%20save%20R%24%2010%20%28max%20R%24%2040%20off%29&marginPrice=1656&osf=cartDealCombine&umpSearchTags=115000000096736024&activityId=5000000096736024&promotionId=5000000096736024",
+                "displayType": "acrossStoreFixedDiscount",
+                "endTime": 1682146799000,
+                "promotionDesc": "R$ 10 off every R$ 100 (max R$ 40)",
+                "startTime": 1681714800000,
+                "teasingStartTime": 1681628400000,
+                "toolCode": "acrossStoreFixedDiscount"
+              }
+            ]
+          }
+        ]
+      },
       "usingNewCouponApi": true
     }
   },
@@ -197,17 +236,103 @@
     "crossLinkGroupList": [
       {
         "channel": "Related Search",
-        "crossLinkList": [],
+        "crossLinkList": [
+          {
+            "displayName": "headphones bluetooth 3 5",
+            "name": "headphones bluetooth 3 5",
+            "url": "https://www.aliexpress.com/w/wholesale-headphones-bluetooth-3-5.html"
+          },
+          {
+            "displayName": "3 5 headset earbuds",
+            "name": "3 5 headset earbuds",
+            "url": "https://www.aliexpress.com/w/wholesale-3-5-headset-earbuds.html"
+          },
+          {
+            "displayName": "bluetooth 5 earbuds",
+            "name": "bluetooth 5 earbuds",
+            "url": "https://www.aliexpress.com/w/wholesale-bluetooth-5-earbuds.html"
+          },
+          {
+            "displayName": "earbud 5",
+            "name": "earbud 5",
+            "url": "https://www.aliexpress.com/w/wholesale-earbud-5.html"
+          },
+          {
+            "displayName": "blutooth 5 ear headphones",
+            "name": "blutooth 5 ear headphones",
+            "url": "https://www.aliexpress.com/w/wholesale-blutooth-5-ear-headphones.html"
+          },
+          {
+            "displayName": "5 bluetooth 3 earphone",
+            "name": "5 bluetooth 3 earphone",
+            "url": "https://www.aliexpress.com/w/wholesale-5-bluetooth-3-earphone.html"
+          },
+          {
+            "displayName": "bluetooth headphones 5",
+            "name": "bluetooth headphones 5",
+            "url": "https://www.aliexpress.com/w/wholesale-bluetooth-headphones-5.html"
+          },
+          {
+            "displayName": "3 5 sport earphones",
+            "name": "3 5 sport earphones",
+            "url": "https://www.aliexpress.com/w/wholesale-3-5-sport-earphones.html"
+          },
+          {
+            "displayName": "5 below bluetooth earbuds",
+            "name": "5 below bluetooth earbuds",
+            "url": "https://www.aliexpress.com/w/wholesale-5-below-bluetooth-earbuds.html"
+          },
+          {
+            "displayName": "5 bluetooth headsets",
+            "name": "5 bluetooth headsets",
+            "url": "https://www.aliexpress.com/w/wholesale-5-bluetooth-headsets.html"
+          },
+          {
+            "displayName": "bluetooth earphone 5 1",
+            "name": "bluetooth earphone 5 1",
+            "url": "https://www.aliexpress.com/w/wholesale-bluetooth-earphone-5-1.html"
+          },
+          {
+            "displayName": "bluetooth 5 0 ear phone",
+            "name": "bluetooth 5 0 ear phone",
+            "url": "https://www.aliexpress.com/w/wholesale-bluetooth-5-0-ear-phone.html"
+          }
+        ],
         "name": "Related Search"
       },
       {
         "channel": "Ranking Keywords",
         "crossLinkList": [
           {
-            "displayName": "s rompers",
-            "name": "s rompers",
+            "displayName": "iir pods",
+            "name": "1005005307186691",
+            "url": "https://www.aliexpress.com/i/1005005307186691.html"
+          },
+          {
+            "displayName": "lp40 tws earphones",
+            "name": "1005005170205597",
+            "url": "https://www.aliexpress.com/i/1005005170205597.html"
+          },
+          {
+            "displayName": "earphone bluetooth 5 wireless",
+            "name": "1005005020749307",
+            "url": "https://www.aliexpress.com/i/1005005020749307.html"
+          },
+          {
+            "displayName": "tws m2 wireless headphones",
+            "name": "1005005315872887",
+            "url": "https://www.aliexpress.com/i/1005005315872887.html"
+          },
+          {
+            "displayName": "earphone with microphone bass",
+            "name": "1005003191349938",
+            "url": "https://www.aliexpress.com/i/1005003191349938.html"
+          },
+          {
+            "displayName": "plain coloured hoodies",
+            "name": "plain coloured hoodies",
             "remark": "CONFIG",
-            "url": "https://www.aliexpress.com/w/wholesale-s-rompers.html"
+            "url": "https://www.aliexpress.com/w/wholesale-plain-coloured-hoodies.html"
           }
         ],
         "name": "Ranking Keywords"
@@ -226,27 +351,27 @@
     },
     "id": 0,
     "name": "CrossLinkModule",
-    "productId": 1005005160275897
+    "productId": 1005005021369239
   },
   "descriptionModule": {
-    "descriptionUrl": "https://aeproductsourcesite.alicdn.com/product/description/pc/v2/en_US/desc.htm?productId=1005005160275897&key=Sa7e653b6d42b47c39286434dba350408T.zip&token=27fdadce3f1998b6bf35c3ba32a68dd9",
+    "descriptionUrl": "https://aeproductsourcesite.alicdn.com/product/description/pc/v2/en_US/desc.htm?productId=1005005021369239&key=Sab945d4faf1e40f0a8f5878b03a57bb51.zip&token=4ccca30ac3e3e3ffda84330354f45937",
     "features": {},
     "i18nMap": {},
     "id": 0,
     "name": "DescriptionModule",
-    "productId": 1005005160275897,
-    "sellerAdminSeq": 2661457318
+    "productId": 1005005021369239,
+    "sellerAdminSeq": 2669691174
   },
   "features": {},
   "feedbackModule": {
-    "companyId": 1122168102,
+    "companyId": 1126370122,
     "features": {},
     "feedbackServer": "//feedback.aliexpress.com",
     "i18nMap": {},
     "id": 0,
     "name": "FeedbackModule",
-    "productId": 1005005160275897,
-    "sellerAdminSeq": 2661457318,
+    "productId": 1005005021369239,
+    "sellerAdminSeq": 2669691174,
     "trialReviewNum": 0
   },
   "groupShareModule": {
@@ -268,21 +393,21 @@
     "i18nMap": {},
     "id": 0,
     "imagePathList": [
-      "https://ae01.alicdn.com/kf/Sc7338902988d4ddab60e26fc4ed652a7m/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-      "https://ae01.alicdn.com/kf/S0ebfc726b8b0495ea7f6cf565a11a760F/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-      "https://ae01.alicdn.com/kf/S9e9ba78d3415417abd6cad05958943ffr/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-      "https://ae01.alicdn.com/kf/S8ceac81c4480475fb8fc42b02da516daM/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-      "https://ae01.alicdn.com/kf/Se6ffea51b46249068dd9756678bd72b5S/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-      "https://ae01.alicdn.com/kf/S304b1fb11c0e41758f0954b4e9444f72Q/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg"
+      "https://ae01.alicdn.com/kf/Sf711c73c6135405abd4e652119bc4b09o/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+      "https://ae01.alicdn.com/kf/Se91775330a9143f0a7e797993f9da58dz/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+      "https://ae01.alicdn.com/kf/Seb7e5ee1cdf149b8993411136c39886eP/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+      "https://ae01.alicdn.com/kf/S6149a4449d944e75a9f177542c2ef74ca/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+      "https://ae01.alicdn.com/kf/Sf6048f59228e4de1a1382f2f086d1f8f6/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+      "https://ae01.alicdn.com/kf/Sf194abbc54cd48a183d20791d2e4ac07Q/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg"
     ],
     "name": "ImageModule",
     "summImagePathList": [
-      "https://ae01.alicdn.com/kf/Sc7338902988d4ddab60e26fc4ed652a7m/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-      "https://ae01.alicdn.com/kf/S0ebfc726b8b0495ea7f6cf565a11a760F/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-      "https://ae01.alicdn.com/kf/S9e9ba78d3415417abd6cad05958943ffr/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-      "https://ae01.alicdn.com/kf/S8ceac81c4480475fb8fc42b02da516daM/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-      "https://ae01.alicdn.com/kf/Se6ffea51b46249068dd9756678bd72b5S/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-      "https://ae01.alicdn.com/kf/S304b1fb11c0e41758f0954b4e9444f72Q/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg"
+      "https://ae01.alicdn.com/kf/Sf711c73c6135405abd4e652119bc4b09o/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+      "https://ae01.alicdn.com/kf/Se91775330a9143f0a7e797993f9da58dz/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+      "https://ae01.alicdn.com/kf/Seb7e5ee1cdf149b8993411136c39886eP/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+      "https://ae01.alicdn.com/kf/S6149a4449d944e75a9f177542c2ef74ca/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+      "https://ae01.alicdn.com/kf/Sf6048f59228e4de1a1382f2f086d1f8f6/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+      "https://ae01.alicdn.com/kf/Sf194abbc54cd48a183d20791d2e4ac07Q/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg"
     ]
   },
   "installmentModule": {
@@ -301,7 +426,21 @@
     },
     "id": 0,
     "name": "MiddleBannerModule",
-    "showUniformBanner": false
+    "showUniformBanner": true,
+    "uniformMiddleBanner": {
+      "bannerType": "platform_newer",
+      "discountRatio": "-63%",
+      "endTimer": {
+        "foregroundImg": "https://ae01.alicdn.com/kf/Sfc5c918257894e90a7f1abbc5b84afee2/120x48.png",
+        "text": "Ends in"
+      },
+      "originalPrice": "R$ 69,21",
+      "price": "R$ 25,00",
+      "priceContentBgUrl": "https://ae01.alicdn.com/kf/Hcf8a5927756e4373bf1d1b928f2d856fN.png",
+      "sloganBanner": "Exclusive first order price",
+      "sloganBgUrl": "https://ae01.alicdn.com/kf/Hcae789ea016843a785b6ce13e275c8c9u.png",
+      "sloganTextColor": "#FFEAEA"
+    }
   },
   "name": "ItemDetailResp",
   "otherServiceModule": {
@@ -338,101 +477,101 @@
     "aerSelfOperation": false,
     "amphtmlTag": "<meta>",
     "boutiqueSeller": false,
-    "canonicalTag": "<link rel=\"canonical\" href=\"https://www.aliexpress.com/item/1005005160275897.html\">",
-    "complaintUrl": "//report.aliexpress.com/health/reportIndex.htm?product_id=1005005160275897&b_login_id=cn1062696025vfeae",
-    "description": "Shop easter rabbit decorations with fast shipping and fast return. Easter decoration bunnys set can be used for bedroom, living room, window display, car decor. Find straw photo props crafts,straw easter decorations with high quality at AliExpress.\nEnjoy ✓Free Shipping Worldwide! ✓Limited Time Sale ✓Easy Return.",
+    "canonicalTag": "<link rel=\"canonical\" href=\"https://www.aliexpress.com/item/1005005021369239.html\">",
+    "complaintUrl": "//report.aliexpress.com/health/reportIndex.htm?product_id=1005005021369239&b_login_id=cn1068384124hqrae",
+    "description": "Online Shopping at a cheapest price for Automotive, Phones &amp; Accessories, Computers &amp; Electronics, Fashion, Beauty &amp; Health, Home &amp; Garden, Toys &amp; Sports, Weddings &amp; Events and more; just about anything else\nEnjoy ✓Free Shipping Worldwide! ✓Limited Time Sale ✓Easy Return.",
     "features": {},
-    "hreflangTag": "<link rel=\"alternate\" hreflang=\"en\" href=\"https://www.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"id\" href=\"https://id.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"ko\" href=\"https://ko.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"ar\" href=\"https://ar.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"de\" href=\"https://de.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"es\" href=\"https://es.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"fr\" href=\"https://fr.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"it\" href=\"https://it.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"nl\" href=\"https://nl.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"pt\" href=\"https://pt.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"th\" href=\"https://th.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://tr.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"vi\" href=\"https://vi.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"he\" href=\"https://he.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"ru\" href=\"https://aliexpress.ru/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"ja\" href=\"https://ja.aliexpress.com/item/1005005160275897.html\"/>\n<link rel=\"alternate\" hreflang=\"pl\" href=\"https://pl.aliexpress.com/item/1005005160275897.html\"/>",
+    "hreflangTag": "<link rel=\"alternate\" hreflang=\"en\" href=\"https://www.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"id\" href=\"https://id.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"ko\" href=\"https://ko.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"ar\" href=\"https://ar.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"de\" href=\"https://de.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"es\" href=\"https://es.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"fr\" href=\"https://fr.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"it\" href=\"https://it.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"nl\" href=\"https://nl.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"pt\" href=\"https://pt.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"th\" href=\"https://th.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://tr.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"vi\" href=\"https://vi.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"he\" href=\"https://he.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"ru\" href=\"https://aliexpress.ru/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"ja\" href=\"https://ja.aliexpress.com/item/1005005021369239.html\"/>\n<link rel=\"alternate\" hreflang=\"pl\" href=\"https://pl.aliexpress.com/item/1005005021369239.html\"/>",
     "i18nMap": {},
     "id": 0,
-    "imagePath": "https://ae01.alicdn.com/kf/Sc7338902988d4ddab60e26fc4ed652a7m/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg",
-    "itemDetailUrl": "https://www.aliexpress.com/item/1005005160275897.html",
-    "keywords": "easter rabbit decorations,easter decoration bunnys,straw photo props crafts,straw easter decorations",
+    "imagePath": "https://ae01.alicdn.com/kf/Sf711c73c6135405abd4e652119bc4b09o/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg",
+    "itemDetailUrl": "https://www.aliexpress.com/item/1005005021369239.html",
+    "keywords": "Aliexpress, Aliexpress.com, Online shopping, Automotive, Phones & Accessories, Computers & Electronics, Fashion, Beauty & Health, Home & Garden, Toys & Sports, Weddings & Events",
     "kidBaby": false,
-    "mSiteUrl": "https://m.aliexpress.com/item/1005005160275897.html",
-    "mediaTag": "<link rel=\"alternate\" media=\"only screen and (max-width: 640px)\" href=\"https://m.aliexpress.com/item/1005005160275897.html\"/>",
+    "mSiteUrl": "https://m.aliexpress.com/item/1005005021369239.html",
+    "mediaTag": "<link rel=\"alternate\" media=\"only screen and (max-width: 640px)\" href=\"https://m.aliexpress.com/item/1005005021369239.html\"/>",
     "multiLanguageUrlList": [
       {
         "language": "msite",
-        "languageUrl": "https://m.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://m.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "en",
-        "languageUrl": "https://www.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://www.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "it",
-        "languageUrl": "https://it.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://it.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "fr",
-        "languageUrl": "https://fr.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://fr.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "de",
-        "languageUrl": "https://de.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://de.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "ru",
-        "languageUrl": "https://aliexpress.ru/item/1005005160275897.html"
+        "languageUrl": "https://aliexpress.ru/item/1005005021369239.html"
       },
       {
         "language": "es",
-        "languageUrl": "https://es.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://es.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "pt",
-        "languageUrl": "https://pt.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://pt.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "ja",
-        "languageUrl": "https://ja.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://ja.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "ko",
-        "languageUrl": "https://ko.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://ko.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "nl",
-        "languageUrl": "https://nl.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://nl.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "ar",
-        "languageUrl": "https://ar.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://ar.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "tr",
-        "languageUrl": "https://tr.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://tr.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "vi",
-        "languageUrl": "https://vi.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://vi.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "he",
-        "languageUrl": "https://he.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://he.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "th",
-        "languageUrl": "https://th.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://th.aliexpress.com/item/1005005021369239.html"
       },
       {
         "language": "pl",
-        "languageUrl": "https://pl.aliexpress.com/item/1005005160275897.html"
+        "languageUrl": "https://pl.aliexpress.com/item/1005005021369239.html"
       }
     ],
     "name": "PageModule",
     "ogDescription": "Smarter Shopping, Better Living!  Aliexpress.com",
-    "ogTitle": "15.65US $ 40% OFF|Easter Rabbit Decorations | Easter Decoration Bunnys | Straw Photo Props Crafts - 2023 - Aliexpress",
-    "ogurl": "//www.aliexpress.com/item/1005005160275897.html",
-    "oldItemDetailUrl": "https://www.aliexpress.com/item/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo/1005005160275897.html",
+    "ogTitle": "25.0R$ 63% OFF|Wireless Headphones 5.3 Bluetooth Earphones Earbuds Headsets TWS Hearding Aids Fone Stereo With Mic For Sports Games Phones| |   - AliExpress",
+    "ogurl": "//www.aliexpress.com/item/1005005021369239.html",
+    "oldItemDetailUrl": "https://www.aliexpress.com/item/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For/1005005021369239.html",
     "plazaElectronicSeller": false,
-    "productId": 1005005160275897,
+    "productId": 1005005021369239,
     "ruSelfOperation": false,
     "showPlazaHeader": false,
     "siteType": "glo",
     "spanishPlaza": false,
-    "title": "Easter Rabbit Decorations | Easter Decoration Bunnys | Straw Photo Props Crafts - 2023 - Aliexpress"
+    "title": "Wireless Headphones 5.3 Bluetooth Earphones Earbuds Headsets TWS Hearding Aids Fone Stereo With Mic For Sports Games Phones| |   - AliExpress"
   },
   "preSaleModule": {
     "features": {},
@@ -441,13 +580,13 @@
     "name": "PreSaleModule",
     "preSale": false
   },
-  "prefix": "//assets.alicdn.com/g/ae-fe/detail-ui/0.0.114",
+  "prefix": "//assets.alicdn.com/g/ae-fe/detail-ui/0.0.117",
   "priceModule": {
     "activity": true,
-    "discount": 40,
+    "discount": 63,
     "discountPromotion": true,
-    "discountRatioTips": "-40%",
-    "discountTips": "-40%",
+    "discountRatioTips": "-63%",
+    "discountTips": "-63%",
     "extraTags": {
       "separatorIcon": {
         "elementList": [
@@ -462,8 +601,8 @@
       }
     },
     "features": {},
-    "formatedActivityPrice": "US $15.65",
-    "formatedPrice": "US $26.08",
+    "formatedActivityPrice": "R$ 25,00",
+    "formatedPrice": "R$ 69,21",
     "hiddenBigSalePrice": false,
     "i18nMap": {
       "LOT": "lot",
@@ -475,39 +614,52 @@
     "installment": false,
     "lot": false,
     "maxActivityAmount": {
-      "currency": "USD",
-      "formatedAmount": "US $15.65",
-      "value": 15.65
+      "currency": "BRL",
+      "formatedAmount": "R$ 25,00",
+      "value": 25.0
     },
     "maxAmount": {
-      "currency": "USD",
-      "formatedAmount": "US $26.08",
-      "value": 26.08
+      "currency": "BRL",
+      "formatedAmount": "R$ 69,21",
+      "value": 69.21
     },
     "minActivityAmount": {
-      "currency": "USD",
-      "formatedAmount": "US $15.65",
-      "value": 15.65
+      "currency": "BRL",
+      "formatedAmount": "R$ 25,00",
+      "value": 25.0
     },
     "minAmount": {
-      "currency": "USD",
-      "formatedAmount": "US $26.08",
-      "value": 26.08
+      "currency": "BRL",
+      "formatedAmount": "R$ 69,21",
+      "value": 69.21
     },
     "multiUnitName": "Pieces",
     "name": "PriceModule",
     "numberPerLot": 1,
     "oddUnitName": "piece",
     "preSale": false,
+    "priceLocalConfig": "{\"useful\":false,\"version\":\"v1\"}",
     "priceRuleInfo": {},
-    "promotionSellingPointTags": [],
+    "promotionSellingPointTags": [
+      {
+        "elementList": [
+          {
+            "elementType": "text",
+            "iconHeight": 0,
+            "iconWidth": 0,
+            "textColor": "#FF5353",
+            "textContent": "R$ 10 off every R$ 100 (max R$ 40)"
+          }
+        ]
+      }
+    ],
     "regularPriceActivity": false,
     "showActivityMessage": false,
     "vatDesc": ""
   },
   "quantityModule": {
     "activity": true,
-    "displayBulkInfo": true,
+    "displayBulkInfo": false,
     "features": {},
     "i18nMap": {
       "LOT": "lot",
@@ -524,14 +676,13 @@
     "multiUnitName": "Pieces",
     "name": "QuantityModule",
     "oddUnitName": "piece",
-    "purchaseLimitNumMax": 0,
-    "skuBulkDiscount": 1,
-    "skuBulkOrder": 3,
-    "totalAvailQuantity": 799
+    "purchaseLimitMaxTips": "1 pieces at most per customer",
+    "purchaseLimitNumMax": 1,
+    "totalAvailQuantity": 9186
   },
   "recommendModule": {
-    "categoryId": 200220143,
-    "companyId": 1122168102,
+    "categoryId": 63705,
+    "companyId": 1126370122,
     "features": {
       "recommendGpsScenarioOtherSellerProducts": "pcDetailBottomMoreOtherSeller",
       "showSubTitle": "true",
@@ -549,8 +700,8 @@
     "id": 0,
     "name": "RecommendModule",
     "platformCount": 20,
-    "productId": 1005005160275897,
-    "storeNum": 1100387846
+    "productId": 1005005021369239,
+    "storeNum": 1102107983
   },
   "redirectModule": {
     "bigBossBan": false,
@@ -562,14 +713,31 @@
     "redirectUrl": ""
   },
   "shippingModule": {
-    "currencyCode": "USD",
+    "currencyCode": "BRL",
+    "expressionExt": "{\"p0\":2669691174,\"p1\":63705,\"p10\":{\"freeShippingTextAB\":\"true\"},\"p11\":\"default\",\"p12\":true,\"p13\":false,\"p14\":[],\"p2\":\"isv\",\"p3\":false,\"p4\":{\"OVERSEA_SELLER_LOCATION\":\"CN\",\"SELLER_QUOTATION_CURRENCY\":\"USD\"},\"p5\":\"1304\",\"p6\":\"1304\",\"p7\":\"USD\",\"p9\":[]}",
     "features": {},
-    "freightCalculateInfo": {
-      "displayMultipleFreight": false,
-      "hideFreight": true
-    },
     "generalFreightInfo": {
-      "allowArouseLayer": false,
+      "allowArouseLayer": true,
+      "deliveryExtraInfoMap": {
+        "CAINIAO_STANDARD": {
+          "allowArouseLayer": true,
+          "serviceDetails": {
+            "details": [
+              {
+                "actionTarget": "https://sale.aliexpress.com/__mobile/esiTMXJb3L.htm",
+                "content": "Get a refund if the item arrives late or not as described. ",
+                "title": "{0}-day Buyer Protection",
+                "type": "bp",
+                "viewMoreText": "View More"
+              }
+            ],
+            "title": "Service"
+          },
+          "shippingFeeText": "Free shipping",
+          "xdays": false
+        }
+      },
+      "freightExt": "[{\"p0\":\"12000031364931654\",\"p1\":\"4.53\",\"p3\":\"USD\",\"p16\":true,\"p5\":\"50019210197\",\"itemScene\":\"default\",\"p18\":\"default\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $4.53\",\"p10\":[218307,266631,267943,218119,268130,268131,84809,268201,132402,268434,111478,267900,268029,268030,268031,267898]}]",
       "hideShipFrom": true,
       "originalLayoutResultList": [
         {
@@ -577,7 +745,7 @@
             {
               "blockGroup": "others-1",
               "blockType": "others",
-              "componentId": "490",
+              "componentId": "3463",
               "content": "Tracking Available",
               "displayCondition": "tracking=visible",
               "distance": 1,
@@ -591,46 +759,50 @@
             "deliveryOptionCode": "CAINIAO_STANDARD",
             "deliveryProviderName": "AliExpress Standard Shipping",
             "leadTimeSort": [
-              9999
+              3800
             ],
-            "patternId": 202002,
+            "patternId": 46001,
+            "logisticsComposeThreshold": "R$ 0.01",
             "discount": 100.0,
-            "utParams": "{\"cmd\":false,\"currency\":\"USD\",\"deliveryDate\":\"2023-04-06\",\"deliveryDayMax\":27,\"deliveryDayMin\":27,\"fAmount\":0.0,\"fCurrency\":\"USD\",\"itemId\":1005005160275897,\"preOrder\":false,\"productId\":1005005160275897,\"provider\":\"cainiao\",\"serviceName\":\"CAINIAO_STANDARD\",\"shipFrom\":\"CN\",\"shipToCountry\":\"US\",\"shippingFee\":\"0\",\"traceId\":\"2132a22e16785144446344598eb529\",\"trackingAvailable\":true}",
+            "logisticsComposeCompany": "AliExpress Standard Shipping",
+            "utParams": "{\"cmd\":false,\"currency\":\"USD\",\"deliveryDate\":\"2023-05-30\",\"deliveryDayMax\":39,\"deliveryDayMin\":39,\"fAmount\":0.0,\"fCurrency\":\"USD\",\"itemId\":1005005021369239,\"meetLogisticsComposeThreshold\":\"yes\",\"preOrder\":false,\"productId\":1005005021369239,\"provider\":\"cainiao\",\"sellingPoint\":\"cmb_sale\",\"serviceName\":\"CAINIAO_STANDARD\",\"shipFrom\":\"CN\",\"shipToCityCode\":\"903200040085000000\",\"shipToCountry\":\"BR\",\"shipToStateCode\":\"903200040000000000\",\"shippingFee\":\"0\",\"traceId\":\"2105267916820701641234095ec173\",\"trackingAvailable\":true}",
             "tracking": "visible",
             "provider": "cainiao",
             "itemShipFromType": "same",
             "itemScene": "default",
-            "shipToCode": "US",
+            "shipToCode": "BR",
             "company": "AliExpress Standard Shipping",
             "currency": "USD",
-            "deliveryDate": "Apr 06",
+            "deliveryDate": "May 30",
             "shipFrom": "China",
-            "deliveryDayMax": 27,
-            "guaranteedDeliveryTime": 60,
+            "deliveryDayMax": 39,
+            "guaranteedDeliveryTime": 75,
             "freightCommitDay": "75",
-            "etaTraceId": "ORDER-f-1-228-2332800000-2332800000-1680847245167-1680847245167-CAINIAO_STANDARD-DOOR_DELIVERY-OPERATING-DEF|SELLER_STOCK_UP-CALENDAR_DAY--RESOURCE_CODE#DEF-432000000-432000000---OPERATING-@DELIVERY_FULFIL-CALENDAR_DAY--DIVISION_ID#228-1900800000-1900800000---OPERATING-|1678514445167",
-            "itemId": 1005005160275897,
-            "solutionBusinessType": "Default",
+            "etaTraceId": "ORDER-f-1-903200040000000000-3369599000-3369599000-1685439763567-1685439763567-CAINIAO_STANDARD-DOOR_DELIVERY-OPERATING-DEF|SELLER_STOCK_UP-CALENDAR_DAY--RESOURCE_CODE#DEF-432000000-432000000---OPERATING-@DELIVERY_FULFIL-CALENDAR_DAY--DIVISION_ID#903200040085000000-2851200000-2851200000---OPERATING-2839|1682070164567",
+            "meetLogisticsComposeThreshold": "yes",
+            "itemId": 1005005021369239,
+            "solutionBusinessType": "LogisticsComposeDiscount",
+            "logisticsComposeDeliveryDate": "Jun 04",
             "shippingFee": "free",
-            "deliveryDayMin": 27,
+            "deliveryDayMin": 39,
             "guaranteedDeliveryTimeProviderName": "cainiao_committed_time",
             "showXDayDeliveryTips": "yes",
-            "solutionId": 268001,
+            "solutionId": 154001,
             "shipFromCode": "CN",
             "deliveryProviderCode": "CAINIAO_STANDARD",
-            "shipTo": "United States"
+            "shipTo": "Autazes"
           },
           "contentLayout": [
             [
               {
-                "blockGroup": "deliveryTime-0",
+                "blockGroup": "deliveryTime-2",
                 "blockType": "deliveryTime",
-                "componentId": "1640",
-                "content": "<span style=\"color: #666666;\">From </span><span style=\"color: #222222;\">China</span><span style=\"color: #666666;\"> to </span><span style=\"color: #222222;\">United States</span><span style=\"color: #666666;\"> via AliExpress Standard Shipping</span>",
-                "displayCondition": "default=visible",
+                "componentId": "3473",
+                "content": "<span style=\"color: #666666;\">Estimated delivery on </span><span style=\"color: #222222;\">Jun 04</span>",
+                "displayCondition": "meetLogisticsComposeThreshold=yes",
                 "distance": 1,
-                "medusaKey": "ship_from_to_config_detail@freight",
-                "order": 2,
+                "medusaKey": "estimated_delivery_on_ComposeDeliveryDate@deliveryTime",
+                "order": 1,
                 "type": "htmlText",
                 "useInDeliveryOptionPanel": true,
                 "useInDetailFirstScreen": true,
@@ -639,13 +811,13 @@
             ],
             [
               {
-                "blockGroup": "deliveryTime-1",
-                "blockType": "deliveryTime",
-                "componentId": "646",
-                "content": "<span style=\"color: #666666;\">Estimated delivery on </span><span style=\"color: #222222;\">Apr 06</span>",
+                "blockGroup": "freight-1",
+                "blockType": "freight",
+                "componentId": "3462",
+                "content": "<span style=\"color: #666666;\">From </span><span style=\"color: #222222;\">China</span><span style=\"color: #666666;\"> to </span><span style=\"color: #222222;\">Autazes</span><span style=\"color: #666666;\"> via AliExpress Standard Shipping</span>",
                 "displayCondition": "default=visible",
                 "distance": 1,
-                "medusaKey": "estimated_delivery_on@deliveryTime",
+                "medusaKey": "ship_from_to_config_detail@freight",
                 "order": 1,
                 "type": "htmlText",
                 "useInDeliveryOptionPanel": true,
@@ -655,29 +827,29 @@
             ]
           ],
           "deliveryOptionPanelDisplayList": [
-            "490",
-            "646",
-            "1394",
-            "1640"
+            "3461",
+            "3462",
+            "3463",
+            "3473"
           ],
           "detailFirstScreenDisplayList": [
-            "646",
-            "1394",
-            "1640"
+            "3461",
+            "3462",
+            "3473"
           ],
           "dxTemplateInfo": {},
-          "finalPatternId": 202002,
+          "finalPatternId": 46001,
           "skuSwitchDisplayList": [
-            "646",
-            "1394",
-            "1640"
+            "3461",
+            "3462",
+            "3473"
           ],
           "titleLayout": [
             [
               {
                 "blockGroup": "title-1",
                 "blockType": "title",
-                "componentId": "1394",
+                "componentId": "3461",
                 "content": "<span style=\"font-size: 15px; color: #222222;\"><strong>Free Shipping</strong></span>",
                 "displayCondition": "shippingFee=free",
                 "distance": 1,
@@ -690,253 +862,10 @@
               }
             ]
           ]
-        },
-        {
-          "additionLayout": [
-            {
-              "blockGroup": "others-1",
-              "blockType": "others",
-              "componentId": "490",
-              "content": "Tracking Available",
-              "displayCondition": "tracking=visible",
-              "distance": 1,
-              "medusaKey": "tracking_available@others",
-              "order": 1,
-              "type": "textWithMark",
-              "useInDeliveryOptionPanel": true
-            }
-          ],
-          "bizData": {
-            "deliveryOptionCode": "CAINIAO_STANDARD_SG_AIR",
-            "deliveryProviderName": "Cainiao Standard - SG Air",
-            "leadTimeSort": [
-              9999
-            ],
-            "patternId": 202002,
-            "discount": 0,
-            "utParams": "{\"cmd\":false,\"currency\":\"USD\",\"deliveryDate\":\"2023-04-07\",\"deliveryDayMax\":28,\"deliveryDayMin\":28,\"fAmount\":8.77,\"fCurrency\":\"USD\",\"itemId\":1005005160275897,\"preOrder\":false,\"productId\":1005005160275897,\"provider\":\"cainiao\",\"serviceName\":\"CAINIAO_STANDARD_SG_AIR\",\"shipFrom\":\"CN\",\"shipToCountry\":\"US\",\"shippingFee\":\"8.77\",\"traceId\":\"2132a22e16785144446344598eb529\",\"trackingAvailable\":true}",
-            "tracking": "visible",
-            "provider": "cainiao",
-            "itemShipFromType": "same",
-            "itemScene": "default",
-            "shipToCode": "US",
-            "company": "Cainiao Standard - SG Air",
-            "currency": "USD",
-            "deliveryDate": "Apr 07",
-            "formattedAmount": "$8.77",
-            "shipFrom": "China",
-            "deliveryDayMax": 28,
-            "guaranteedDeliveryTime": 60,
-            "freightCommitDay": "75",
-            "etaTraceId": "ORDER-f-1-228-2419200000-2419200000-1680933645167-1680933645167-CAINIAO_STANDARD_SG_AIR-DOOR_DELIVERY-OPERATING-DEF|SELLER_STOCK_UP-CALENDAR_DAY--RESOURCE_CODE#DEF-604800000-604800000---OPERATING-@DELIVERY_FULFIL-CALENDAR_DAY--DIVISION_ID#228-1814400000-1814400000---OPERATING-|1678514445167",
-            "itemId": 1005005160275897,
-            "displayAmount": 8.77,
-            "solutionBusinessType": "Default",
-            "shippingFee": "charge",
-            "deliveryDayMin": 28,
-            "guaranteedDeliveryTimeProviderName": "cainiao_committed_time",
-            "showXDayDeliveryTips": "yes",
-            "solutionId": 268001,
-            "shipFromCode": "CN",
-            "displayCurrency": "USD",
-            "deliveryProviderCode": "CAINIAO_STANDARD_SG_AIR",
-            "shipTo": "United States"
-          },
-          "contentLayout": [
-            [
-              {
-                "blockGroup": "deliveryTime-0",
-                "blockType": "deliveryTime",
-                "componentId": "1640",
-                "content": "<span style=\"color: #666666;\">From </span><span style=\"color: #222222;\">China</span><span style=\"color: #666666;\"> to </span><span style=\"color: #222222;\">United States</span><span style=\"color: #666666;\"> via Cainiao Standard - SG Air</span>",
-                "displayCondition": "default=visible",
-                "distance": 1,
-                "medusaKey": "ship_from_to_config_detail@freight",
-                "order": 2,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ],
-            [
-              {
-                "blockGroup": "deliveryTime-1",
-                "blockType": "deliveryTime",
-                "componentId": "646",
-                "content": "<span style=\"color: #666666;\">Estimated delivery on </span><span style=\"color: #222222;\">Apr 07</span>",
-                "displayCondition": "default=visible",
-                "distance": 1,
-                "medusaKey": "estimated_delivery_on@deliveryTime",
-                "order": 1,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ]
-          ],
-          "deliveryOptionPanelDisplayList": [
-            "490",
-            "646",
-            "1395",
-            "1640"
-          ],
-          "detailFirstScreenDisplayList": [
-            "646",
-            "1395",
-            "1640"
-          ],
-          "dxTemplateInfo": {},
-          "finalPatternId": 202002,
-          "skuSwitchDisplayList": [
-            "646",
-            "1395",
-            "1640"
-          ],
-          "titleLayout": [
-            [
-              {
-                "blockGroup": "title-1",
-                "blockType": "title",
-                "componentId": "1395",
-                "content": "<span style=\"font-size: 15px; color: #222222;\"><strong>Shipping: $8.77</strong></span>",
-                "displayCondition": "previewAmount=invisible",
-                "distance": 1,
-                "medusaKey": "shippingfee@freightCost",
-                "order": 2,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ]
-          ]
-        },
-        {
-          "additionLayout": [
-            {
-              "blockGroup": "others-1",
-              "blockType": "others",
-              "componentId": "490",
-              "content": "Tracking Available",
-              "displayCondition": "tracking=visible",
-              "distance": 1,
-              "medusaKey": "tracking_available@others",
-              "order": 1,
-              "type": "textWithMark",
-              "useInDeliveryOptionPanel": true
-            }
-          ],
-          "bizData": {
-            "deliveryOptionCode": "CAINIAO_PREMIUM",
-            "deliveryProviderName": "AliExpress Premium Shipping",
-            "leadTimeSort": [
-              9999
-            ],
-            "patternId": 202002,
-            "discount": 0,
-            "utParams": "{\"cmd\":false,\"currency\":\"USD\",\"deliveryDate\":\"2023-03-24\",\"deliveryDayMax\":14,\"deliveryDayMin\":14,\"fAmount\":61.18,\"fCurrency\":\"USD\",\"itemId\":1005005160275897,\"preOrder\":false,\"productId\":1005005160275897,\"provider\":\"cainiao\",\"serviceName\":\"CAINIAO_PREMIUM\",\"shipFrom\":\"CN\",\"shipToCountry\":\"US\",\"shippingFee\":\"61.18\",\"traceId\":\"2132a22e16785144446344598eb529\",\"trackingAvailable\":true}",
-            "tracking": "visible",
-            "provider": "cainiao",
-            "itemShipFromType": "same",
-            "itemScene": "default",
-            "shipToCode": "US",
-            "company": "AliExpress Premium Shipping",
-            "currency": "USD",
-            "deliveryDate": "Mar 24",
-            "formattedAmount": "$61.18",
-            "shipFrom": "China",
-            "deliveryDayMax": 14,
-            "guaranteedDeliveryTime": 35,
-            "freightCommitDay": "75",
-            "etaTraceId": "ORDER-f-1-228-1209600000-1209600000-1679724045167-1679724045167-CAINIAO_PREMIUM-DOOR_DELIVERY-OPERATING-DEF|SELLER_STOCK_UP-CALENDAR_DAY--RESOURCE_CODE#DEF-259200000-259200000---OPERATING-@DELIVERY_FULFIL-CALENDAR_DAY--DIVISION_ID#228-950400000-950400000---OPERATING-|1678514445167",
-            "itemId": 1005005160275897,
-            "displayAmount": 61.18,
-            "solutionBusinessType": "Default",
-            "shippingFee": "charge",
-            "deliveryDayMin": 14,
-            "guaranteedDeliveryTimeProviderName": "cainiao_committed_time",
-            "showXDayDeliveryTips": "yes",
-            "solutionId": 268001,
-            "shipFromCode": "CN",
-            "displayCurrency": "USD",
-            "deliveryProviderCode": "CAINIAO_PREMIUM",
-            "shipTo": "United States"
-          },
-          "contentLayout": [
-            [
-              {
-                "blockGroup": "deliveryTime-0",
-                "blockType": "deliveryTime",
-                "componentId": "1640",
-                "content": "<span style=\"color: #666666;\">From </span><span style=\"color: #222222;\">China</span><span style=\"color: #666666;\"> to </span><span style=\"color: #222222;\">United States</span><span style=\"color: #666666;\"> via AliExpress Premium Shipping</span>",
-                "displayCondition": "default=visible",
-                "distance": 1,
-                "medusaKey": "ship_from_to_config_detail@freight",
-                "order": 2,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ],
-            [
-              {
-                "blockGroup": "deliveryTime-1",
-                "blockType": "deliveryTime",
-                "componentId": "646",
-                "content": "<span style=\"color: #666666;\">Estimated delivery on </span><span style=\"color: #222222;\">Mar 24</span>",
-                "displayCondition": "default=visible",
-                "distance": 1,
-                "medusaKey": "estimated_delivery_on@deliveryTime",
-                "order": 1,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ]
-          ],
-          "deliveryOptionPanelDisplayList": [
-            "490",
-            "646",
-            "1395",
-            "1640"
-          ],
-          "detailFirstScreenDisplayList": [
-            "646",
-            "1395",
-            "1640"
-          ],
-          "dxTemplateInfo": {},
-          "finalPatternId": 202002,
-          "skuSwitchDisplayList": [
-            "646",
-            "1395",
-            "1640"
-          ],
-          "titleLayout": [
-            [
-              {
-                "blockGroup": "title-1",
-                "blockType": "title",
-                "componentId": "1395",
-                "content": "<span style=\"font-size: 15px; color: #222222;\"><strong>Shipping: $61.18</strong></span>",
-                "displayCondition": "previewAmount=invisible",
-                "distance": 1,
-                "medusaKey": "shippingfee@freightCost",
-                "order": 2,
-                "type": "htmlText",
-                "useInDeliveryOptionPanel": true,
-                "useInDetailFirstScreen": true,
-                "useInSkuSwitch": true
-              }
-            ]
-          ]
         }
       ],
       "shippingFeeText": "Free shipping",
+      "styleCode": "default",
       "usingNewFreight": true
     },
     "hbaFreeShipping": false,
@@ -994,14 +923,16 @@
     },
     "id": 0,
     "name": "ShippingModule",
-    "productId": 1005005160275897,
-    "regionCountryName": "United States",
-    "suppressFreightInvoke": true,
+    "productId": 1005005021369239,
+    "regionCityName": "Autazes",
+    "regionCountryName": "Brazil",
+    "regionProvinceName": "Amazonas",
+    "suppressFreightInvoke": false,
     "userCountryCode": "CN",
     "userCountryName": "China (Mainland)"
   },
   "skuModule": {
-    "categoryId": 200220143,
+    "categoryId": 63705,
     "features": {},
     "forcePromiseWarrantyJson": "{}",
     "hasSizeInfo": false,
@@ -1052,924 +983,58 @@
     "name": "SKUModule",
     "productSKUPropertyList": [
       {
-        "isShowTypeColor": false,
+        "isShowTypeColor": true,
         "order": 1,
-        "showType": "none",
-        "showTypeColor": false,
+        "showType": "colour_atla",
+        "showTypeColor": true,
         "skuPropertyId": 14,
         "skuPropertyName": "Color",
         "skuPropertyValues": [
           {
-            "propertyValueDefinitionName": "2pcs  A",
-            "propertyValueDisplayName": "2pcs  A",
-            "propertyValueId": 202422806,
-            "propertyValueIdLong": 202422806,
-            "propertyValueName": "Deep Sapphire",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S798dd548c3a44403934445576f9e2cacc/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S798dd548c3a44403934445576f9e2cacc/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  A",
+            "propertyValueDefinitionName": "Black",
+            "propertyValueDisplayName": "Black",
+            "propertyValueId": 29,
+            "propertyValueIdLong": 29,
+            "propertyValueName": "White",
+            "skuColorValue": "#FFFFFF",
+            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/Sf6048f59228e4de1a1382f2f086d1f8f6/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_640x640.jpg",
+            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/Sf6048f59228e4de1a1382f2f086d1f8f6/Wireless-Headphones-5-3-Bluetooth-Earphones-Earbuds-Headsets-TWS-Hearding-Aids-Fone-Stereo-With-Mic-For.jpg_50x50.jpg",
+            "skuPropertyTips": "Black",
             "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  A"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  B",
-            "propertyValueDisplayName": "2pcs  B",
-            "propertyValueId": 202422807,
-            "propertyValueIdLong": 202422807,
-            "propertyValueName": "Fluorescence Yellow",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/Sf4b96e6cff9a4a57b41df0dde08924deB/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/Sf4b96e6cff9a4a57b41df0dde08924deB/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  B",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  B"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  C",
-            "propertyValueDisplayName": "2pcs  C",
-            "propertyValueId": 202419806,
-            "propertyValueIdLong": 202419806,
-            "propertyValueName": "Olive",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S4c5ca233973046ce9011c289e0a9cab18/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S4c5ca233973046ce9011c289e0a9cab18/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  C",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  C"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  D",
-            "propertyValueDisplayName": "2pcs  D",
-            "propertyValueId": 202418806,
-            "propertyValueIdLong": 202418806,
-            "propertyValueName": "Mint green",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S3c01db593c664740881f9fca7168bfb0B/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S3c01db593c664740881f9fca7168bfb0B/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  D",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  D"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  E",
-            "propertyValueDisplayName": "2pcs  E",
-            "propertyValueId": 200006151,
-            "propertyValueIdLong": 200006151,
-            "propertyValueName": "Light Grey",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S11a65a5b57ff407ebb6a7bef235e70814/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S11a65a5b57ff407ebb6a7bef235e70814/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  E",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  E"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  F",
-            "propertyValueDisplayName": "2pcs  F",
-            "propertyValueId": 200006152,
-            "propertyValueIdLong": 200006152,
-            "propertyValueName": "light green",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S1f58f59946d94a7891eab12cb0796dbft/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S1f58f59946d94a7891eab12cb0796dbft/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  F",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  F"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  G",
-            "propertyValueDisplayName": "2pcs  G",
-            "propertyValueId": 200006153,
-            "propertyValueIdLong": 200006153,
-            "propertyValueName": "Light yellow",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/Sd74d80af47d44e2e8a6fed15cff46af1p/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/Sd74d80af47d44e2e8a6fed15cff46af1p/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  G",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  G"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  H",
-            "propertyValueDisplayName": "2pcs  H",
-            "propertyValueId": 200006154,
-            "propertyValueIdLong": 200006154,
-            "propertyValueName": "Dark Khaki",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S3167787ea5e641e6ae757c865cda511bM/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S3167787ea5e641e6ae757c865cda511bM/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  H",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  H"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  I",
-            "propertyValueDisplayName": "2pcs  I",
-            "propertyValueId": 200006155,
-            "propertyValueIdLong": 200006155,
-            "propertyValueName": "dark gray",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S6c7ea5daaa384ce9b48e40bba17de5e3e/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S6c7ea5daaa384ce9b48e40bba17de5e3e/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  I",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  I"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  J",
-            "propertyValueDisplayName": "2pcs  J",
-            "propertyValueId": 200006156,
-            "propertyValueIdLong": 200006156,
-            "propertyValueName": "plum",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S3cd2267b68c747718f1cbac8e9ff311cI/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S3cd2267b68c747718f1cbac8e9ff311cI/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  J",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  J"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  K",
-            "propertyValueDisplayName": "2pcs  K",
-            "propertyValueId": 200004889,
-            "propertyValueIdLong": 200004889,
-            "propertyValueName": "Army Green",
-            "skuColorValue": "#7C8C30",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S8c8c92861883479db45597bdca02c788m/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S8c8c92861883479db45597bdca02c788m/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  K",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  K"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  L",
-            "propertyValueDisplayName": "2pcs  L",
-            "propertyValueId": 200004870,
-            "propertyValueIdLong": 200004870,
-            "propertyValueName": "Deep Blue",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S9c0892573802476eb1f7eb79713b1b99q/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S9c0892573802476eb1f7eb79713b1b99q/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  L",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  L"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  M",
-            "propertyValueDisplayName": "2pcs  M",
-            "propertyValueId": 200003699,
-            "propertyValueIdLong": 200003699,
-            "propertyValueName": "MULTI",
-            "skuColorValue": "mutil",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S239ca0d1eb3e4e84945bb1155bc73a75j/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S239ca0d1eb3e4e84945bb1155bc73a75j/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  M",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  M"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs  N",
-            "propertyValueDisplayName": "2pcs  N",
-            "propertyValueId": 200002984,
-            "propertyValueIdLong": 200002984,
-            "propertyValueName": "Burgundy",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/Sb6424ee1241d40bda14c7a083a9fcb196/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/Sb6424ee1241d40bda14c7a083a9fcb196/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs  N",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs  N"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs O",
-            "propertyValueDisplayName": "2pcs O",
-            "propertyValueId": 200000195,
-            "propertyValueIdLong": 200000195,
-            "propertyValueName": "Chocolate",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/Sddd122b0b9c84655bffa0882972fab4c1/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/Sddd122b0b9c84655bffa0882972fab4c1/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs O",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs O"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs P",
-            "propertyValueDisplayName": "2pcs P",
-            "propertyValueId": 100018786,
-            "propertyValueIdLong": 100018786,
-            "propertyValueName": "Clear",
-            "skuColorValue": "clear",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S99e0b9acff634137a3012e771181920dS/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S99e0b9acff634137a3012e771181920dS/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs P",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs P"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs Q",
-            "propertyValueDisplayName": "2pcs Q",
-            "propertyValueId": 365016,
-            "propertyValueIdLong": 365016,
-            "propertyValueName": "violet",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S900f64335a5e4ef78fb161c6fb860629T/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S900f64335a5e4ef78fb161c6fb860629T/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs Q",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs Q"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs R",
-            "propertyValueDisplayName": "2pcs R",
-            "propertyValueId": 365458,
-            "propertyValueIdLong": 365458,
-            "propertyValueName": "Auburn",
-            "skuColorValue": "#8D6468",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S13975e4413fb44b09eb89ebdc551adedQ/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S13975e4413fb44b09eb89ebdc551adedQ/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs R",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs R"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs S",
-            "propertyValueDisplayName": "2pcs S",
-            "propertyValueId": 350850,
-            "propertyValueIdLong": 350850,
-            "propertyValueName": "Gold",
-            "skuColorValue": "#FFD700",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S1abd7ab7bf654a1aae48348df8259306E/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S1abd7ab7bf654a1aae48348df8259306E/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs S",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs S"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs T",
-            "propertyValueDisplayName": "2pcs T",
-            "propertyValueId": 350852,
-            "propertyValueIdLong": 350852,
-            "propertyValueName": "Orange",
-            "skuColorValue": "#FFA500",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S784cb82328ae444c9ba4786e4e7f6ff2t/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S784cb82328ae444c9ba4786e4e7f6ff2t/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs T",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs T"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs U",
-            "propertyValueDisplayName": "2pcs U",
-            "propertyValueId": 350853,
-            "propertyValueIdLong": 350853,
-            "propertyValueName": "Silver",
-            "skuColorValue": "#CCC",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S99e4b7ad4c4f4cfab076d4078c9c884ek/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S99e4b7ad4c4f4cfab076d4078c9c884ek/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs U",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs U"
-          },
-          {
-            "propertyValueDefinitionName": "2pcs V",
-            "propertyValueDisplayName": "2pcs V",
-            "propertyValueId": 10,
-            "propertyValueIdLong": 10,
-            "propertyValueName": "Red",
-            "skuColorValue": "#FF0000",
-            "skuPropertyImagePath": "https://ae01.alicdn.com/kf/S18860f5f350c42229b11d1b9c1bb40abh/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_640x640.jpg",
-            "skuPropertyImageSummPath": "https://ae01.alicdn.com/kf/S18860f5f350c42229b11d1b9c1bb40abh/2023-Year-Easter-Straw-Easter-Rabbit-Decoration-with-Clothes-Happy-Easter-Home-Garden-Wedding-Ornament-Photo.jpg_50x50.jpg",
-            "skuPropertyTips": "2pcs V",
-            "skuPropertyValueShowOrder": 1,
-            "skuPropertyValueTips": "2pcs V"
-          }
-        ]
-      },
-      {
-        "isShowTypeColor": false,
-        "order": 3,
-        "showType": "none",
-        "showTypeColor": false,
-        "skuPropertyId": 5,
-        "skuPropertyName": "Size",
-        "skuPropertyValues": [
-          {
-            "propertyValueDefinitionName": "35cm",
-            "propertyValueDisplayName": "35cm",
-            "propertyValueId": 361385,
-            "propertyValueIdLong": 361385,
-            "propertyValueName": "L",
-            "skuPropertyTips": "35cm",
-            "skuPropertyValueShowOrder": 2,
-            "skuPropertyValueTips": "35cm"
+            "skuPropertyValueTips": "Black"
           }
         ]
       }
     ],
-    "selectedSkuAttr": "14:202422807#2pcs  B;5:361385#35cm",
+    "selectedSkuAttr": "14:29#Black",
     "skuPriceList": [
       {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000031922150782\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
+        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000031364931654\",\"p1\":\"4.53\",\"p10\":[218307,266631,267943,218119,268130,268131,84809,268201,132402,268434,111478,267900,268029,268030,268031,267898],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p5\":\"50019210197\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $4.53\"}",
         "salable": true,
-        "skuAttr": "14:202422807#2pcs  B;5:361385#35cm",
-        "skuId": 12000031922150782,
-        "skuIdStr": "12000031922150782",
-        "skuPropIds": "202422807,361385",
+        "skuAttr": "14:29#Black",
+        "skuId": 12000031364931654,
+        "skuIdStr": "12000031364931654",
+        "skuPropIds": "29",
         "skuVal": {
-          "availQuantity": 48,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 48,
+          "availQuantity": 9186,
+          "discount": "63",
+          "discountTips": "63% off",
+          "inventory": 9186,
           "isActivity": true,
           "optionalWarrantyPrice": [],
           "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
+            "currency": "BRL",
+            "formatedAmount": "R$ 25,00",
+            "value": 25.0
           },
+          "skuActivityAmountLocal": "R$ 25,00||",
           "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
+            "currency": "BRL",
+            "formatedAmount": "R$ 69,21",
+            "value": 69.21
           },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000031922150783\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:202419806#2pcs  C;5:361385#35cm",
-        "skuId": 12000031922150783,
-        "skuIdStr": "12000031922150783",
-        "skuPropIds": "202419806,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000031994957285\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:202418806#2pcs  D;5:361385#35cm",
-        "skuId": 12000031994957285,
-        "skuIdStr": "12000031994957285",
-        "skuPropIds": "202418806,361385",
-        "skuVal": {
-          "availQuantity": 41,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 41,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000031922150781\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:202422806#2pcs  A;5:361385#35cm",
-        "skuId": 12000031922150781,
-        "skuIdStr": "12000031922150781",
-        "skuPropIds": "202422806,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275494\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:100018786#2pcs P;5:361385#35cm",
-        "skuId": 12000032408275494,
-        "skuIdStr": "12000032408275494",
-        "skuPropIds": "100018786,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275495\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:365016#2pcs Q;5:361385#35cm",
-        "skuId": 12000032408275495,
-        "skuIdStr": "12000032408275495",
-        "skuPropIds": "365016,361385",
-        "skuVal": {
-          "availQuantity": 44,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 44,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032201296243\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006153#2pcs  G;5:361385#35cm",
-        "skuId": 12000032201296243,
-        "skuIdStr": "12000032201296243",
-        "skuPropIds": "200006153,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275496\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:365458#2pcs R;5:361385#35cm",
-        "skuId": 12000032408275496,
-        "skuIdStr": "12000032408275496",
-        "skuPropIds": "365458,361385",
-        "skuVal": {
-          "availQuantity": 45,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 45,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032201296242\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006152#2pcs  F;5:361385#35cm",
-        "skuId": 12000032201296242,
-        "skuIdStr": "12000032201296242",
-        "skuPropIds": "200006152,361385",
-        "skuVal": {
-          "availQuantity": 15,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 15,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275497\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:350850#2pcs S;5:361385#35cm",
-        "skuId": 12000032408275497,
-        "skuIdStr": "12000032408275497",
-        "skuPropIds": "350850,361385",
-        "skuVal": {
-          "availQuantity": 56,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 56,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032201296241\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006151#2pcs  E;5:361385#35cm",
-        "skuId": 12000032201296241,
-        "skuIdStr": "12000032201296241",
-        "skuPropIds": "200006151,361385",
-        "skuVal": {
-          "availQuantity": 52,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 52,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275498\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:350852#2pcs T;5:361385#35cm",
-        "skuId": 12000032408275498,
-        "skuIdStr": "12000032408275498",
-        "skuPropIds": "350852,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032408275499\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:350853#2pcs U;5:361385#35cm",
-        "skuId": 12000032408275499,
-        "skuIdStr": "12000032408275499",
-        "skuPropIds": "350853,361385",
-        "skuVal": {
-          "availQuantity": 46,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 46,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032274297009\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200000195#2pcs O;5:361385#35cm",
-        "skuId": 12000032274297009,
-        "skuIdStr": "12000032274297009",
-        "skuPropIds": "200000195,361385",
-        "skuVal": {
-          "availQuantity": 87,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 87,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032235504507\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200004889#2pcs  K;5:361385#35cm",
-        "skuId": 12000032235504507,
-        "skuIdStr": "12000032235504507",
-        "skuPropIds": "200004889,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032235504506\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006156#2pcs  J;5:361385#35cm",
-        "skuId": 12000032235504506,
-        "skuIdStr": "12000032235504506",
-        "skuPropIds": "200006156,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032238071378\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200003699#2pcs  M;5:361385#35cm",
-        "skuId": 12000032238071378,
-        "skuIdStr": "12000032238071378",
-        "skuPropIds": "200003699,361385",
-        "skuVal": {
-          "availQuantity": 76,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 76,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032238071379\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200002984#2pcs  N;5:361385#35cm",
-        "skuId": 12000032238071379,
-        "skuIdStr": "12000032238071379",
-        "skuPropIds": "200002984,361385",
-        "skuVal": {
-          "availQuantity": 72,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 72,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032214756979\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006155#2pcs  I;5:361385#35cm",
-        "skuId": 12000032214756979,
-        "skuIdStr": "12000032214756979",
-        "skuPropIds": "200006155,361385",
-        "skuVal": {
-          "availQuantity": 83,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 83,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032214756978\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200006154#2pcs  H;5:361385#35cm",
-        "skuId": 12000032214756978,
-        "skuIdStr": "12000032214756978",
-        "skuPropIds": "200006154,361385",
-        "skuVal": {
-          "availQuantity": 77,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 77,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032238071377\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:200004870#2pcs  L;5:361385#35cm",
-        "skuId": 12000032238071377,
-        "skuIdStr": "12000032238071377",
-        "skuPropIds": "200004870,361385",
-        "skuVal": {
-          "availQuantity": 0,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 0,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
-        }
-      },
-      {
-        "freightExt": "{\"itemScene\":\"default\",\"p0\":\"12000032509330594\",\"p1\":\"15.65\",\"p10\":[201379,218307,182209,56804,218119,189703,201380,189189,84809,64944,64945,111478,91165,91166],\"p16\":true,\"p18\":\"default\",\"p3\":\"USD\",\"p4\":\"990000\",\"p5\":\"0\",\"p6\":\"null\",\"p7\":\"{}\",\"p9\":\"US $15.65\"}",
-        "salable": true,
-        "skuAttr": "14:10#2pcs V;5:361385#35cm",
-        "skuId": 12000032509330594,
-        "skuIdStr": "12000032509330594",
-        "skuPropIds": "10,361385",
-        "skuVal": {
-          "availQuantity": 57,
-          "bulkOrder": 3,
-          "discount": "40",
-          "discountTips": "40% off",
-          "inventory": 57,
-          "isActivity": true,
-          "optionalWarrantyPrice": [],
-          "skuActivityAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $15.65",
-            "value": 15.65
-          },
-          "skuAmount": {
-            "currency": "USD",
-            "formatedAmount": "US $26.08",
-            "value": 26.08
-          },
-          "skuCalPrice": "26.08"
+          "skuAmountLocal": "R$ 69,21||",
+          "skuCalPrice": "13.04"
         }
       }
     ],
@@ -1982,54 +1047,198 @@
     "name": "SpecsModule",
     "props": [
       {
-        "attrName": "Electronic",
-        "attrValue": "NO"
-      },
-      {
-        "attrName": "Occasion",
-        "attrValue": "Easter"
-      },
-      {
-        "attrName": "Pattern",
-        "attrValue": "Animal"
-      },
-      {
         "attrName": "Material",
-        "attrValue": "Straw"
+        "attrValue": "Metal"
       },
       {
-        "attrName": "is_customized",
+        "attrName": "Width[mm]",
+        "attrValue": "6"
+      },
+      {
+        "attrName": "Depth[mm]",
+        "attrValue": "8"
+      },
+      {
+        "attrName": "Weight[g]",
+        "attrValue": "50"
+      },
+      {
+        "attrName": "Height[mm]",
+        "attrValue": "10"
+      },
+      {
+        "attrName": "Battery Capacity[mAh]",
+        "attrValue": "300"
+      },
+      {
+        "attrName": "Battery life up to[hours]",
+        "attrValue": "3"
+      },
+      {
+        "attrName": "Voice assistant built-in",
         "attrValue": "No"
       },
       {
-        "attrName": "Model Number",
-        "attrValue": "Straw Rabbits Bunny Decorations"
+        "attrName": "Maximum wireless range[m]",
+        "attrValue": "10m-20m"
       },
       {
-        "attrName": "Brand Name",
-        "attrValue": "nobico"
+        "attrName": "NFC Technology",
+        "attrValue": "No"
+      },
+      {
+        "attrName": "Sound Isolating",
+        "attrValue": "No"
+      },
+      {
+        "attrName": "Category",
+        "attrValue": "Earphones & Headphones"
+      },
+      {
+        "attrName": "Earcups Type",
+        "attrValue": "Semi-open"
+      },
+      {
+        "attrName": "Max Output",
+        "attrValue": "20mW"
+      },
+      {
+        "attrName": "Number Of Drivers",
+        "attrValue": "2"
+      },
+      {
+        "attrName": "Charging Method",
+        "attrValue": "Charging case"
+      },
+      {
+        "attrName": "Headphone Pads Material",
+        "attrValue": "Silicone"
+      },
+      {
+        "attrName": "Magnet Type",
+        "attrValue": "Ferrite"
+      },
+      {
+        "attrName": "Driver Diameter",
+        "attrValue": "8mm"
+      },
+      {
+        "attrName": "Total Harmonic Distortion",
+        "attrValue": "10%"
+      },
+      {
+        "attrName": "Impedance Range",
+        "attrValue": "from 33 to 100 Ω"
+      },
+      {
+        "attrName": "Bluetooth Version",
+        "attrValue": "5.1"
+      },
+      {
+        "attrName": "Package List",
+        "attrValue": "User Manual,Charger,Charging case"
+      },
+      {
+        "attrName": "Features",
+        "attrValue": "With Microphone"
+      },
+      {
+        "attrName": "Codecs",
+        "attrValue": "NONE"
+      },
+      {
+        "attrName": "With Microphone",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Is wireless",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Support Memory Card",
+        "attrValue": "No"
+      },
+      {
+        "attrName": "Waterproof",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Resistance",
+        "attrValue": "2000Ω"
+      },
+      {
+        "attrName": "Line Length",
+        "attrValue": "0m"
+      },
+      {
+        "attrName": "Frequency Response Range",
+        "attrValue": "20 - 2000Hz"
+      },
+      {
+        "attrName": "Sensitivity",
+        "attrValue": "3000dB"
+      },
+      {
+        "attrName": "Plug Type",
+        "attrValue": "NONE"
+      },
+      {
+        "attrName": "Active Noise-Cancellation",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Volume Control",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Control Button",
+        "attrValue": "Yes"
+      },
+      {
+        "attrName": "Vocalism Principle",
+        "attrValue": "Dynamic"
+      },
+      {
+        "attrName": "Wireless Type",
+        "attrValue": "bluetooth"
+      },
+      {
+        "attrName": "Connectors",
+        "attrValue": "USB"
+      },
+      {
+        "attrName": "Communication",
+        "attrValue": "Wireless"
+      },
+      {
+        "attrName": "Style",
+        "attrValue": "In-ear"
+      },
+      {
+        "attrName": "Certification",
+        "attrValue": "CE,RoHS"
       },
       {
         "attrName": "Origin",
         "attrValue": "Mainland China"
       },
       {
-        "attrName": "CN",
-        "attrValue": "Guangdong"
+        "attrName": "Brand Name",
+        "attrValue": "SHUSHU"
       }
     ]
   },
   "storeModule": {
-    "buyerAdminSeq": 3831282040,
-    "companyId": 1122168102,
+    "buyerAdminSeq": 4555024838,
+    "companyId": 1126370122,
     "countryCompleteName": "China",
-    "detailPageUrl": "//www.aliexpress.com/item/1005005160275897.html",
+    "detailPageUrl": "//www.aliexpress.com/item/1005005021369239.html",
     "esRetailOrConsignment": false,
     "features": {},
     "feedbackMessageServer": "//message.aliexpress.com",
     "feedbackServer": "//feedback.aliexpress.com",
     "followed": false,
-    "followingNumber": 42,
+    "followingNumber": 2937,
     "hasStore": true,
     "hasStoreHeader": true,
     "hideCustomerService": false,
@@ -2047,41 +1256,41 @@
     },
     "id": 0,
     "name": "StoreModule",
-    "openTime": "Apr 21, 2022",
+    "openTime": "May 24, 2022",
     "openedYear": 0,
-    "positiveNum": 157,
-    "positiveRate": "95.5%",
-    "productId": 1005005160275897,
-    "sellerAdminSeq": 2661457318,
-    "sessionId": "+QuSHHQ9ilQCAWeyNgveJ8cF",
+    "positiveNum": 5420,
+    "positiveRate": "92.0%",
+    "productId": 1005005021369239,
+    "sellerAdminSeq": 2669691174,
+    "sessionId": "4EfJHNrhmRwCAXOfLR7ripfy",
     "siteType": "glo",
-    "storeName": "XF Kitchen Supplies Home Decor Store",
-    "storeNum": 1100387846,
-    "storeURL": "//www.aliexpress.com/store/1100387846",
+    "storeName": "LHXY Store",
+    "storeNum": 1102107983,
+    "storeURL": "//www.aliexpress.com/store/1102107983",
     "topBrandDescURL": "https://sale.aliexpress.com/topbrand.htm",
     "topRatedSeller": false
   },
   "titleModule": {
     "features": {},
     "feedbackRating": {
-      "averageStar": "4.4",
-      "averageStarRage": "87.1",
+      "averageStar": "4.7",
+      "averageStarRage": "94.6",
       "display": true,
-      "evarageStar": "4.4",
-      "evarageStarRage": "87.1",
-      "fiveStarNum": 11,
-      "fiveStarRate": "64",
-      "fourStarNum": 3,
-      "fourStarRate": "18",
-      "oneStarNum": 0,
-      "oneStarRate": "0",
-      "positiveRate": "64.7",
+      "evarageStar": "4.7",
+      "evarageStarRage": "94.6",
+      "fiveStarNum": 44,
+      "fiveStarRate": "84",
+      "fourStarNum": 5,
+      "fourStarRate": "10",
+      "oneStarNum": 1,
+      "oneStarRate": "2",
+      "positiveRate": "84.7",
       "threeStarNum": 1,
-      "threeStarRate": "6",
-      "totalValidNum": 17,
+      "threeStarRate": "2",
+      "totalValidNum": 52,
       "trialReviewNum": 0,
-      "twoStarNum": 2,
-      "twoStarRate": "12"
+      "twoStarNum": 1,
+      "twoStarRate": "2"
     },
     "formatTradeCount": "0",
     "i18nMap": {
@@ -2097,43 +1306,41 @@
     "name": "TitleModule",
     "orig": false,
     "origTitle": false,
-    "subject": "2023 Year Easter Straw Easter Rabbit Decoration with Clothes Happy Easter Home Garden Wedding Ornament Photo Props Crafts Bunny",
+    "subject": "Wireless Headphones 5.3 Bluetooth Earphones Earbuds Headsets TWS Hearding Aids Fone Stereo With Mic For Sports Games Phones",
     "titleTags": [],
-    "tradeCount": 0,
     "trans": false,
     "transTitle": false
   },
   "webEnv": {
-    "country": "US",
-    "currency": "USD",
+    "country": "BR",
+    "currency": "BRL",
     "env": {
       "valMap": {
         "g11n:locale": "en_US",
         "g11n:timezone": "",
         "ua:device": "pc",
-        "user:id": "3831282040",
-        "g11n:country": "CN",
+        "user:id": "4555024838",
+        "g11n:country": "BR",
         "page:name": "",
         "g11n:site": "glo",
         "page:app": "",
         "ua:browser": "chrome",
-        "ua:platform": "mac",
-        "user:type": "buyer",
+        "ua:platform": "other",
+        "user:type": "",
         "page:id": "item_html",
         "user:member": "",
-        "g11n:currency": "USD"
+        "g11n:currency": "BRL"
       },
       "zone": "global_env"
     },
     "host": "www.aliexpress.com",
-    "hostname": "ae-glodetail-342305b4a7903094c09ce785e7bdbadb-kxmfn",
-    "ip": "61.141.78.233",
+    "hostname": "ae-glodetail-e622c6fd2fdb80dab7b881bbb9bcd8f4-jhhhr",
+    "ip": "115.159.45.30",
     "lang": "en_US",
     "language": "en",
     "locale": "en_US",
-    "referer": "https://www.aliexpress.com",
     "reqHost": "https://www.aliexpress.com",
     "site": "glo",
-    "traceId": "2132a22e16785144446344598eb529"
+    "traceId": "2105267916820701641234095ec173"
   }
 }

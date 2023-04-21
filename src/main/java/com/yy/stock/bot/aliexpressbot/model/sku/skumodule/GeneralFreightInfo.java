@@ -3,6 +3,8 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ import java.util.List;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GeneralFreightInfo {
 
     private boolean allowArouseLayer;
