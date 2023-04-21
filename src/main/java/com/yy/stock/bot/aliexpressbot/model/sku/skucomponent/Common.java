@@ -1,6 +1,6 @@
 /**
-  * Copyright 2023 ab173.com 
-  */
+ * Copyright 2023 ab173.com
+ */
 package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
 
 /**
@@ -9,6 +9,12 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Common {
 
     private String recommendationsFrom;
@@ -24,95 +30,109 @@ public class Common {
     private String similarRecommond;
     private String youMayAlsoLikeSeeMore;
     private String qanda;
+
+    public String getRecommendationsFrom() {
+        return recommendationsFrom;
+    }
+
     public void setRecommendationsFrom(String recommendationsFrom) {
-         this.recommendationsFrom = recommendationsFrom;
-     }
-     public String getRecommendationsFrom() {
-         return recommendationsFrom;
-     }
+        this.recommendationsFrom = recommendationsFrom;
+    }
+
+    public String getSharePc() {
+        return sharePc;
+    }
 
     public void setSharePc(String sharePc) {
-         this.sharePc = sharePc;
-     }
-     public String getSharePc() {
-         return sharePc;
-     }
+        this.sharePc = sharePc;
+    }
+
+    public String getSkuEditSelection() {
+        return skuEditSelection;
+    }
 
     public void setSkuEditSelection(String skuEditSelection) {
-         this.skuEditSelection = skuEditSelection;
-     }
-     public String getSkuEditSelection() {
-         return skuEditSelection;
-     }
+        this.skuEditSelection = skuEditSelection;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public void setDescription(String description) {
-         this.description = description;
-     }
-     public String getDescription() {
-         return description;
-     }
+        this.description = description;
+    }
+
+    public String getSpecification() {
+        return specification;
+    }
 
     public void setSpecification(String specification) {
-         this.specification = specification;
-     }
-     public String getSpecification() {
-         return specification;
-     }
+        this.specification = specification;
+    }
+
+    public String getSkuSelections() {
+        return skuSelections;
+    }
 
     public void setSkuSelections(String skuSelections) {
-         this.skuSelections = skuSelections;
-     }
-     public String getSkuSelections() {
-         return skuSelections;
-     }
+        this.skuSelections = skuSelections;
+    }
+
+    public String getFeedback() {
+        return feedback;
+    }
 
     public void setFeedback(String feedback) {
-         this.feedback = feedback;
-     }
-     public String getFeedback() {
-         return feedback;
-     }
+        this.feedback = feedback;
+    }
+
+    public String getYouMayAlsoLike() {
+        return youMayAlsoLike;
+    }
 
     public void setYouMayAlsoLike(String youMayAlsoLike) {
-         this.youMayAlsoLike = youMayAlsoLike;
-     }
-     public String getYouMayAlsoLike() {
-         return youMayAlsoLike;
-     }
+        this.youMayAlsoLike = youMayAlsoLike;
+    }
+
+    public String getOutOfStock() {
+        return outOfStock;
+    }
 
     public void setOutOfStock(String outOfStock) {
-         this.outOfStock = outOfStock;
-     }
-     public String getOutOfStock() {
-         return outOfStock;
-     }
+        this.outOfStock = outOfStock;
+    }
+
+    public String getTopSellingsFrom() {
+        return topSellingsFrom;
+    }
 
     public void setTopSellingsFrom(String topSellingsFrom) {
-         this.topSellingsFrom = topSellingsFrom;
-     }
-     public String getTopSellingsFrom() {
-         return topSellingsFrom;
-     }
+        this.topSellingsFrom = topSellingsFrom;
+    }
+
+    public String getSimilarRecommond() {
+        return similarRecommond;
+    }
 
     public void setSimilarRecommond(String similarRecommond) {
-         this.similarRecommond = similarRecommond;
-     }
-     public String getSimilarRecommond() {
-         return similarRecommond;
-     }
+        this.similarRecommond = similarRecommond;
+    }
+
+    public String getYouMayAlsoLikeSeeMore() {
+        return youMayAlsoLikeSeeMore;
+    }
 
     public void setYouMayAlsoLikeSeeMore(String youMayAlsoLikeSeeMore) {
-         this.youMayAlsoLikeSeeMore = youMayAlsoLikeSeeMore;
-     }
-     public String getYouMayAlsoLikeSeeMore() {
-         return youMayAlsoLikeSeeMore;
-     }
+        this.youMayAlsoLikeSeeMore = youMayAlsoLikeSeeMore;
+    }
+
+    public String getQanda() {
+        return qanda;
+    }
 
     public void setQanda(String qanda) {
-         this.qanda = qanda;
-     }
-     public String getQanda() {
-         return qanda;
-     }
+        this.qanda = qanda;
+    }
 
 }

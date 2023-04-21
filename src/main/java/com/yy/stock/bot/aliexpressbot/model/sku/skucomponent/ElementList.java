@@ -1,6 +1,6 @@
 /**
-  * Copyright 2023 ab173.com 
-  */
+ * Copyright 2023 ab173.com
+ */
 package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
 
 /**
@@ -9,6 +9,12 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ElementList {
 
     private int iconHeight;
@@ -16,39 +22,45 @@ public class ElementList {
     private String iconType;
     private String iconAddress;
     private String elementType;
+
+    public int getIconHeight() {
+        return iconHeight;
+    }
+
     public void setIconHeight(int iconHeight) {
-         this.iconHeight = iconHeight;
-     }
-     public int getIconHeight() {
-         return iconHeight;
-     }
+        this.iconHeight = iconHeight;
+    }
+
+    public int getIconWidth() {
+        return iconWidth;
+    }
 
     public void setIconWidth(int iconWidth) {
-         this.iconWidth = iconWidth;
-     }
-     public int getIconWidth() {
-         return iconWidth;
-     }
+        this.iconWidth = iconWidth;
+    }
+
+    public String getIconType() {
+        return iconType;
+    }
 
     public void setIconType(String iconType) {
-         this.iconType = iconType;
-     }
-     public String getIconType() {
-         return iconType;
-     }
+        this.iconType = iconType;
+    }
+
+    public String getIconAddress() {
+        return iconAddress;
+    }
 
     public void setIconAddress(String iconAddress) {
-         this.iconAddress = iconAddress;
-     }
-     public String getIconAddress() {
-         return iconAddress;
-     }
+        this.iconAddress = iconAddress;
+    }
+
+    public String getElementType() {
+        return elementType;
+    }
 
     public void setElementType(String elementType) {
-         this.elementType = elementType;
-     }
-     public String getElementType() {
-         return elementType;
-     }
+        this.elementType = elementType;
+    }
 
 }

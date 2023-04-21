@@ -9,12 +9,6 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * Auto-generated: 2023-04-21 12:11:30
- *
- * @author ab173.com (info@ab173.com)
- * @website http://www.ab173.com/json/
- */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SkuComponent {

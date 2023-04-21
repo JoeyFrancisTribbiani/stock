@@ -3,9 +3,11 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PromotionComponent {
     private boolean discountPromotion;
     private boolean activity;

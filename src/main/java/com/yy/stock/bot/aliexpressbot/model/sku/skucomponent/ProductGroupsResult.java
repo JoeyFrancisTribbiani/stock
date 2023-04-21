@@ -10,6 +10,11 @@ import java.util.List;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductGroupsResult {
 
     private List<Groups> groups;

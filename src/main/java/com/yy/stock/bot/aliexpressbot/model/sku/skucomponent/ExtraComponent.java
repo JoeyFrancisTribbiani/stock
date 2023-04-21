@@ -1,6 +1,6 @@
 /**
-  * Copyright 2023 ab173.com 
-  */
+ * Copyright 2023 ab173.com
+ */
 package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
 
 /**
@@ -9,6 +9,12 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skucomponent;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExtraComponent {
 
     private String expressionExt;
@@ -22,81 +28,93 @@ public class ExtraComponent {
     private EnvInfo envInfo;
     private String complaintUrl;
     private String productDetailImageUrl;
+
+    public String getExpressionExt() {
+        return expressionExt;
+    }
+
     public void setExpressionExt(String expressionExt) {
-         this.expressionExt = expressionExt;
-     }
-     public String getExpressionExt() {
-         return expressionExt;
-     }
+        this.expressionExt = expressionExt;
+    }
+
+    public String getAeOrderFrom() {
+        return aeOrderFrom;
+    }
 
     public void setAeOrderFrom(String aeOrderFrom) {
-         this.aeOrderFrom = aeOrderFrom;
-     }
-     public String getAeOrderFrom() {
-         return aeOrderFrom;
-     }
+        this.aeOrderFrom = aeOrderFrom;
+    }
+
+    public boolean getShowCoinAnim() {
+        return showCoinAnim;
+    }
 
     public void setShowCoinAnim(boolean showCoinAnim) {
-         this.showCoinAnim = showCoinAnim;
-     }
-     public boolean getShowCoinAnim() {
-         return showCoinAnim;
-     }
+        this.showCoinAnim = showCoinAnim;
+    }
+
+    public String getAbTrace() {
+        return abTrace;
+    }
 
     public void setAbTrace(String abTrace) {
-         this.abTrace = abTrace;
-     }
-     public String getAbTrace() {
-         return abTrace;
-     }
+        this.abTrace = abTrace;
+    }
+
+    public UiTestInfo getUiTestInfo() {
+        return uiTestInfo;
+    }
 
     public void setUiTestInfo(UiTestInfo uiTestInfo) {
-         this.uiTestInfo = uiTestInfo;
-     }
-     public UiTestInfo getUiTestInfo() {
-         return uiTestInfo;
-     }
+        this.uiTestInfo = uiTestInfo;
+    }
+
+    public String getFreightExt() {
+        return freightExt;
+    }
 
     public void setFreightExt(String freightExt) {
-         this.freightExt = freightExt;
-     }
-     public String getFreightExt() {
-         return freightExt;
-     }
+        this.freightExt = freightExt;
+    }
+
+    public String getSeoTitle() {
+        return seoTitle;
+    }
 
     public void setSeoTitle(String seoTitle) {
-         this.seoTitle = seoTitle;
-     }
-     public String getSeoTitle() {
-         return seoTitle;
-     }
+        this.seoTitle = seoTitle;
+    }
+
+    public String getDetailPageUrl() {
+        return detailPageUrl;
+    }
 
     public void setDetailPageUrl(String detailPageUrl) {
-         this.detailPageUrl = detailPageUrl;
-     }
-     public String getDetailPageUrl() {
-         return detailPageUrl;
-     }
+        this.detailPageUrl = detailPageUrl;
+    }
+
+    public EnvInfo getEnvInfo() {
+        return envInfo;
+    }
 
     public void setEnvInfo(EnvInfo envInfo) {
-         this.envInfo = envInfo;
-     }
-     public EnvInfo getEnvInfo() {
-         return envInfo;
-     }
+        this.envInfo = envInfo;
+    }
+
+    public String getComplaintUrl() {
+        return complaintUrl;
+    }
 
     public void setComplaintUrl(String complaintUrl) {
-         this.complaintUrl = complaintUrl;
-     }
-     public String getComplaintUrl() {
-         return complaintUrl;
-     }
+        this.complaintUrl = complaintUrl;
+    }
+
+    public String getProductDetailImageUrl() {
+        return productDetailImageUrl;
+    }
 
     public void setProductDetailImageUrl(String productDetailImageUrl) {
-         this.productDetailImageUrl = productDetailImageUrl;
-     }
-     public String getProductDetailImageUrl() {
-         return productDetailImageUrl;
-     }
+        this.productDetailImageUrl = productDetailImageUrl;
+    }
 
 }
