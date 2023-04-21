@@ -104,10 +104,12 @@ public abstract class AliExpressStockEngine extends StockEngine {
     @Override
     public void checkout() throws InterruptedException {
 
-        while (!driverEngine.getDriver().getCurrentUrl().contains(coreEngine.urls.confirmPaymentPage)) {
-            log.info("等待进入confirm页面...");
-            Thread.sleep(1000);
-        }
+//        while (!driverEngine.getDriver().getCurrentUrl().contains(coreEngine.urls.confirmPaymentPage)) {
+//            log.info("等待进入confirm页面...");
+//            Thread.sleep(1000);
+//        }
+        log.info(coreEngine.getBotName() + "开始进入confirm页面...");
+        driverEngine.getExecutor().waitForUrl(coreEngine.urls.confirmPaymentPage, 18);
 
         var quantityToBuy = BigDecimal.valueOf(stockRequest.getOrderInfo().getQuantity());
 
@@ -135,9 +137,7 @@ public abstract class AliExpressStockEngine extends StockEngine {
                 var span = driverEngine.getExecutor().getByRelativeXpath(divs.get(0), ".//span");
                 if (span != null && span.getText().equals("Total shipping")) {
                     var feeDiv = divs.get(1);
-//                    var textDiv = driverEngine.getExecutor().getByRelativeXpath( feeDiv, ".//div");
                     text = feeDiv.getText();
-//                    text = text.equals("Free") ? "US $0" : text;
                     break;
                 }
             }

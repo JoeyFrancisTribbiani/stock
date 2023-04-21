@@ -22,10 +22,13 @@ public abstract class LoginEngine implements PluggableEngine {
     protected FetcherEngine fetcherEngine;
 
     protected boolean isLogined() throws InterruptedException, IOException {
-//        var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
-//        return testLoginedHtml(html);
-        var html = fetcherEngine.fetchHtmlByDriver(coreEngine.urls.testLogin);
-        return testLoginedHtml(html);
+        var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
+        if (testLoginedHtml(html)) {
+            return true;
+        } else {
+            html = fetcherEngine.fetchHtmlByDriver(coreEngine.urls.testLogin);
+            return testLoginedHtml(html);
+        }
     }
 
 
