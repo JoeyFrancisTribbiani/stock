@@ -4,7 +4,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.yy.stock.bot.engine.PluggableEngine;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,6 +28,8 @@ public abstract class ResterEngine implements PluggableEngine {
 
     protected abstract void initBotHeaders();
 
+    public abstract String getStringResponse(String url);
+
     public void updateCookie(MyCookie[] cookies) {
         StringBuilder builder = new StringBuilder();
         for (var cookie : cookies) {
@@ -47,12 +48,6 @@ public abstract class ResterEngine implements PluggableEngine {
 //        savedHeaders = headers;
 //    }
 
-    public String getStringResponse(String url) {
-        HttpEntity entity = new HttpEntity<>(savedHeaders);
-        HttpEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
-        });
-        return response.getBody();
-    }
 
     //q:将下面的方法改为返回泛型方法
     public <T> T httpGetWithBotHeaders(String url, Class<T> clazz) {

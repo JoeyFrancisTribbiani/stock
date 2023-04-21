@@ -1,7 +1,13 @@
 package com.yy.stock.bot.aliexpressbot.engine.rester;
 
 import com.yy.stock.bot.engine.rester.ResterEngine;
+import com.yy.stock.bot.helper.RestTemplateHelper;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.ByteArrayInputStream;
 
 public class AliExpressResterEngine extends ResterEngine {
     @Override
@@ -26,5 +32,31 @@ public class AliExpressResterEngine extends ResterEngine {
         headers.add("Accept-Encoding", "gzip, deflate, br");
         headers.add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,und;q=0.7,ru;q=0.6");
         savedHeaders = headers;
+    }
+
+    @Override
+    public String getStringResponse(String url) {
+//        HttpEntity entity = new HttpEntity<>(savedHeaders);
+//        HttpEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+//        });
+//        return response.getBody();
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> entity = new HttpEntity<>(getBotHeaders());
+            HttpEntity<byte[]> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    byte[].class
+            );
+
+            byte[] data = RestTemplateHelper.unGZip(new ByteArrayInputStream(response.getBody()));
+
+            return new String(data, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

@@ -109,8 +109,9 @@ public class AliExpressFetcherEngine extends FetcherEngine {
             aliExpressSkuModule = new ObjectMapper().readValue(jsonStr, AliExpressSkuModule.class);
         }
 
-        aliExpressSkuModule.setPlatform(coreEngine.getBuyerAccount().getPlatform());
-
+        var p = coreEngine.getBuyerAccount().getPlatform();
+        var n = p.getName();
+        aliExpressSkuModule.setPlatform(p);
 
 //        var platfromJsonStr = new ObjectMapper().writeValueAsString(coreEngine.getBuyerAccount().getPlatform());
 //        platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
