@@ -14,7 +14,8 @@ import java.util.List;
 public class AliExpressLoginEngine extends LoginEngine {
     @Override
     protected boolean testLoginedHtml(String html) throws InterruptedException, IOException {
-        if (html.contains("imageList\":[")) {
+//        if (html.contains("imageList\":[")) {
+        if (html.contains("Wish List")) {
             return true;
         }
         return false;

@@ -54,7 +54,7 @@ aliclass:
 
 aliurls:
   homePage: "https://www.aliexpress.com/"
-  testLogin: "https://www.aliexpress.com/item/1005004631075179.html"
+  testLogin: "https://www.aliexpress.com/account/index.html"
   loginPage: "https://login.aliexpress.com/"
   addToCartApi: "https://cart.lazada.sg/cart/api/add"
   cartPage: "https://cart.lazada.sg/cart"
