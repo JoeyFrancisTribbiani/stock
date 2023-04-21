@@ -7,6 +7,7 @@ import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class BotFactory {
     @Value("${bot.gridhub.statusUrl}")
     //q:这个配置为什么获取不到
@@ -74,7 +76,7 @@ public class BotFactory {
                     bot.keepSessionAlive();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.info("保活任务出错，移除bot，并关闭session");
                 runningBotPool.remove(bot);
                 bot.bye();
             }
