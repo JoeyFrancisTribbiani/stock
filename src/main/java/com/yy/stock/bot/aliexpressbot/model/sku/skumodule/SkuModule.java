@@ -19,7 +19,7 @@ import java.util.List;
 public class SkuModule {
 
     private long categoryId;
-    private Features features;
+    //    private Features features;
     private String forcePromiseWarrantyJson;
     private boolean hasSizeInfo;
     private boolean hasSkuProperty;
