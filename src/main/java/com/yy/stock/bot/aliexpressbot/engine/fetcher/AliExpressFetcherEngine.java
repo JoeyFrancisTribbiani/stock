@@ -49,7 +49,7 @@ public class AliExpressFetcherEngine extends FetcherEngine {
      */
     @Override
     protected boolean verifyHtml(String html) {
-        return html.contains("imageModule");
+        return html.contains("skuPropertyValues");
     }
 
     /**
