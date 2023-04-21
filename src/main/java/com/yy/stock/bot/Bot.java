@@ -110,7 +110,7 @@ public class Bot {
     }
 
     public void keepSessionAlive() {
-        var curTitle = coreEngine.getDriverEngine().getDriver().getSessionId();
-        log.info(getBotName() + "当前Session ID: {}", curTitle);
+        var curTitle = coreEngine.getDriverEngine().getDriver().getTitle();
+        log.info(getBotName() + "当前页面标题: {}", curTitle);
     }
 }
