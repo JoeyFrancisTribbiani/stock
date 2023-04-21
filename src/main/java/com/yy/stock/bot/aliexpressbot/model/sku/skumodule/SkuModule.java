@@ -3,9 +3,6 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-
 import java.util.List;
 
 /**
@@ -14,13 +11,17 @@ import java.util.List;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
-@Data
+
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class SkuModule {
 
     private long categoryId;
-    //    private Features features;
-    private String forcePromiseWarrantyJson;
+    //    private String forcePromiseWarrantyJson;
     private boolean hasSizeInfo;
     private boolean hasSkuProperty;
     private I18nMap i18nMap;

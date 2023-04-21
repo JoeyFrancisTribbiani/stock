@@ -6,8 +6,8 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class PriceModule {
     private boolean activity;
     private int discount;
@@ -15,7 +15,6 @@ public class PriceModule {
     private String discountRatioTips;
     private String discountTips;
     private ExtraTags extraTags;
-    private Features features;
     private String formatedActivityPrice;
     private String formatedPrice;
     private boolean hiddenBigSalePrice;

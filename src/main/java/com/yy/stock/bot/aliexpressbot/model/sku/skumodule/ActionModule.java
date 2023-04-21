@@ -6,8 +6,8 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class ActionModule {
 
     private ActionConfs actionConfs;
@@ -19,7 +19,6 @@ public class ActionModule {
     private boolean comingSoon;
     private long companyId;
     private String confirmOrderUrl;
-    private Features features;
     private String freightExt;
     private int id;
     private boolean invalidBuyNow;

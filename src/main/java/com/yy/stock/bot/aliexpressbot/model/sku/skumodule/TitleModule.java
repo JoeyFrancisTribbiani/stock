@@ -3,17 +3,15 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 import java.util.List;
 
-/**
- * Auto-generated: 2023-04-21 12:4:52
- *
- * @author ab173.com (info@ab173.com)
- * @website http://www.ab173.com/json/
- */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class TitleModule {
 
-    private Features features;
     private FeedbackRating feedbackRating;
     private String formatTradeCount;
     private I18nMap i18nMap;
@@ -27,13 +25,6 @@ public class TitleModule {
     private boolean trans;
     private boolean transTitle;
 
-    public Features getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(Features features) {
-        this.features = features;
-    }
 
     public FeedbackRating getFeedbackRating() {
         return feedbackRating;

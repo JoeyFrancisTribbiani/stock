@@ -11,6 +11,11 @@ import java.util.List;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class SeparatorIcon {
 
     private List<ElementList> elementList;

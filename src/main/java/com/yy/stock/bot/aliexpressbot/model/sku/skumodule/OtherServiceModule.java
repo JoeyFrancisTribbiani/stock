@@ -9,21 +9,19 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class OtherServiceModule {
 
-    private Features features;
     private boolean hasWarrantyInfo;
     private I18nMap i18nMap;
     private int id;
     private String name;
 
-    public Features getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(Features features) {
-        this.features = features;
-    }
 
     public boolean getHasWarrantyInfo() {
         return hasWarrantyInfo;

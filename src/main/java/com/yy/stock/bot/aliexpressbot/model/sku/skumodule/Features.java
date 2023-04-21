@@ -9,6 +9,11 @@ package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
-public class Features {
+//
 
-}
+//
+//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+//public class Features {
+//
+//}

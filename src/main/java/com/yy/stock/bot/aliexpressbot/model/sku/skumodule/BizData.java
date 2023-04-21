@@ -8,14 +8,8 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * Auto-generated: 2023-04-21 12:4:52
- *
- * @author ab173.com (info@ab173.com)
- * @website http://www.ab173.com/json/
- */
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class BizData {
 
     private String deliveryOptionCode;
