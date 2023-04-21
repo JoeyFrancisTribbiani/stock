@@ -106,6 +106,9 @@ public class AliExpressFetcherEngine extends FetcherEngine {
             aliExpressSkuModule.getShippingModule().setGeneralFreightInfo(new GeneralFreightInfo());
             aliExpressSkuModule.getShippingModule().getGeneralFreightInfo().setOriginalLayoutResultList(aliExpressSkuComponent.getWebGeneralFreightCalculateComponent().getOriginalLayoutResultList());
 
+            aliExpressSkuModule.setStoreModule(new StoreModule());
+            aliExpressSkuModule.getStoreModule().setStoreName(aliExpressSkuComponent.getStoreHeaderComponent().getStoreHeaderResult().getStoreName());
+
         } else {
             aliExpressSkuModule = new ObjectMapper().readValue(jsonStr, AliExpressSkuModule.class);
         }
