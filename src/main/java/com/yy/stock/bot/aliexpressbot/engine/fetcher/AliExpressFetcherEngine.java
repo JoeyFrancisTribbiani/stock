@@ -2,6 +2,8 @@ package com.yy.stock.bot.aliexpressbot.engine.fetcher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yy.stock.bot.aliexpressbot.model.sku.skucomponent.AliExpressSkuComponent;
+import com.yy.stock.bot.aliexpressbot.model.sku.skumodule.*;
 import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.helper.RestTemplateHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -83,13 +85,40 @@ public class AliExpressFetcherEngine extends FetcherEngine {
         if (jsonStr.equals("")) {
             return html;
         }
-        var platfromJsonStr = new ObjectMapper().writeValueAsString(coreEngine.getBuyerAccount().getPlatform());
-        platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
-        var sb = new StringBuilder(jsonStr);
-        var i = jsonStr.indexOf("{");
-        sb.insert(i + 1, platfromJsonStr);
-        jsonStr = sb.toString();
-        return jsonStr;
+        AliExpressSkuModule aliExpressSkuModule;
+        if (jsonStr.contains("skuComponent")) {
+            AliExpressSkuComponent aliExpressSkuComponent = new ObjectMapper().readValue(jsonStr, AliExpressSkuComponent.class);
+            aliExpressSkuModule = new AliExpressSkuModule();
+            aliExpressSkuModule.setTitleModule(new TitleModule());
+            aliExpressSkuModule.getTitleModule().setSubject(aliExpressSkuComponent.getProductInfoComponent().getSubject());
+
+            aliExpressSkuModule.setImageModule(new ImageModule());
+            aliExpressSkuModule.getImageModule().setImagePathList(aliExpressSkuComponent.getImageComponent().getImagePathList());
+            aliExpressSkuModule.getImageModule().setSummImagePathList(aliExpressSkuComponent.getImageComponent().getSummImagePathList());
+
+            aliExpressSkuModule.setSkuModule(new SkuModule());
+            aliExpressSkuModule.getSkuModule().setSkuPriceList(aliExpressSkuComponent.getPriceComponent().getSkuPriceList());
+
+            aliExpressSkuModule.getSkuModule().setProductSKUPropertyList(aliExpressSkuComponent.getSkuComponent().getProductSKUPropertyList());
+
+            aliExpressSkuModule.setShippingModule(new ShippingModule());
+            aliExpressSkuModule.getShippingModule().setGeneralFreightInfo(new GeneralFreightInfo());
+            aliExpressSkuModule.getShippingModule().getGeneralFreightInfo().setOriginalLayoutResultList(aliExpressSkuComponent.getWebGeneralFreightCalculateComponent().getOriginalLayoutResultList());
+
+        } else {
+            aliExpressSkuModule = new ObjectMapper().readValue(jsonStr, AliExpressSkuModule.class);
+        }
+
+        aliExpressSkuModule.setPlatform(coreEngine.getBuyerAccount().getPlatform());
+
+
+//        var platfromJsonStr = new ObjectMapper().writeValueAsString(coreEngine.getBuyerAccount().getPlatform());
+//        platfromJsonStr = "\"platform\":" + platfromJsonStr + ",";
+//        var sb = new StringBuilder(jsonStr);
+//        var i = jsonStr.indexOf("{");
+//        sb.insert(i + 1, platfromJsonStr);
+//        jsonStr = sb.toString();
+        return new ObjectMapper().writeValueAsString(aliExpressSkuModule);
     }
 
 }

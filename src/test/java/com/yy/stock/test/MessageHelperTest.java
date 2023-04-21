@@ -4,10 +4,13 @@ import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yy.stock.bot.aliexpressbot.engine.email.AliExpressEmailEngine;
+import com.yy.stock.bot.aliexpressbot.model.sku.skucomponent.AliExpressSkuComponent;
+import com.yy.stock.bot.aliexpressbot.model.sku.skumodule.AliExpressSkuModule;
 import com.yy.stock.bot.engine.driver.ChromeDriverEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
 import com.yy.stock.bot.helper.MessageHelper;
 import com.yy.stock.common.util.PasswordGenerator;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -204,6 +207,33 @@ class MessageHelperTest {
 
         var result = new String(data, "UTF-8");
         System.out.println(result);
+    }
+
+    @Test
+    void testSkuComponentJsonToJava() {
+        //读取项目根目录的aliSKUComponent.json文件
+        String json = null;
+        try {
+            json = FileUtils.readFileToString(new File("aliSKUComponent.json"), "UTF-8");
+            //将json转为java对象AliExpressSkuComponent
+            AliExpressSkuComponent aliExpressSkuComponent = new ObjectMapper().readValue(json, AliExpressSkuComponent.class);
+            System.out.println(aliExpressSkuComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testSkuModuleJsonToJava() {
+        String json = null;
+        try {
+            json = FileUtils.readFileToString(new File("aliSKUModule.json"), "UTF-8");
+            //将json转为java对象AliExpressSkuModule
+            AliExpressSkuModule aliExpressSkuModule = new ObjectMapper().readValue(json, AliExpressSkuModule.class);
+            System.out.println(aliExpressSkuModule);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private HttpHeaders initHeaders() {

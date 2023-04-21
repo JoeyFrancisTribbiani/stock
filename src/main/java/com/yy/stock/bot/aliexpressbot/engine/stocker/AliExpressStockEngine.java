@@ -55,9 +55,53 @@ public abstract class AliExpressStockEngine extends StockEngine {
         var productPage = stockRequest.getSupplier().getUrl();
         driverEngine.getDriver().get(productPage);
         var html = driverEngine.getDriver().getPageSource();
-        if (html.contains("sku-item--wrap")) {
+        if (html.contains("pdp-info-right")) {
             var styleList = stockRequest.getSupplier().getStyleName().split(",");
-            var skuPanels = driverEngine.getExecutor().listByClassName("product-sku");
+            var skuInfoDiv = driverEngine.getExecutor().getByClassName("pdp-info-right");
+            var sectionDivs = driverEngine.getExecutor().listByRelativeXpath(skuInfoDiv, ".//div");
+            WebElement skuPanelsRoot = null;
+            for (var sectionDiv : sectionDivs) {
+                var className = sectionDiv.getAttribute("class");
+                if (className.startsWith("sku--wrap")) {
+                    skuPanelsRoot = sectionDiv;
+                    break;
+                }
+            }
+            var skuPanels = driverEngine.getExecutor().listByRelativeXpath(skuPanelsRoot, ".//div");
+            for (int i = 0; i < styleList.length; i++) {
+                if (skuPanels.size() <= i) {
+                    break;
+                }
+                var panel = skuPanels.get(i);
+                var skuImgList = driverEngine.getExecutor().listByRelativeXpath(panel, ".//img");
+                for (var img : skuImgList) {
+                    var styleTitle = img.getAttribute("alt");
+                    if (styleTitle != null & styleTitle.equals(styleList[i])) {
+                        img.click();
+                        boolean isSelected = false;
+                        while (!isSelected) {
+                            var imgParentLi = driverEngine.getExecutor().getByRelativeXpath(img, ".//..");
+                            var className = imgParentLi.getAttribute("class");
+                            if (className == null) {
+                                continue;
+                            }
+                            if (className.contains("sku-item--selected")) {
+                                isSelected = true;
+                            } else {
+                                img.click();
+                            }
+                        }
+                    }
+                }
+            }
+            WebElement amountInput = driverEngine.getExecutor().getByClassName("comet-input-number-input");
+            driverEngine.getExecutor().clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
+            Thread.sleep(2333);
+
+            var buyNowButtonDiv = driverEngine.getExecutor().getByClassName("comet-btn-primary");
+            buyNowButtonDiv.click();
+            Thread.sleep(2333);
+
         } else {
             var styleList = stockRequest.getSupplier().getStyleName().split(",");
             var skuPanels = driverEngine.getExecutor().listByClassName("product-sku");
