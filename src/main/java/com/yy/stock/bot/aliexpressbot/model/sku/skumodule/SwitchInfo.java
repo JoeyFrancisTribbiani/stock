@@ -14,20 +14,4 @@ public class SwitchInfo {
     private boolean deliveryMigrate;
     private boolean skuUnavailableRevision;
 
-    public boolean getDeliveryMigrate() {
-        return deliveryMigrate;
-    }
-
-    public void setDeliveryMigrate(boolean deliveryMigrate) {
-        this.deliveryMigrate = deliveryMigrate;
-    }
-
-    public boolean getSkuUnavailableRevision() {
-        return skuUnavailableRevision;
-    }
-
-    public void setSkuUnavailableRevision(boolean skuUnavailableRevision) {
-        this.skuUnavailableRevision = skuUnavailableRevision;
-    }
-
 }

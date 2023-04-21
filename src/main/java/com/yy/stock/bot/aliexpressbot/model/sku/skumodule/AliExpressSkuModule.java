@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AliExpressSkuModule {
     private Platform platform;
-    private ActionModule actionModule;
+    //    private ActionModule actionModule;
     private AePlusModule aePlusModule;
     private CommonModule commonModule;
     private DescriptionModule descriptionModule;
