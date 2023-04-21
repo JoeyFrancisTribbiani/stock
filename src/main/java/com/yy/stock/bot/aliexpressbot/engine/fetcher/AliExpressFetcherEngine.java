@@ -6,6 +6,7 @@ import com.yy.stock.bot.aliexpressbot.model.sku.skucomponent.AliExpressSkuCompon
 import com.yy.stock.bot.aliexpressbot.model.sku.skumodule.*;
 import com.yy.stock.bot.engine.fetcher.FetcherEngine;
 import com.yy.stock.bot.helper.RestTemplateHelper;
+import com.yy.stock.dto.SkuModuleBase;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -66,7 +67,7 @@ public class AliExpressFetcherEngine extends FetcherEngine {
      * @return
      */
     @Override
-    protected String fetchSkuProperties(String html) throws JsonProcessingException {
+    protected SkuModuleBase fetchSkuProperties(String html) throws JsonProcessingException {
         var jsonStr = "";
         Document doc = Jsoup.parse(html);
         Elements tds = doc.getElementsByTag("script"); // 标识获取html中第一个<script>标签
@@ -83,7 +84,7 @@ public class AliExpressFetcherEngine extends FetcherEngine {
             }
         }
         if (jsonStr.equals("")) {
-            return html;
+            return null;
         }
         AliExpressSkuModule aliExpressSkuModule;
         if (jsonStr.contains("skuComponent")) {
@@ -119,7 +120,7 @@ public class AliExpressFetcherEngine extends FetcherEngine {
 //        var i = jsonStr.indexOf("{");
 //        sb.insert(i + 1, platfromJsonStr);
 //        jsonStr = sb.toString();
-        return new ObjectMapper().writeValueAsString(aliExpressSkuModule);
+        return aliExpressSkuModule;
     }
 
 }

@@ -6,7 +6,7 @@ import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.engine.loginer.LoginEngine;
 import com.yy.stock.bot.engine.rester.ResterEngine;
-import com.yy.stock.config.GlobalVariables;
+import com.yy.stock.dto.SkuModuleBase;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -21,24 +21,22 @@ public abstract class FetcherEngine implements PluggableEngine {
         return null;
     }
 
-    public String fetch(String url) throws IOException, InterruptedException, MessagingException {
+    public SkuModuleBase fetch(String url) throws IOException, InterruptedException, MessagingException {
         var html = fetchHtml(url);
         if (verifyHtml(html)) {
             coreEngine.updateLoginTime();
-            String json = fetchSkuProperties(html);
-            return json;
+            return fetchSkuProperties(html);
         }
 
         if (verifyPageNotFound(html)) {
-            return GlobalVariables.PRODUCT_PAGE_NOT_FOUND;
+            return null;
         }
 
         driverEngine.getDriver().get(url);
         html = driverEngine.getDriver().getPageSource();
         if (verifyHtml(html)) {
             coreEngine.updateLoginTime();
-            String json = fetchSkuProperties(html);
-            return json;
+            return fetchSkuProperties(html);
         }
 
         loginEngine.login();
@@ -46,8 +44,7 @@ public abstract class FetcherEngine implements PluggableEngine {
 
         html = driverEngine.getDriver().getPageSource();
 
-        String json = fetchSkuProperties(html);
-        return json;
+        return fetchSkuProperties(html);
     }
 
     protected abstract String fetchHtml(String url) throws IOException;
@@ -58,7 +55,7 @@ public abstract class FetcherEngine implements PluggableEngine {
 
     protected abstract boolean verifyPageNotFound(String html);
 
-    protected abstract String fetchSkuProperties(String html) throws JsonProcessingException;
+    protected abstract SkuModuleBase fetchSkuProperties(String html) throws JsonProcessingException;
 
     @Override
     public void plugIn(CoreEngine coreEngine) {

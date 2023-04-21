@@ -3,6 +3,7 @@ package com.yy.stock.bot;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.engine.core.CoreEngine;
+import com.yy.stock.dto.SkuModuleBase;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
@@ -90,13 +91,13 @@ public class Bot {
         }
     }
 
-    public String fetch(String url) throws InterruptedException, MessagingException, IOException {
+    public SkuModuleBase fetch(String url) throws InterruptedException, MessagingException, IOException {
         try {
             return coreEngine.fetch(url);
         } catch (Exception e) {
             coreEngine.setBotStatus(BotStatus.idle);
             log.debug("fetch error: {}", e.getMessage());
-            return "";
+            return null;
         }
     }
 

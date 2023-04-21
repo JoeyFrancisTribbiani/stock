@@ -17,6 +17,7 @@ import com.yy.stock.bot.engine.tracker.TrackEngine;
 import com.yy.stock.bot.selector.BaseClassSelector;
 import com.yy.stock.bot.selector.BaseUrls;
 import com.yy.stock.bot.selector.BaseXpaths;
+import com.yy.stock.dto.SkuModuleBase;
 import com.yy.stock.dto.StockRequest;
 import com.yy.stock.dto.TrackRequest;
 import com.yy.stock.entity.BuyerAccount;
@@ -196,7 +197,7 @@ public abstract class CoreEngine {
         setBotStatus(BotStatus.idle);
     }
 
-    public String fetch(String url) throws InterruptedException, MessagingException, IOException {
+    public SkuModuleBase fetch(String url) throws InterruptedException, MessagingException, IOException {
         setBotStatus(BotStatus.fetching);
         var html = fetcherEngine.fetch(url);
         setBotStatus(BotStatus.idle);

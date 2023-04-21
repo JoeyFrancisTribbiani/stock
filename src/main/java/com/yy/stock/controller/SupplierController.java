@@ -5,6 +5,7 @@ import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
 import com.yy.stock.config.GlobalVariables;
+import com.yy.stock.dto.SkuModuleBase;
 import com.yy.stock.entity.Supplier;
 import com.yy.stock.scheduler.PlatformFactory;
 import com.yy.stock.service.BuyerAccountService;
@@ -59,7 +60,7 @@ public class SupplierController {
     }
 
     @GetMapping("/skuProperties")
-    public Result<String> getSupplierSkuProperties(@RequestParam("url") String url, @RequestParam("countryCode") String countryCode) throws IOException, InterruptedException, MessagingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public Result<SkuModuleBase> getSupplierSkuProperties(@RequestParam("url") String url, @RequestParam("countryCode") String countryCode) throws IOException, InterruptedException, MessagingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         if (url == null) {
             throw new IllegalArgumentException("url 不能为空");

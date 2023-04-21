@@ -4,12 +4,13 @@
 package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yy.stock.dto.SkuModuleBase;
 import com.yy.stock.entity.Platform;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AliExpressSkuModule {
+public class AliExpressSkuModule extends SkuModuleBase {
     private Platform platform;
     //    private ActionModule actionModule;
     private AePlusModule aePlusModule;
