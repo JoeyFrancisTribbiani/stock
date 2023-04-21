@@ -3,6 +3,9 @@
  */
 package com.yy.stock.bot.aliexpressbot.model.sku.skumodule;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -11,6 +14,8 @@ import java.util.List;
  * @author ab173.com (info@ab173.com)
  * @website http://www.ab173.com/json/
  */
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SkuModule {
 
     private long categoryId;
@@ -25,101 +30,5 @@ public class SkuModule {
     private String selectedSkuAttr;
     private List<SkuPriceList> skuPriceList;
     private String warrantyDetailJson;
-
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Features getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(Features features) {
-        this.features = features;
-    }
-
-    public String getForcePromiseWarrantyJson() {
-        return forcePromiseWarrantyJson;
-    }
-
-    public void setForcePromiseWarrantyJson(String forcePromiseWarrantyJson) {
-        this.forcePromiseWarrantyJson = forcePromiseWarrantyJson;
-    }
-
-    public boolean getHasSizeInfo() {
-        return hasSizeInfo;
-    }
-
-    public void setHasSizeInfo(boolean hasSizeInfo) {
-        this.hasSizeInfo = hasSizeInfo;
-    }
-
-    public boolean getHasSkuProperty() {
-        return hasSkuProperty;
-    }
-
-    public void setHasSkuProperty(boolean hasSkuProperty) {
-        this.hasSkuProperty = hasSkuProperty;
-    }
-
-    public I18nMap getI18nMap() {
-        return i18nMap;
-    }
-
-    public void setI18nMap(I18nMap i18nMap) {
-        this.i18nMap = i18nMap;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<ProductSKUPropertyList> getProductSKUPropertyList() {
-        return productSKUPropertyList;
-    }
-
-    public void setProductSKUPropertyList(List<ProductSKUPropertyList> productSKUPropertyList) {
-        this.productSKUPropertyList = productSKUPropertyList;
-    }
-
-    public String getSelectedSkuAttr() {
-        return selectedSkuAttr;
-    }
-
-    public void setSelectedSkuAttr(String selectedSkuAttr) {
-        this.selectedSkuAttr = selectedSkuAttr;
-    }
-
-    public List<SkuPriceList> getSkuPriceList() {
-        return skuPriceList;
-    }
-
-    public void setSkuPriceList(List<SkuPriceList> skuPriceList) {
-        this.skuPriceList = skuPriceList;
-    }
-
-    public String getWarrantyDetailJson() {
-        return warrantyDetailJson;
-    }
-
-    public void setWarrantyDetailJson(String warrantyDetailJson) {
-        this.warrantyDetailJson = warrantyDetailJson;
-    }
 
 }
