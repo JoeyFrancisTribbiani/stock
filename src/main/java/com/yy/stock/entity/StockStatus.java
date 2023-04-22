@@ -48,7 +48,7 @@ public class StockStatus {
     @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger supplierId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "buyer_id")
     private BuyerAccount buyer;
 
