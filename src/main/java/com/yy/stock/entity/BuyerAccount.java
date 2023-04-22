@@ -28,7 +28,7 @@ public class BuyerAccount implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "platform_id")
-    @JsonIgnoreProperties({"buyerAccounts"})
+    @JsonIgnoreProperties(value = {"buyerAccounts"}, allowSetters = true)
     private Platform platform;
 
     @Column(name = "email")

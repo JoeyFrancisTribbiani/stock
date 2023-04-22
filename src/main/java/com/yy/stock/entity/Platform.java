@@ -49,11 +49,11 @@ public class Platform implements Serializable {
 
     @OneToMany
     @JoinColumn(name = "platform_id")
-    @JsonIgnoreProperties({"platform"})
+    @JsonIgnoreProperties(value = {"platform"}, allowSetters = true)
     private List<BuyerAccount> buyerAccounts;
 
     @OneToMany
     @JoinColumn(name = "platform_id")
-    @JsonIgnoreProperties({"platform"})
+    @JsonIgnoreProperties(value = {"platform"}, allowSetters = true)
     private List<Supplier> suppliers;
 }

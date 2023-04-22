@@ -63,7 +63,7 @@ public class Supplier implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "platform_id")
-    @JsonIgnoreProperties({"suppliers"})
+    @JsonIgnoreProperties(value = {"suppliers"}, allowSetters = true)
     private Platform platform;
 
     /**
