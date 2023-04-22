@@ -55,6 +55,7 @@ public abstract class AliExpressStockEngine extends StockEngine {
         var productPage = stockRequest.getSupplier().getUrl();
         driverEngine.getDriver().get(productPage);
         var html = driverEngine.getDriver().getPageSource();
+        //两种页面布局，1：component, 2: module
         if (html.contains("pdp-info-right")) {
             var styleList = stockRequest.getSupplier().getStyleName().split(",");
             var skuInfoDiv = driverEngine.getExecutor().getByClassName("pdp-info-right");
@@ -77,7 +78,9 @@ public abstract class AliExpressStockEngine extends StockEngine {
                 for (var img : skuImgList) {
                     var styleTitle = img.getAttribute("alt");
                     if (styleTitle != null & styleTitle.equals(styleList[i])) {
-                        img.click();
+                        var parentDiv = driverEngine.getExecutor().getByRelativeXpath(img, ".//..");
+//                        img.click();
+                        parentDiv.click();
                         boolean isSelected = false;
                         while (!isSelected) {
                             var imgParentLi = driverEngine.getExecutor().getByRelativeXpath(img, ".//..");
@@ -88,7 +91,8 @@ public abstract class AliExpressStockEngine extends StockEngine {
                             if (className.contains("sku-item--selected")) {
                                 isSelected = true;
                             } else {
-                                img.click();
+                                parentDiv.click();
+//                                img.click();
                             }
                         }
                     }
