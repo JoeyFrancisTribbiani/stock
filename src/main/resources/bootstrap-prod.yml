@@ -31,7 +31,8 @@ spring:
         transportMode: "NIO"
   datasource:
     amazon:
-      jdbc-url: jdbc:mysql://172.81.214.167:3306/db_wimoor?characterEncoding=UTF-8&serverTimezone=UTC
+      #      jdbc-url: jdbc:mysql://172.81.214.167:3306/db_wimoor?characterEncoding=UTF-8&serverTimezone=UTC
+      jdbc-url: jdbc:mysql:192.168.50.238//:3306/db_wimoor?characterEncoding=UTF-8&serverTimezone=UTC
       username: root
       password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -46,7 +47,7 @@ spring:
       poolName: amazonHikariCP
       connectionTimeout: 10000
     stock:
-      jdbc-url: jdbc:mysql://172.81.214.167:3306/stock?characterEncoding=UTF-8&serverTimezone=UTC
+      jdbc-url: jdbc:mysql://192.168.50.238:3306/stock?characterEncoding=UTF-8&serverTimezone=UTC
       username: root
       password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -94,7 +95,7 @@ xxl:
     executor:
       appname: stock-executor
       port: 30888
-      ip: 192.168.50.231
+      ip: 192.168.50.238
       logpath: /tmp/applogs/xxl-job/jobhandler
       logretentiondays: 30
     accessToken: default_token
