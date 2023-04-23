@@ -69,7 +69,7 @@ public class StockStatusService {
         var orderIdList = amazonOrderVoList.stream().map(AmazonOrdersVo::getOrderid).toList();
         var stockStatusList = statusRepository.findAllByAmazonAuthIdAndMarketplaceIdAndAmazonOrderIdIn(authId, marketpalceId, orderIdList);
         if (stockStatusList.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
         List<StockStatus> notCreated = new ArrayList<>();
         for (AmazonOrdersVo amazonOrderVo : amazonOrderVoList) {
