@@ -34,7 +34,8 @@ spring:
       #      jdbc-url: jdbc:mysql://172.81.214.167:3306/db_wimoor?characterEncoding=UTF-8&serverTimezone=UTC
       jdbc-url: jdbc:mysql:192.168.50.238//:3306/db_wimoor?characterEncoding=UTF-8&serverTimezone=UTC
       username: root
-      password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
+      #      password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
+      password: toor0109
       driver-class-name: com.mysql.cj.jdbc.Driver
       type: com.zaxxer.hikari.HikariDataSource
       #      hikari:
@@ -49,7 +50,7 @@ spring:
     stock:
       jdbc-url: jdbc:mysql://192.168.50.238:3306/stock?characterEncoding=UTF-8&serverTimezone=UTC
       username: root
-      password: ryG9WGQVUY8XHUDr2N919xJHcKXVUE1WGCz
+      password: toor0109
       driver-class-name: com.mysql.cj.jdbc.Driver
       type: com.zaxxer.hikari.HikariDataSource
       #      hikari:
