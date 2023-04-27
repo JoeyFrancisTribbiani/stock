@@ -90,7 +90,9 @@ public class DebugChromeDriverEngine {
 
     private ChromeDriver initChromeDriver() {
         log.info("开始初始化chromeDriver");
-        String driverPath = "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver";
+//        String driverPath = "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver";
+
+        String driverPath = "D:\\Fadacai888888\\wimoor_work\\chromedriver.exe";
         System.setProperty("webdriver.chrome.driver",
                 driverPath);
         System.setProperty("webdriver.http.factory", "jdk-http-client");
