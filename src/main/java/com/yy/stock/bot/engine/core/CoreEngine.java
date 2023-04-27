@@ -143,11 +143,11 @@ public abstract class CoreEngine {
         buyerAccount.setLoginCookie(cookiesStr);
         buyerAccountService.save(buyerAccount);
     }
-//    public void persistBotHeaders(HttpHeaders headers) throws JsonProcessingException {
-//        var cookiesStr = new ObjectMapper().writeValueAsString(headers);
-//        buyerAccount.setLoginCookie(cookiesStr);
-//        buyerAccountService.save(buyerAccount);
-//    }
+
+    public void clearBuyerCookie() {
+        buyerAccount.setLoginCookie("");
+        buyerAccountService.save(buyerAccount);
+    }
     //endregion
 
     public void goHome() {

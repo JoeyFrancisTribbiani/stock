@@ -34,6 +34,9 @@ public class AliExpressLoginEngine extends LoginEngine {
                     var accessNowButton = instructionExecutor.getByXpath(coreEngine.xpaths.loginAccessNowButton);
                     accessNowButton.click();
                     Thread.sleep(2000);
+
+                    solveLoginCookieError();
+
                     // todo 滑块验证
                     try {
                         coreEngine.solveLoginCaptcha();
@@ -64,6 +67,19 @@ public class AliExpressLoginEngine extends LoginEngine {
             return false;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected void solveLoginCookieError() {
+        try {
+            var errorMsgSpan = instructionExecutor.getByClassName("fm-error-message");
+            var errorMsg = errorMsgSpan.getText();
+            if (errorMsg.contains("Your account name or password is incorrect")) {
+                log.info("cookie登录失败，账号或密码错误");
+                coreEngine.clearBuyerCookie();
+            }
+        } catch (Exception e) {
+            log.info("填充cookie后未提示报错", e);
         }
     }
 
