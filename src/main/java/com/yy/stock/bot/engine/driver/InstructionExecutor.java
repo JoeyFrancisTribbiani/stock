@@ -1,6 +1,7 @@
 package com.yy.stock.bot.engine.driver;
 
 import com.yy.stock.bot.helper.MessageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+@Slf4j
 public class InstructionExecutor {
     private final CdpRemoteWebDriver driver;
     int WAIT_SECONDS = 8;
@@ -48,22 +50,27 @@ public class InstructionExecutor {
         return browserName + browserVersion + "-" + osName;
     }
 
-    public void clearAndType(WebElement field, String text) {
+    public void clearAndType(WebElement field, String text) throws InterruptedException {
         field.clear();
         field.click();
         if (!field.getAttribute("value").equals("")) {
             var os = getBrowserInfo();
             if (os != null) {
+                log.info("浏览器代理操作系统信息: {}", os);
                 os = os.toLowerCase();
                 if (os.contains("mac")) {
                     field.sendKeys(Keys.COMMAND, "a");
+                    log.info("发送按键内容: {}", "Keys.COMMAND + a");
                 } else {
                     field.sendKeys(Keys.CONTROL, "a");
+                    log.info("发送按键内容: {}", "Keys.CONTROL + a");
                 }
             } else {
                 field.sendKeys(Keys.CONTROL, "a");
             }
+            Thread.sleep(800);
             field.sendKeys(Keys.BACK_SPACE);
+            log.info("发送按键内容: {}", "Keys.BACK_SPACE");
         }
         field.click();
         field.clear();
