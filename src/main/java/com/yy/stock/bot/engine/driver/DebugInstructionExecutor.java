@@ -158,6 +158,11 @@ public class DebugInstructionExecutor {
                 .until(d -> el.findElement(By.className(className)));
     }
 
+    public WebElement getByCssSelector(String className) {
+        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
+                .until(d -> d.findElement(By.cssSelector(className)));
+    }
+
     public WebElement getByTagName(WebElement el, String tagName) {
         return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
                 .until(d -> el.findElement(By.tagName(tagName)));
@@ -176,6 +181,10 @@ public class DebugInstructionExecutor {
     public List<WebElement> listByClassName(String className) {
         return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
                 .until(d -> d.findElements(By.className(className)));
+    }
+    public List<WebElement> listByCssSelector(String className) {
+        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
+                .until(d -> d.findElements(By.cssSelector(className)));
     }
 
     public List<WebElement> listByTagName(String tag) {
@@ -258,6 +267,37 @@ public class DebugInstructionExecutor {
             for (int k = 0; k < pointsX.size(); k++) {
                 action.moveByOffset(pointsX.get(k), pointsY.get(k)).perform();
             }
+        }
+    }
+    public void openAndSwitchNewTab(){
+        var field = driver.findElement(By.cssSelector("body"));
+
+        var os = getBrowserInfo();
+        if (os != null) {
+            os = os.toLowerCase();
+            if (os.contains("mac")) {
+                field.sendKeys(Keys.COMMAND, "t");
+            } else {
+                field.sendKeys(Keys.CONTROL, "t");
+            }
+        } else {
+            field.sendKeys(Keys.CONTROL, "t");
+        }
+
+        ArrayList<String> tabs = new ArrayList<String> (driver.getWindowHandles());
+        driver.switchTo().window(tabs.get(1)); //switches to new tab
+    }
+    public void openUrlInNewTab(String url){
+        driver.executeScript("window.open('"+url+"','_blank');");
+        // Switch to new window opened
+        for(String winHandle : driver.getWindowHandles()){
+            driver.switchTo().window(winHandle);
+        }
+    }
+    public void closeThisTab(){
+        driver.close();
+        for(String winHandle : driver.getWindowHandles()){
+            driver.switchTo().window(winHandle);
         }
     }
 

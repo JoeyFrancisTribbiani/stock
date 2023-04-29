@@ -12,7 +12,7 @@ public class AmazonSelection {
 
     @Id
     @Column(name = "asin", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String asin;
 
     @Column(name = "marketplace_id", nullable = false)

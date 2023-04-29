@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AmazonSelectionService {
 
@@ -18,5 +20,9 @@ public class AmazonSelectionService {
 
     public void save(AmazonSelection selection) {
         amazonSelectionRepository.save(selection);
+    }
+
+    public Optional<AmazonSelection> getOneByAsin(String asin) {
+        return amazonSelectionRepository.findById(asin);
     }
 }

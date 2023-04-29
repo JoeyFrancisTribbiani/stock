@@ -1,5 +1,6 @@
 package com.yy.stock.scheduler;
 
+import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
@@ -49,7 +50,8 @@ public class RegisterScheduler {
     private EmailAccountService emailAccountService;
 
     @XxlJob(value = "registerJobHandler")
-    public void registerXxlJobHandler(BigInteger platformId) throws InterruptedException {
+    public void registerXxlJobHandler() throws InterruptedException {
+        BigInteger platformId = new BigInteger( XxlJobHelper.getJobParam());
         if (isBusy()) {
             log.info("注册任务正忙，跳过此次计划.");
             return;

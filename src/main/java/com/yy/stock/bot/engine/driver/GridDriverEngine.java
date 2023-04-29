@@ -131,7 +131,6 @@ public class GridDriverEngine {
 
     private CdpRemoteWebDriver initChromeDriver() throws MalformedURLException {
         log.info("开始初始化remoteChromeDriver");
-//        ChromeOptions chromeOptions = new ChromeOptions();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("disable-infobars");
         options.addArguments("--disable-popup-blocking"); // 禁用阻止弹出窗口
@@ -154,25 +153,20 @@ public class GridDriverEngine {
         // this sends Network.enable to chromedriver
 
 
-        Map<String, Object> networkPrefs = new HashMap();
-        networkPrefs.put("enableNetwork", true);
-        networkPrefs.put("enablePage", false);
-//        networkPrefs.put("enableTimeline", false);
-        options.setExperimentalOption("perfLoggingPrefs", networkPrefs);
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-//        logPrefs.enable(LogType.BROWSER, Level.ALL);
-        options.setCapability("goog:loggingPrefs", logPrefs);
-//        options.setCapability("perfLoggingPrefs", networkPrefs);
-        options.setCapability("goog:perfLoggingPrefs", networkPrefs);
-//        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+        //开启性能日志会导致内存占用不断增加
+//        Map<String, Object> networkPrefs = new HashMap();
+//        networkPrefs.put("enableNetwork", true);
+//        networkPrefs.put("enablePage", false);
+//        options.setExperimentalOption("perfLoggingPrefs", networkPrefs);
+//        LoggingPreferences logPrefs = new LoggingPreferences();
+//        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+//        options.setCapability("goog:loggingPrefs", logPrefs);
+//        options.setCapability("goog:perfLoggingPrefs", networkPrefs);
 
-//        CdpRemoteWebDriver driver = new RemoteCdpRemoteWebDriver(new URL(hubUrl), chromeOptions);
         var registerUrl = gridDriverEngineConfig.getRegisterUrl();
         CdpRemoteWebDriver driver = new CdpRemoteWebDriver(new URL(registerUrl), options);
         driver.manage().window().maximize();
 
-        //修改window.navigator.webdirver=undefined，防机器人识别机制
         Map<String, Object> command = new HashMap<>();
         command.put("source", "Object.defineProperty(navigator, 'CdpRemoteWebDriver', {get: () => undefined})");
         driver.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", command);

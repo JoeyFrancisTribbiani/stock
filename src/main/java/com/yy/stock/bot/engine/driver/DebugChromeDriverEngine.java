@@ -92,18 +92,18 @@ public class DebugChromeDriverEngine {
         log.info("开始初始化chromeDriver");
 //        String driverPath = "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver";
 
-        String driverPath = "D:\\Fadacai888888\\wimoor_work\\chromedriver.exe";
+        String driverPath = "D:\\Fadacai888888\\wimoor_work\\chromedriver_111_win.exe";
         System.setProperty("webdriver.chrome.driver",
                 driverPath);
         System.setProperty("webdriver.http.factory", "jdk-http-client");
 
         ChromeOptions options = new ChromeOptions();
 
-        LoggingPreferences logPrefs = new LoggingPreferences();
-        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-        logPrefs.enable(LogType.BROWSER, Level.ALL);
-
-        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+//        LoggingPreferences logPrefs = new LoggingPreferences();
+//        logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
+//        logPrefs.enable(LogType.BROWSER, Level.ALL);
+//
+//        options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 
         options.addArguments("--remote-allow-origins=*");
 

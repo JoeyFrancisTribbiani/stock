@@ -3,6 +3,7 @@ package com.yy.stock.test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.seleniumgrid.model.GridStatusResponseModel;
 import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
+import com.yy.stock.scheduler.SelectAmazonProductScheduler;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,6 +15,14 @@ import java.net.MalformedURLException;
 
 class WebDriverTest {
 
+    @Test
+    void testSelection(){
+        var selectionScheduler = new SelectAmazonProductScheduler();
+        selectionScheduler.driverEngine=new DebugChromeDriverEngine();
+        var searchUrl  ="https://www.amazon.sg/s?k=Micro+SD";
+        var searchKey = "Micro SD";
+        selectionScheduler.fetchAsin(searchUrl,searchKey);
+    }
     @Test
     void testChromeDiver() throws InterruptedException, MalformedURLException {
 //        var dList = new ArrayList<WebDriver>();
