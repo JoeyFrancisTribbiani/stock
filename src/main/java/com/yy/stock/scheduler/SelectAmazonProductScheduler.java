@@ -1,5 +1,7 @@
 package com.yy.stock.scheduler;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
@@ -8,6 +10,9 @@ import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.entity.AmazonSelection;
 import com.yy.stock.service.AmazonSelectionService;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +57,10 @@ public class SelectAmazonProductScheduler {
         if (driverEngine == null) {
             driverEngine = new DebugChromeDriverEngine();
         }
+        if(searchKey.startsWith("BestSeller")){
+            fetchBestSeller(searchKey);
+            return;
+        }
         var searchUrl = "https://www.amazon.sg/s?k=" + searchKey;
 
         int maxPage = 3;
@@ -59,8 +68,71 @@ public class SelectAmazonProductScheduler {
             searchUrl = searchUrl + "&page=" + i;
             fetchAsin(searchUrl, searchKey);
         }
+    }
+
+    private void fetchBestSeller(String searchKey) throws InterruptedException {
+        var categoryArr = searchKey.split("-");
+        if(categoryArr.length <2){
+            var searchUrl = "https://www.amazon.sg/gp/bestsellers/";
+            driverEngine.getDriver().get(searchUrl);
+            Thread.sleep(2000);
+            var html = driverEngine.getDriver().getPageSource();
+            Document doc = Jsoup.parse(html);
+            var categoryItems = doc.getElementsByAttributeValue("role","treeitem");
+            for(var item :categoryItems){
+                var children=item.children();
+                for(var child : children){
+                    var tagName = child.tagName();
+                    if(tagName.equals("span")){
+                        if(!child.text().equals("Any Category"))
+                        {
+
+                        }
+                    }
+                    if(tagName.equals("a")){
+                        var link = child.attr("href");
+                        var category = child.text();
+//                        var navLevelStr = link.split("ref=")[1];
+                        var levelStr = "https://www.amazon.sg/gp/bestsellers/baby/ref=zg_bs_nav_0".split("zg_bs_nav_")[1];
+                        if(levelStr.equals("0")){
+                            continue;
+                        }
+                    }
+                }
+            }
+        }else {
+            var category = categoryArr[1];
+
+            var searchUrl = "https://www.amazon.sg/gp/bestsellers/" + category;
+            driverEngine.getDriver().get(searchUrl);
 
 
+            var dataClientDiv = driverEngine.getExecutor().getByClassName("p13n-desktop-grid");
+            var jsonDataListStr = dataClientDiv.getAttribute("data-client-recs-list");
+            var array = JSONArray.parseArray(jsonDataListStr);
+            for (var item : array) {
+                var asin = ((JSONObject) item).getString("id");
+                var url = "https://www.amazon.sg/dp/" + asin;
+                var one = amazonSelectionService.getOneByAsin(asin);
+                if (one.isPresent()) {
+                    log.info("此商品已经存在，跳过.");
+                    continue;
+                }
+                var price = ((JSONObject) item).getString("price");
+                var priceNum = Double.parseDouble(price);
+                if (priceNum > 38) {
+                    log.info("此商品价格大于38新币，跳过.");
+                    continue;
+                }
+                var selection = new AmazonSelection();
+                selection.setAsin(asin);
+                selection.setPrice(priceNum + "");
+                selection.setUrl(url);
+                selection.setSearchKey(searchKey);
+                selection.setMarketplaceId("A19VAU5U5O7RUS");
+                amazonSelectionService.save(selection);
+            }
+        }
     }
 
     public void fetchAsin(String searchUrl, String searchKey) {
@@ -116,8 +188,8 @@ public class SelectAmazonProductScheduler {
                 var price = priceSpan.getText();
                 var priceFormat = price.replace("S$", "").replace("\n", ".");
                 var priceNum = Double.parseDouble(priceFormat);
-                if(priceNum>66){
-                    log.info("此商品价格大于66新币，跳过.");
+                if(priceNum>38){
+                    log.info("此商品价格大于38新币，跳过.");
                     continue;
                 }
 
@@ -132,8 +204,6 @@ public class SelectAmazonProductScheduler {
                 Thread.sleep(1000);
             } catch (Exception exx) {
                 log.info(getExecutorName(url) + " 抓取过程出错.");
-            }finally {
-//                driverEngine.getExecutor().closeThisTab();
             }
         }
     }
