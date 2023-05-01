@@ -11,18 +11,23 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 
 class WebDriverTest {
 
     @Test
-    void testSelection(){
+    void testSelection() throws InterruptedException {
         var selectionScheduler = new SelectAmazonProductScheduler();
-        selectionScheduler.driverEngine=new DebugChromeDriverEngine();
-        var searchUrl  ="https://www.amazon.sg/gp/bestsellers/electronics/8417576051?ref_=Oct_d_obs_S&pd_rd_w=L3RlM&content-id=amzn1.sym.878cff72-f123-4f0b-b0b8-51da456a0c3e&pf_rd_p=878cff72-f123-4f0b-b0b8-51da456a0c3e&pf_rd_r=787JMGGGMW5QZVR1B6P3&pd_rd_wg=EAMie&pd_rd_r=290bfb78-c142-42b3-a6b5-4188c9ca4850";
-        var searchKey = "Micro SD";
-        selectionScheduler.fetchAsin(searchUrl,searchKey);
+        selectionScheduler.driverEngine = new DebugChromeDriverEngine();
+
+        selectionScheduler.saveSubCategories("https://www.amazon.sg/gp/bestsellers/", BigInteger.valueOf(0));
+
+//        var searchUrl  ="https://www.amazon.sg/gp/bestsellers/electronics/8417576051?ref_=Oct_d_obs_S&pd_rd_w=L3RlM&content-id=amzn1.sym.878cff72-f123-4f0b-b0b8-51da456a0c3e&pf_rd_p=878cff72-f123-4f0b-b0b8-51da456a0c3e&pf_rd_r=787JMGGGMW5QZVR1B6P3&pd_rd_wg=EAMie&pd_rd_r=290bfb78-c142-42b3-a6b5-4188c9ca4850";
+//        var searchKey = "Micro SD";
+//        selectionScheduler.fetchAsin(searchUrl,searchKey);
     }
+
     @Test
     void testChromeDiver() throws InterruptedException, MalformedURLException {
 //        var dList = new ArrayList<WebDriver>();

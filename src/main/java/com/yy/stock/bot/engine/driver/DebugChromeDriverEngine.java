@@ -9,14 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 @Slf4j
 @Getter
