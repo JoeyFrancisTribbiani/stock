@@ -1,6 +1,7 @@
 package com.yy.stock.controller;
 
 import com.yy.stock.common.result.Result;
+import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.EmailAccount;
 import com.yy.stock.service.EmailAccountService;
 import com.yy.stock.vo.EmailAccountListQuery;
@@ -24,11 +25,6 @@ public class EmailAccountController {
     @Autowired
     private EmailAccountService emailAccountService;
 
-    @PostMapping
-    public String save(@Valid @RequestBody EmailAccount vO) {
-        return emailAccountService.save(vO).toString();
-    }
-
     //表单提交必须用post请求
     @PostMapping("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile csvFile) throws IOException {
@@ -49,6 +45,10 @@ public class EmailAccountController {
     public void update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody EmailAccount vO) {
         emailAccountService.update(id, vO);
+    }
+    @PostMapping("/save")
+    public Result<String> save(@Valid @RequestBody EmailAccount vO) {
+        return Result.success(emailAccountService.save(vO).toString());
     }
 
     @GetMapping("/{id}")

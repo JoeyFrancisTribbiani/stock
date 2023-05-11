@@ -11,6 +11,7 @@ import com.yy.stock.adaptor.amazon.api.pojo.vo.AmzProductListVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockOrderStatusListVo;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
 import com.yy.stock.adaptor.amazon.entity.AmzOrdersAddress;
+import com.yy.stock.adaptor.amazon.service.AmzOrderItemService;
 import com.yy.stock.adaptor.amazon.service.AmzOrdersAddressService;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
@@ -19,6 +20,7 @@ import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.Platform;
 import com.yy.stock.entity.StockStatus;
 import com.yy.stock.entity.Supplier;
+import com.yy.stock.scheduler.StockAsyncExecutor;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.PlatformService;
 import com.yy.stock.service.StockStatusService;
@@ -55,6 +57,10 @@ public class StockStatusController {
     private StockStatusService stockStatusService;
     @Autowired
     private OrderFulfillmentSubmitFeedService orderFulfillmentSubmitFeedService;
+    @Autowired
+    private AmzOrderItemService amzOrderItemService;
+    @Autowired
+    private StockAsyncExecutor stockAsyncExecutor;
 
     @PostMapping
     public String save(@Valid @RequestBody StockStatus vO) {
@@ -112,7 +118,7 @@ public class StockStatusController {
     @PostMapping("/orderStatusList")
     public Result<Page<StockOrderStatusListVo>> orderListAction(@RequestBody AmazonOrdersListQuery query) throws JsonProcessingException {
         Result<Page<AmazonOrdersVo>> result = amazonClientOneFeign.getOrderListAction(query);
-        if (Result.isSuccess(result) && result.getData() != null) {
+        if (Result.isSuccess(result) && result.getData() != null && result.getData().getRecords().size() != 0) {
             var gotPage = result.getData();
             List<StockOrderStatusListVo> list = new ArrayList<>();
             var order1 = result.getData().getRecords().get(0);
@@ -173,9 +179,9 @@ public class StockStatusController {
             page.setPages(gotPage.getPages());
             page.setRecords(list);
             return Result.success(page);
-
         }
-        return Result.failed();
+        var page = new Page<StockOrderStatusListVo>(0, 0, 0, false);
+        return Result.success(page);
     }
 
     @PostMapping("/saveOrderStockStatus")
@@ -185,6 +191,17 @@ public class StockStatusController {
             return Result.success(true);
         } catch (Exception ex) {
             return Result.failed();
+        }
+    }
+
+    @PostMapping("/manualStock")
+    public Result<Boolean> manualStockAction(@RequestBody StockStatus stockStatus) throws JsonProcessingException {
+        try {
+            var orderItemInfo = amzOrderItemService.findInfoByItemId(stockStatus.getAmazonOrderId(), stockStatus.getOrderItemId());
+            stockAsyncExecutor.startStockAsync(orderItemInfo, stockStatus);
+            return Result.success(true);
+        } catch (Exception ex) {
+            return Result.failed(ex.getMessage());
         }
     }
 

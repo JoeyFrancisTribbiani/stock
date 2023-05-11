@@ -1,16 +1,24 @@
 package com.yy.stock.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.yy.stock.bot.amazonbot.model.GatherEntrance;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.math.BigInteger;
+import java.util.List;
 
 @Data
 @Entity
 @Accessors(chain = true)
 @Table(name = "amazon_selection")
 public class AmazonSelection {
-
     @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigInteger id;
+
     @Column(name = "asin", nullable = false)
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String asin;
@@ -18,13 +26,33 @@ public class AmazonSelection {
     @Column(name = "marketplace_id", nullable = false)
     private String marketplaceId;
 
-
+    @Column(name = "category_id")
+    private String categoryId;
+    @Column(name = "gather_entrance")
+    @Enumerated(EnumType.STRING)
+    private GatherEntrance gatherEntrance;
+    @Column(name = "sku")
+    private String sku;
     @Column(name = "url", nullable = false)
     private String url;
-
     @Column(name = "price", nullable = false)
     private String price;
-
     @Column(name = "search_key")
     private String searchKey;
+    @Column(name = "confirm_sell")
+    private Boolean confirmSell;
+    @Column(name = "can_follow_sell")
+    private Boolean canFollowSell;
+    @Column(name = "confirm_supplier")
+    private Boolean confirmSupplier;
+    @Column(name = "has_supplier")
+    private Boolean hasSupplier;
+//    @Column(name = "follow_sell_switch")
+//    private Boolean followSellSwitch;
+//    @Column(name = "has_follow_sell")
+//    private Boolean hasFollowSell;
+//    @OneToMany
+//    @JoinColumn(name = "selection_id")
+//    @JsonIgnoreProperties(value = {"amazonSelection"}, allowSetters = true)
+//    private List<AmazonSelectionHasFollow> amazonSelectionHasFollows;
 }

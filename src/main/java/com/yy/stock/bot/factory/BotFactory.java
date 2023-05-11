@@ -70,9 +70,14 @@ public class BotFactory {
     }
 
     public void keepSessionsAlive() {
+        log.info("保活任务开始,当前运行中的bot数量:{}", runningBotPool.size());
+        for (Bot bot : runningBotPool) {
+            log.info("当前运行中的bot:{},bot状态:{}", bot.getBotName(), bot.getBotStatus().name());
+        }
         for (Bot bot : runningBotPool) {
             try {
                 if (bot.getBotStatus() == BotStatus.idle) {
+                    log.info("bot:{},bot状态:{} 开始保活，获取title：", bot.getBotName(), bot.getBotStatus().name());
                     bot.keepSessionAlive();
                 }
             } catch (Exception e) {

@@ -19,6 +19,12 @@ spring:
         shared-configs[1]:
           data-id: wimoor-commom-ext
           refresh: true
+  cache:
+    type:
+      simple
+    cache-names:
+      amazoncategory
+
   redis:
     redisson:
       config: |

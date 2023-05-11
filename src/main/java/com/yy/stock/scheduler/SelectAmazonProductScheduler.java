@@ -4,29 +4,39 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import com.yy.stock.adaptor.amazon.api.InventorySubmitFeedService;
+import com.yy.stock.bot.amazonbot.model.GatherEntrance;
+import com.yy.stock.bot.amazonbot.model.TraversalStatus;
 import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.entity.AmazonCategory;
 import com.yy.stock.entity.AmazonSelection;
 import com.yy.stock.service.AmazonCategoryService;
+import com.yy.stock.service.AmazonSelectionHasFollowService;
 import com.yy.stock.service.AmazonSelectionService;
+import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j
 @Service
 public class SelectAmazonProductScheduler {
-
     public DebugChromeDriverEngine driverEngine;
     @Autowired
     protected BotFactory botFactory;
@@ -36,142 +46,305 @@ public class SelectAmazonProductScheduler {
     @Autowired
     private AmazonSelectionService amazonSelectionService;
     @Autowired
+    private AmazonSelectionHasFollowService amazonSelectionHasFollowService;
+    @Autowired
     private AmazonCategoryService amazonCategoryService;
+    @Autowired
+    private InventorySubmitFeedService inventorySubmitFeedService;
 
     @XxlJob(value = "selectAmazonProductJobHandler")
-    public void selectAmazonProductXxlJobHandler() throws InterruptedException {
-        String searchKey = XxlJobHelper.getJobParam();
+    public boolean selectAmazonProductXxlJobHandler(String fetchAsinsCmd) throws InterruptedException {
+        String searchKey = null;
+        if (fetchAsinsCmd == null || fetchAsinsCmd.equals("")) {
+            searchKey = XxlJobHelper.getJobParam();
+        } else {
+            searchKey = fetchAsinsCmd;
+        }
         if (isBusy()) {
             log.info("选品任务正忙，跳过此次计划.");
-            return;
+            return false;
         }
         isBusy = true;
         try {
             schedule(searchKey);
-        } catch (Exception ex) {
+
+        }catch (org.openqa.selenium.remote.UnreachableBrowserException ex){
+            log.info("选品任务过程中报错,ex:" + ex.getMessage());
+            driverEngine = null;
+        }
+        catch (Exception ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
         } finally {
             isBusy = false;
         }
+        return true;
     }
 
-    public void schedule(String searchKey) throws InterruptedException {
-        log.info("开始搜索关键词：" + searchKey);
+    public void schedule(String searchUrl) throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
+        // searchUrl示例1：https://www.amazon.sg/gp/bestsellers/pet-supplies/14589236051/ref=zg_bs_nav_pet-supplies_3_14590078051
+        // searchUrl示例2：https://www.amazon.sg/s?k=dd&ref=nb_sb_noss
+        // searchUrl示例3：""
+
+        // 如果为空则不是采集任务，而是取消无货源的跟卖ASIN
+        if (searchUrl == null || searchUrl.equals("")) {
+            log.info("开始取消无货源的跟卖ASIN");
+            cancelUnavailableFollowedAsin();
+            return;
+        }
+
+        log.info("开始搜索关键词：" + searchUrl);
         if (driverEngine == null) {
             driverEngine = new DebugChromeDriverEngine();
         }
-        if (searchKey.startsWith("BestSeller")) {
-            fetchBestSeller(searchKey);
+        if (searchUrl.startsWith("FetchByCategory")) {
+            String[] split = searchUrl.split(",");
+            var marketplaceId = split[1];
+            String categoryId = split[2];
+            var amazonCategory = amazonCategoryService.getListByMarketplaceIdAndCategoryId(marketplaceId, categoryId).get(0);
+            var categoryUrl = amazonCategory.getUrl();
+            log.info("开始搜索类目：" + amazonCategory.getName());
+
+            amazonCategory.setTraversalStatus(TraversalStatus.Progressing);
+            amazonCategoryService.save(amazonCategory);
+
+            fetchBestSellerCategoryAsins(categoryUrl);
+
+            amazonCategory.setTraversalStatus(TraversalStatus.Done);
+            amazonCategory.setLastTraversalTime(new Date());
+            amazonCategoryService.save(amazonCategory);
             return;
         }
-        var searchUrl = "https://www.amazon.sg/s?k=" + searchKey;
 
+        if (searchUrl.contains("gp/bestsellers")) {
+            fetchBestSeller(searchUrl);
+            return;
+        }
+
+        // 否则获取关键词搜索展示页的商品
         int maxPage = 3;
         for (int i = 1; i <= maxPage; i++) {
             searchUrl = searchUrl + "&page=" + i;
-            fetchAsin(searchUrl, searchKey);
+            fetchSearchAsins(searchUrl, searchUrl);
         }
     }
 
-    private void fetchBestSeller(String searchKey) throws InterruptedException {
-        var categoryArr = searchKey.split("-");
-        if (categoryArr.length < 2) {
-            saveSubCategories("https://www.amazon.sg/gp/bestsellers/", BigInteger.valueOf(0));
-        } else {
-            var category = categoryArr[1];
+    public void cancelUnavailableFollowedAsin() throws InterruptedException, DatatypeConfigurationException, ParserConfigurationException, IOException {
+        var toBeCanceledAsins = amazonSelectionHasFollowService.getToBeCancelled();
+        log.info("待取消的跟卖ASIN数量：" + toBeCanceledAsins.size());
+        for (var amazonSelectionHasFollow : toBeCanceledAsins) {
+            inventorySubmitFeedService.submit(amazonSelectionHasFollow);
+            Thread.sleep(2000);
         }
     }
 
-    public void saveSubCategories(String parentCategoryUrl, BigInteger parentId) throws InterruptedException {
-//        var searchUrl = "https://www.amazon.sg/gp/bestsellers/";
+    private void fetchBestSeller(String url) throws InterruptedException, MalformedURLException {
+        saveSubCategories(url);
+//        fetchBestSellerCategoryAsins(url);
+    }
+
+    public void saveSubCategories(String parentCategoryUrl) throws InterruptedException, MalformedURLException {
+//        var searchUrl = "https://www.amazon.sg/gp/bestsellers/automotive/6394508051/ref=zg_bs_nav_automotive_1";
+        if (amazonCategoryService == null) {
+            amazonSelectionService = new AmazonSelectionService();
+        }
         driverEngine.getDriver().get(parentCategoryUrl);
         Thread.sleep(2000);
+
+        var url = new URL(parentCategoryUrl);
+        var host = url.getHost();
+
         var html = driverEngine.getDriver().getPageSource();
         Document doc = Jsoup.parse(html);
+        String marketplaceId = getMarketplaceIdFromUrl(parentCategoryUrl);
+
         var categoryItems = doc.getElementsByAttributeValue("role", "treeitem");
-        for (var item : categoryItems) {
+        var subCategorieItems = new Elements();
+        for (int i = 0; i < categoryItems.size(); i++) {
+            var item = categoryItems.get(i);
             var children = item.children();
-            for (int i = 0; i < children.size(); i++) {
-                var child = children.get(i);
-                var tagName = child.tagName();
-                if (tagName.equals("a")) {
-                    var link = child.attr("href");
-                    BigInteger id;
-                    var category = child.text();
-                    if (category.equals("Any Category")) {
+            var child = children.get(0);
+            var tagName = child.tagName();
+            // span是当前分类，a是父子分类
+            if (tagName.equals("span")) {
+                var parentDiv = item.parent();
+                var parentRole = parentDiv.attr("role");
+
+                // 如果当前分类所在的item，父级div角色是group，说明当前分类已经没有子分类，而是和兄弟分类分在了同一个group，那么函数直接返回
+                if (parentRole.equals("group")) {
+                    return;
+                } else {
+                    // 如果当前分类所在的item，父级div没有role特性，说明当前分类还有子分类，继续递归
+                    // 它下面的兄弟div是子分类集合且role为group
+                    var nextDiv = item.nextElementSibling();
+                    //q:sibling是兄弟节点，而children是子节点，为什么这里用nextElementSibling()而不用children()?
+                    //a:因为children()只能获取直接子节点，而nextElementSibling()可以获取兄弟节点
+                    var nextRole = nextDiv.attr("role");
+                    if (nextRole.equals("group")) {
+                        subCategorieItems = nextDiv.children();
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < subCategorieItems.size(); i++) {
+            var item = subCategorieItems.get(i);
+            var children = item.children();
+            var child = children.get(0);
+            var tagName = child.tagName();
+            if (tagName.equals("a")) {
+                var href = child.attr("href");
+                var hrefArr = href.split("/");
+                var link = "https://" + host + href;
+
+                String categoryId;
+                String idStr;
+                String ancestorsCategoryId;
+                String parentId = "";
+                var categoryName = child.text();
+
+                ancestorsCategoryId = hrefArr[3];
+
+                idStr = hrefArr[4];
+
+                // 说明是此子分类是祖先分类，存储ancestorCategoryId为id
+                if (idStr.startsWith("ref=")) {
+                    categoryId = ancestorsCategoryId;
+                    parentId = "Root";
+                    var cateList = new String[]{
+                            "fashion",
+                            "lawn-and-garden",
+                    };
+                    if (!Arrays.asList(cateList).contains(categoryId)) {
                         continue;
                     }
-                    var levelStr = link.split("zg_bs_nav_")[1];
-                    var amazonCategory = new AmazonCategory();
-                    amazonCategory.setName(category);
-                    amazonCategory.setUrl(link);
-                    amazonCategory.setTraversalStatus("pending");
-                    if (levelStr.equals("0")) {
-                        id = BigInteger.valueOf(i);
-                        amazonCategory.setLevel("1");
-                        amazonCategory.setParentId(new BigInteger("0"));
-                    } else {
-//                            var url = "https://www.amazon.sg/gp/bestsellers/automotive/6394508051/ref=zg_bs_nav_automotive_1";
-                        var cateStrArr = link.split("/gp/bestsellers/")[1];
-                        var idStr = cateStrArr.split("/")[1];
-                        id = new BigInteger(idStr);
-                        amazonCategory.setParentId(parentId);
-                        amazonCategory.setLevel(levelStr);
+                } else {
+                    categoryId = idStr;
+                    var parentIdStr = hrefArr[5];
+                    var parentIdArr = parentIdStr.split("zg_bs_nav_");
+                    var parentIdStr2 = parentIdArr[1];
+                    var parentIdArr2 = parentIdStr2.split("_");
+                    if (parentIdArr2.length == 2) {
+                        parentId = parentIdArr2[0];
                     }
-                    amazonCategory.setId(id);
-                    amazonCategoryService.save(amazonCategory);
-
-                    amazonCategory.setTraversalStatus("in progress");
-                    amazonCategoryService.save(amazonCategory);
-
-                    saveCategoryAsins(link);
-
-                    amazonCategory.setTraversalStatus("done");
-                    amazonCategory.setLastTraversalTime(new Date());
-                    amazonCategoryService.save(amazonCategory);
-
-                    saveSubCategories(link, id);
+                    if (parentIdArr2.length == 3) {
+                        parentId = parentIdArr2[2];
+                    }
                 }
+
+                AmazonCategory oldCategory = amazonCategoryService.getByMarketplaceIdAndCategoryId(marketplaceId, categoryId);
+                if (oldCategory == null) {
+                    var amazonCategory = new AmazonCategory();
+                    amazonCategory.setMarketplaceId(marketplaceId);
+                    amazonCategory.setCategoryId(categoryId);
+                    amazonCategory.setParentId(parentId);
+                    amazonCategory.setAncestorsId(ancestorsCategoryId);
+                    amazonCategory.setName(categoryName);
+                    amazonCategory.setUrl(link);
+                    amazonCategory.setTraversalStatus(TraversalStatus.Pending);
+                    amazonCategoryService.save(amazonCategory);
+                }
+//
+
+                saveSubCategories(link);
             }
         }
     }
 
-    public void saveCategoryAsins(String parentCategoryUrl) throws InterruptedException {
+    public void fetchBestSellerCategoryAsins(String parentCategoryUrl) throws InterruptedException {
 
-//        var parentCategoryUrl = "https://www.amazon.sg/gp/bestsellers/" + category;
-        driverEngine.getDriver().get(parentCategoryUrl);
+        fetchBestSellerOnePageAsins(parentCategoryUrl);
+    }
+
+    private void fetchBestSellerOnePageAsins(String pageUrl) throws InterruptedException {
+        var pageNum = getBestSellerPageNumFromUrl(pageUrl);
+        if (pageNum > 4) {
+            return;
+        }
+        var marketplaceId = getMarketplaceIdFromUrl(pageUrl);
+        driverEngine.getDriver().get(pageUrl);
+        Thread.sleep(1000);
+
+        driverEngine.getDriver().executeScript("window.scrollTo(0, 0)");
+        Thread.sleep(500);
+
+        driverEngine.getDriver().executeScript("window.scrollBy(0, 5000)");
+        Thread.sleep(500);
+        for (var i = 0; i < 8; i++) {
+            driverEngine.getDriver().executeScript("window.scrollBy(0, 500)");
+            Thread.sleep(1500);
+        }
 
         var dataClientDiv = driverEngine.getExecutor().getByClassName("p13n-desktop-grid");
         var jsonDataListStr = dataClientDiv.getAttribute("data-client-recs-list");
         var array = JSONArray.parseArray(jsonDataListStr);
-        var category = driverEngine.getExecutor().getByTagName("h1").getText();
-        category = category.split("Best Sellers in ")[1];
 
-        for (var item : array) {
-            var asin = ((JSONObject) item).getString("id");
-            var url = "https://www.amazon.sg/dp/" + asin;
-            var one = amazonSelectionService.getOneByAsin(asin);
-            if (one.isPresent()) {
-                log.info("此商品已经存在，跳过.");
+        List<String> urlList = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            log.info("正在处理第" + (i + 1) + "个商品，共" + array.size() + "个商品");
+            var item = array.get(i);
+            var url = "";
+            var asin = "";
+            WebElement asinCardDiv = null;
+            try {
+                asin = ((JSONObject) item).getString("id");
+
+                var one = amazonSelectionService.getOneByMarketplaceIdAndAsin(marketplaceId, asin);
+                if (one != null) {
+                    log.info("此商品已经存在，跳过.");
+                    continue;
+                }
+
+                asinCardDiv = driverEngine.getExecutor().getById(asin);
+                var a = driverEngine.getExecutor().getByRelativeXpath(asinCardDiv, ".//a[@class='a-link-normal']");
+                url = a.getAttribute("href");
+            } catch (Exception ex) {
+                log.error("获取Asin卡片失败，跳过.");
                 continue;
             }
-            var price = ((JSONObject) item).getString("price");
-            var priceNum = Double.parseDouble(price);
-            if (priceNum > 38) {
-                log.info("此商品价格大于38新币，跳过.");
-                continue;
+
+            try {
+                var priceDiv = driverEngine.getExecutor().getByRelativeXpath(asinCardDiv, ".//span[@class='a-size-base a-color-price']");
+                var price = priceDiv.getText().replace("S$", "");
+                var priceNum = Double.parseDouble(price);
+                if (priceNum > 38) {
+                    log.info("此商品价格大于38新币，跳过.");
+                    continue;
+                }
+                if (priceNum < 6) {
+                    log.info("此商品价格小于8新币，跳过.");
+                    continue;
+                }
+            } catch (Exception ex) {
+                log.error("在列表页获取价格失败,去产品页获取.");
             }
-            var selection = new AmazonSelection();
-            selection.setAsin(asin);
-            selection.setPrice(priceNum + "");
-            selection.setUrl(url);
-            selection.setSearchKey("BestSeller-" + category);
-            selection.setMarketplaceId("A19VAU5U5O7RUS");
-            amazonSelectionService.save(selection);
+            urlList.add(url);
         }
+        try {
+//            var nextPage = driverEngine.getExecutor().getByCssSelector(".a-last a");
+//            if (nextPage != null & !nextPage.getAttribute("class").contains("a-disabled") && !nextPage.getAttribute("href").equals("")) {
+//                var nextPageUrl = nextPage.getAttribute("href");
+            var nextPageUrl = "";
+            if (pageNum == 1) {
+                nextPageUrl = pageUrl + "?&pg=2";
+            } else {
+                nextPageUrl = pageUrl.replace("&pg=" + pageNum, "&pg=" + (pageNum + 1));
+            }
+            fetchBestSellerOnePageAsins(nextPageUrl);
+        } catch (Exception ex) {
+            log.info("没有下一页了，开始拉取本页的产品.");
+        }
+
+        for (int i = 0; i < urlList.size(); i++) {
+            var url = urlList.get(i);
+            log.info("开始去产品页拉取第" + (i + 1) + "个商品，共" + urlList.size() + "个商品");
+            fetchOneAsin(url, pageUrl);
+            Thread.sleep(2000);
+        }
+
     }
 
-    public void fetchAsin(String searchUrl, String searchKey) {
+    public void fetchSearchAsins(String searchUrl, String searchKey) {
         driverEngine.getDriver().get(searchUrl);
 
         List<WebElement> links;
@@ -198,50 +371,164 @@ public class SelectAmazonProductScheduler {
         for (var link : filteredLinks) {
             log.info("开始抓取Asin：" + link);
 //            var url = "https://www.amazon.sg"+ link.getAttribute("href");
-            var url = link;
-            try {
-                Thread.sleep(1000);
+            fetchOneAsin(link, searchKey);
+        }
+    }
+
+    public void fetchOneAsin(String link, String parentUrl) {
+        var marketplaceId = getMarketplaceIdFromUrl(link);
+        GatherEntrance entrance = getEntranceFromUrl(parentUrl);
+
+        var url = link;
+        try {
+            Thread.sleep(1000);
 //                driverEngine.getExecutor().openUrlInNewTab(url);
-                driverEngine.getDriver().get(url);
-                Thread.sleep(8888);
-                var html = driverEngine.getDriver().getPageSource();
-                if (html.contains("There are no customer ratings")) {
-                    log.info("此商品没有评论，跳过.");
-                    continue;
-                }
-                if (html.contains("There are 0 reviews and 0 ratings from Singapore")) {
-                    log.info("此商品没有来自新加坡的评论，跳过.");
-                    continue;
-                }
-                var asinInput = driverEngine.getExecutor().getById("ASIN");
-                var asin = asinInput.getAttribute("value");
-                var one = amazonSelectionService.getOneByAsin(asin);
-                if (one.isPresent()) {
-                    log.info("此商品已经存在，跳过.");
-                    continue;
-                }
-                var priceSpan = driverEngine.getExecutor().getByCssSelector(".a-price.aok-align-center");
-                var price = priceSpan.getText();
-                var priceFormat = price.replace("S$", "").replace("\n", ".");
-                var priceNum = Double.parseDouble(priceFormat);
-                if (priceNum > 38) {
-                    log.info("此商品价格大于38新币，跳过.");
-                    continue;
-                }
+            driverEngine.getDriver().get(url);
+            Thread.sleep(1888);
 
+            var asinInput = driverEngine.getExecutor().getById("ASIN");
+            var asin = asinInput.getAttribute("value");
+            var one = amazonSelectionService.getOneByMarketplaceIdAndAsin(marketplaceId, asin);
+            if (one != null) {
+                log.info("此商品已经存在，跳过.");
+                return;
+            }
 
-                var selection = new AmazonSelection();
-                selection.setAsin(asin);
-                selection.setPrice(priceNum + "");
-                selection.setUrl(url);
-                selection.setSearchKey(searchKey);
-                selection.setMarketplaceId("A19VAU5U5O7RUS");
+            var selection = new AmazonSelection();
+            selection.setMarketplaceId(marketplaceId);
+            selection.setAsin(asin);
+            selection.setUrl(url);
+
+            var priceSpan = driverEngine.getExecutor().getByCssSelector(".a-price.aok-align-center");
+            var price = priceSpan.getText();
+            var priceFormat = price.replace("S$", "").replace("\n", ".");
+            var priceNum = Double.parseDouble(priceFormat);
+            if (priceNum > 38) {
+                log.info("此商品价格大于38新币，跳过.");
+                selection.setPrice(priceNum+"");
+                selection.setConfirmSell(true);
+                selection.setConfirmSupplier(true);
+                selection.setHasSupplier(false);
                 amazonSelectionService.save(selection);
-                Thread.sleep(1000);
-            } catch (Exception exx) {
-                log.info(getExecutorName(url) + " 抓取过程出错.");
+                return;
+            }
+
+            var html = driverEngine.getDriver().getPageSource();
+            if (html.contains("There are no customer ratings")) {
+                log.info("此商品没有评论，跳过.");
+                selection.setPrice(priceNum+"");
+                selection.setConfirmSell(true);
+                selection.setConfirmSupplier(true);
+                selection.setHasSupplier(false);
+                amazonSelectionService.save(selection);
+                return;
+            }
+            if (html.contains("There are 0 reviews and 0 ratings from")) {
+                log.info("此商品没有来自该国家的评论，跳过.");
+                selection.setPrice(priceNum+"");
+                selection.setConfirmSell(true);
+                selection.setConfirmSupplier(true);
+                selection.setHasSupplier(false);
+                amazonSelectionService.save(selection);
+                return;
+            }
+
+            WebElement wayFindingDiv = null;
+            List<WebElement> links = null;
+            var categoryId = "";
+            var categoryName = "";
+            var searchKey = "";
+            try {
+                wayFindingDiv = driverEngine.getExecutor().getById("wayfinding-breadcrumbs-container");
+                links = driverEngine.getExecutor().listByRelativeXpath(wayFindingDiv, ".//a[@class='a-link-normal a-color-tertiary']");
+                //取最后一个link
+                var leafCategoryLink = links.get(links.size() - 1);
+                var href = leafCategoryLink.getAttribute("href");
+                var paramArr = href.split("&");
+                for (var param : paramArr) {
+                    if (param.startsWith("node=")) {
+                        categoryId = param.replace("node=", "");
+                        break;
+                    }
+                }
+
+                categoryName = leafCategoryLink.getText();
+
+                if (entrance == GatherEntrance.BestSeller) {
+                    searchKey = categoryName;
+                }
+                if (entrance == GatherEntrance.Search) {
+                    searchKey = getSearchKeyFromSearchUrl(parentUrl);
+                }
+            } catch (Exception ex) {
+                categoryId = getCategoryIdFromBestSellerUrl(parentUrl);
+                var category = amazonCategoryService.getByMarketplaceIdAndCategoryId(marketplaceId, categoryId);
+                if (category != null) {
+                    categoryName = category.getName();
+                    searchKey = categoryName;
+                }
+            }
+
+            selection.setCategoryId(categoryId);
+            selection.setGatherEntrance(entrance);
+            selection.setPrice(priceNum + "");
+            selection.setSearchKey(searchKey);
+            selection.setConfirmSell(false);
+            selection.setConfirmSupplier(false);
+            selection.setHasSupplier(false);
+            amazonSelectionService.save(selection);
+            Thread.sleep(1000);
+        } catch (Exception exx) {
+            log.info(getExecutorName(url) + " 抓取fetchOneAsin过程出错.");
+            log.info(exx.getMessage());
+        }
+    }
+
+    private String getSearchKeyFromSearchUrl(String parentUrl) {
+        var paramArr = parentUrl.split("/s?k=");
+        var param = paramArr[1];
+        var paramArr2 = param.split("&");
+        return paramArr2[0];
+    }
+
+    private Integer getBestSellerPageNumFromUrl(String pageUrl) {
+        var paramArr = pageUrl.split("&");
+        for (var param : paramArr) {
+            if (param.startsWith("pg=")) {
+                var pageNum = param.replace("pg=", "");
+                return Integer.parseInt(pageNum);
             }
         }
+        return 1;
+    }
+
+    private GatherEntrance getEntranceFromUrl(String url) {
+        if (url.contains("/gp/bestsellers")) {
+            return GatherEntrance.BestSeller;
+        }
+        if (url.contains("/s?k=")) {
+            return GatherEntrance.Search;
+        }
+        if (url.contains("/s?bbn=") || url.contains("/s?rh=") || url.contains("/b/ref=")) {
+            return GatherEntrance.Category;
+        }
+        return GatherEntrance.Search;
+    }
+
+    private String getCategoryIdFromBestSellerUrl(String url) {
+        var paramArr = url.split("/gp/bestsellers/");
+        var param = paramArr[1];
+        if (param.startsWith("ref=")) {
+            return "Root";
+        }
+        var paramArr2 = param.split("/");
+        if (paramArr2.length == 2) {
+            return paramArr2[0];
+        }
+        if (paramArr2.length == 3) {
+            return paramArr2[1];
+        }
+        return "";
     }
 
     public boolean isBusy() {
@@ -250,5 +537,43 @@ public class SelectAmazonProductScheduler {
 
     public String getExecutorName(String url) {
         return "AmazonSelection" + "__" + url;
+    }
+
+    public String getBestSellerUrl(String countryCode, String category) {
+        switch (countryCode) {
+            case "US":
+                return "https://www.amazon.com/gp/bestsellers/" + category;
+            case "UK":
+                return "https://www.amazon.co.uk/gp/bestsellers/" + category;
+            case "BR":
+                return "https://www.amazon.com.br/gp/bestsellers/" + category;
+            case "CA":
+                return "https://www.amazon.ca/gp/bestsellers/" + category;
+            case "AU":
+                return "https://www.amazon.com.au/gp/bestsellers/" + category;
+            case "SG":
+                return "https://www.amazon.sg/gp/bestsellers/" + category;
+            default:
+                return "https://www.amazon.com/gp/bestsellers/" + category;
+        }
+    }
+
+    public String getMarketplaceIdFromUrl(String url) {
+        if (url.contains("amazon.co.uk")) {
+            return "A1F83G8C2ARO7P";
+        }
+        if (url.contains("amazon.com.br")) {
+            return "A2Q3Y263D00KWC";
+        }
+        if (url.contains("amazon.ca")) {
+            return "A2EUQ1WTGCTBG2";
+        }
+        if (url.contains("amazon.com.au")) {
+            return "A39IBJ37TRP1C6";
+        }
+        if (url.contains("amazon.sg")) {
+            return "A19VAU5U5O7RUS";
+        }
+        return "ATVPDKIKX0DER";
     }
 }

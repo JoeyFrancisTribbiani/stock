@@ -184,7 +184,12 @@ public abstract class CoreEngine {
         stockStatus.setLastStockTryTime(DateTime.now().toLocalDateTime());
         stockStatusService.save(stockStatus);
 
-        stockEngine.stock(stockRequest);
+        try {
+            stockEngine.stock(stockRequest);
+        }catch (Exception ex){
+            log.debug("stock error",ex);
+            throw ex;
+        }
 
         buyerAccount.setOrderCount(buyerAccount.getOrderCount() + 1);
         buyerAccountService.save(buyerAccount);

@@ -89,7 +89,7 @@ public class DebugChromeDriverEngine {
         log.info("开始初始化chromeDriver");
 //        String driverPath = "/Users/minmin/Documents/Fadacai88888/stock/libs/chromedriver";
 
-        String driverPath = "D:\\Fadacai888888\\wimoor_work\\chromedriver_111_win.exe";
+        String driverPath = "D:\\Fadacai888888\\wimoor_work\\chromedriver_113_win.exe";
         System.setProperty("webdriver.chrome.driver",
                 driverPath);
         System.setProperty("webdriver.http.factory", "jdk-http-client");

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -24,6 +25,9 @@ public class AmzOrderItemService {
 
     public List<OrderItemAdaptorInfoDTO> get6DaysUnshipped() {
         return amzOrderItemRepository.find6DaysUnshippedOrders();
+    }
+    public OrderItemAdaptorInfoDTO findInfoByItemId(String orderId,String itemId){
+        return amzOrderItemRepository.findInfoByItemId(orderId, itemId);
     }
 
     public AmzOrderItemUPK save(AmzOrderItemVO vO) {

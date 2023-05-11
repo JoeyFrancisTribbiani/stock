@@ -41,7 +41,7 @@ public class AliExpressLoginEngine extends LoginEngine {
 //                        accessNowButton.click();
                         Thread.sleep(500);
                     } catch (Exception e) {
-                        log.error("滑块验证失败", e);
+                        log.error("滑块验证失败");
                     }
 
                     if(hasLoginCookieError()){
@@ -57,7 +57,7 @@ public class AliExpressLoginEngine extends LoginEngine {
                         log.error("获取页面源代码失败", e);
                     }
 
-                    instructionExecutor.waitForUrl(coreEngine.urls.homePage, 600);
+                    instructionExecutor.waitForUrl(coreEngine.urls.homePage, 30);
                     return true;
                 } else {
                     return false;
@@ -66,7 +66,7 @@ public class AliExpressLoginEngine extends LoginEngine {
 
             return currentUrl.startsWith(coreEngine.urls.homePage);
         } catch (TimeoutException e) {
-            log.info("selenium超时错误,将重试...", e);
+            log.info("未按预期跳转，selenium超时错误,将返回未登录状态...");
             return false;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -78,7 +78,7 @@ public class AliExpressLoginEngine extends LoginEngine {
         try {
             errorMsgSpan = instructionExecutor.getByClassName("fm-error-message");
         } catch (Exception e) {
-            log.info("填充cookie后未提示报错", e);
+            log.info("填充cookie后未提示报错");
             return false;
         }
         var errorMsg = errorMsgSpan.getText();
@@ -110,6 +110,14 @@ public class AliExpressLoginEngine extends LoginEngine {
             if (loginOrVerifyUrl.contains("member.lazada.sg/user/verification-pc")) {
                 verifyLoginByEmail();
             } else {
+                try {
+                    var accessNowButton = instructionExecutor.getByXpath(coreEngine.xpaths.loginAccessNowButton);
+                    accessNowButton.click();
+                    Thread.sleep(2000);
+                }catch (Exception ex){
+                    log.info("未找到Access按钮，直接输入账号密码", ex.getMessage());
+                }
+
                 inputAccountAndPassword();
 
                 instructionExecutor.waitForUrl(coreEngine.urls.homePage, 30);
@@ -304,21 +312,21 @@ public class AliExpressLoginEngine extends LoginEngine {
             coreEngine.solveLoginCaptcha();
             loginButton.click();
         } catch (Exception e) {
-            log.error("密码登录：滑块验证失败", e);
+            log.error("密码登录：滑块验证失败");
         }
 
         try {
             solveLoginEmailVerifyCode();
             loginButton.click();
         } catch (Exception e) {
-            log.error("密码登录：邮箱验证失败", e);
+            log.error("密码登录：邮箱验证失败");
         }
 
         try {
             solveChickenCaptcha();
             loginButton.click();
         } catch (Exception e) {
-            log.error("密码登录：小鸡验证失败", e);
+            log.error("密码登录：小鸡验证失败");
         }
         Thread.sleep(8888);
     }

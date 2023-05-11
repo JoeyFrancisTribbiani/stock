@@ -68,8 +68,9 @@ public class InstructionExecutor {
             } else {
                 field.sendKeys(Keys.CONTROL, "a");
             }
-            Thread.sleep(800);
+            Thread.sleep(2000);
             field.sendKeys(Keys.BACK_SPACE);
+            Thread.sleep(2000);
             log.info("发送按键内容: {}", "Keys.BACK_SPACE");
         }
         field.click();

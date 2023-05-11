@@ -2,6 +2,7 @@ package com.yy.stock.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.amazon.api.pojo.vo.StockStatusListVo;
+import com.yy.stock.bot.businessbot.BusinessBot;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
 import com.yy.stock.config.GlobalVariables;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
 
@@ -82,6 +84,11 @@ public class SupplierController {
         }
     }
 
+    @PostMapping("/caculateProfit")
+    public Result<BigDecimal> profitAction(@RequestBody StockStatusListVo vo) throws JsonProcessingException {
+        var profit = BusinessBot.caculateProfit(vo);
+        return Result.success(profit);
+    }
     @PostMapping("/bindSku")
     public Result<StockStatusListVo> bindSkuAction(@RequestBody StockStatusListVo vo) throws JsonProcessingException {
         var supplier = supplierService.getBySku(new BigInteger(vo.getAmazonAuthId()), vo.getMarketplaceid(), vo.getSku());

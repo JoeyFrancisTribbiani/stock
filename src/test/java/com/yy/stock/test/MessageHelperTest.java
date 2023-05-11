@@ -50,6 +50,7 @@ class MessageHelperTest {
         }
     }
 
+
     @Test
     void testPasswordGenerator() {
         var pass = PasswordGenerator.randomPassword(16);
@@ -287,5 +288,21 @@ class MessageHelperTest {
         var d = l.getDisplayCountry(new Locale("en", "BR"));
         System.out.println(l);
 
+    }
+    @Test
+    void testLeafCategoryFormat(){
+        var href ="https://www.amazon.sg/b/ref=dp_bc_aui_C_4?ie=UTF8&node=6400501051p";
+        var paramArr = href.split("&");
+        var categoryId = "";
+        for(var param : paramArr){
+            if(param.startsWith("node=")){
+                categoryId = param.replace("node=", "");
+                break;
+            }
+        }
+
+
+
+        System.out.println(categoryId);
     }
 }
