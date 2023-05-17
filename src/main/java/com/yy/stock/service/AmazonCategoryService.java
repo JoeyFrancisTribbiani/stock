@@ -3,6 +3,7 @@ package com.yy.stock.service;
 import com.yy.stock.entity.AmazonCategory;
 import com.yy.stock.repository.AmazonCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class AmazonCategoryService {
     @Autowired
     private AmazonCategoryRepository amazonCategoryRepository;
 
+    @CacheEvict(value = "amazoncategory",key = "#vO.marketplaceId+'_Root'")
     public void save(AmazonCategory vO) {
         amazonCategoryRepository.save(vO);
     }
@@ -40,7 +42,7 @@ public class AmazonCategoryService {
         return level1;
     }
 
-    @Cacheable(value = "amazoncategory",key = "#vO.marketplaceId+'_'+#vO.name")
+    @Cacheable(value = "amazoncategory",key = "#vO.marketplaceId+'_Root'")
     public List<AmazonCategory> findAllChildCategories(AmazonCategory vO) {
         // 查询所有节点
         var nodes = amazonCategoryRepository.findAllChildCategories(vO.getMarketplaceId(), vO.getCategoryId());

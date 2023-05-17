@@ -3,6 +3,7 @@ package com.yy.stock.test;
 import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.amazon.api.InventorySubmitFeedService;
+import com.yy.stock.adaptor.amazon.api.PriceSubmitFeedService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
 import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
 import com.yy.stock.bot.factory.BotFactory;
@@ -10,6 +11,7 @@ import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
 import com.yy.stock.dto.OrderItemAdaptorInfoDTO;
 import com.yy.stock.scheduler.SelectAmazonProductScheduler;
 import com.yy.stock.scheduler.StockScheduler;
+import com.yy.stock.service.AmazonSelectionHasFollowService;
 import com.yy.stock.service.AmazonSelectionService;
 import com.yy.stock.service.BuyerAccountService;
 import org.junit.jupiter.api.Test;
@@ -48,7 +50,11 @@ class StockSchedulerTest {
     @Autowired
     private AmazonSelectionService amazonSelectionService ;
     @Autowired
+    private AmazonSelectionHasFollowService amazonSelectionHasFollowService;
+    @Autowired
     private InventorySubmitFeedService inventorySubmitFeedService;
+    @Autowired
+    private PriceSubmitFeedService priceSubmitFeedService;
     @Test
     void testSchedule() throws InterruptedException {
     }
@@ -64,6 +70,11 @@ class StockSchedulerTest {
     void testCancelFollow() throws DatatypeConfigurationException, ParserConfigurationException, IOException {
 //        var s = amazonSelectionService.getOneByMarketplaceIdAndAsin("B09KBVZPL6");
 //        inventorySubmitFeedService.submit(s.get());
+    }
+    @Test
+    void testUpdatePrice() throws DatatypeConfigurationException, ParserConfigurationException, IOException {
+        var hasFollow = amazonSelectionHasFollowService.getById(new BigInteger("91"));
+        priceSubmitFeedService.submit(hasFollow);
     }
     @Test
     void testBotFactory() throws InterruptedException, MalformedURLException, JsonProcessingException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {

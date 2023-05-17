@@ -1,13 +1,13 @@
 package com.yy.stock.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.yy.stock.bot.amazonbot.model.GatherEntrance;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.math.BigInteger;
-import java.util.List;
 
 @Data
 @Entity
@@ -17,6 +17,7 @@ public class AmazonSelection {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigInteger id;
 
     @Column(name = "asin", nullable = false)
@@ -47,6 +48,8 @@ public class AmazonSelection {
     private Boolean confirmSupplier;
     @Column(name = "has_supplier")
     private Boolean hasSupplier;
+    @Column(name = "pic_url")
+    private String picUrl;
 //    @Column(name = "follow_sell_switch")
 //    private Boolean followSellSwitch;
 //    @Column(name = "has_follow_sell")

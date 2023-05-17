@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AmazonSelectionService {
@@ -44,5 +43,12 @@ public class AmazonSelectionService {
 
     public AmazonSelection getById(BigInteger selectionId) {
         return amazonSelectionRepository.getReferenceById(selectionId);
+    }
+
+    public List<AmazonSelection> getByMarketplaceAndSelectionIds(String marketplaceId, List<BigInteger> selectionIds) {
+        return amazonSelectionRepository.findAllByMarketplaceIdAndIdIn(marketplaceId, selectionIds);
+    }
+    public List<AmazonSelection> getBySelectionIds( List<BigInteger> selectionIds) {
+        return amazonSelectionRepository.findAllByIdIn( selectionIds);
     }
 }

@@ -1,21 +1,15 @@
 package com.yy.stock.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.yy.stock.bot.amazonbot.model.TraversalStatus;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -23,7 +17,7 @@ import java.util.Set;
 @Accessors(chain = true)
 @Table(name = "amazon_category")
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class AmazonCategory {
+public class AmazonCategory implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,14 +29,17 @@ public class AmazonCategory {
     private String categoryId;
     @Column(name = "parent_id")
     private String parentId;
-//    @ToString.Exclude
-//    @ManyToOne
-//    @JoinColumn(name = "parent_id", referencedColumnName = "category_id")
-//    @JsonIgnoreProperties(value = {"children"}, allowSetters = true)
-//    private AmazonCategory parent;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id")
-    private List<AmazonCategory> children;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "parent_id")
+@Transient
+    private List<AmazonCategory> childrena = new ArrayList<>();
+    public void setChildren(List<AmazonCategory> children) {
+        this.childrena = children;
+    }
+    @Transient
+    public List<AmazonCategory> getChildren() {
+        return childrena;
+    }
 
     @Column(name = "ancestors_id")
     private String ancestorsId;

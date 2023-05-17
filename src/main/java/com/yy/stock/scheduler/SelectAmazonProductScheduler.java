@@ -1,7 +1,5 @@
 package com.yy.stock.scheduler;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.api.InventorySubmitFeedService;
@@ -15,11 +13,11 @@ import com.yy.stock.entity.AmazonSelection;
 import com.yy.stock.service.AmazonCategoryService;
 import com.yy.stock.service.AmazonSelectionHasFollowService;
 import com.yy.stock.service.AmazonSelectionService;
-import jodd.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,11 +67,10 @@ public class SelectAmazonProductScheduler {
         try {
             schedule(searchKey);
 
-        }catch (org.openqa.selenium.remote.UnreachableBrowserException ex){
+        } catch (org.openqa.selenium.remote.UnreachableBrowserException ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
             driverEngine = null;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
         } finally {
             isBusy = false;
@@ -85,17 +83,19 @@ public class SelectAmazonProductScheduler {
         // searchUrl示例2：https://www.amazon.sg/s?k=dd&ref=nb_sb_noss
         // searchUrl示例3：""
 
+        if (driverEngine == null) {
+            driverEngine = new DebugChromeDriverEngine();
+        }
+
         // 如果为空则不是采集任务，而是取消无货源的跟卖ASIN
         if (searchUrl == null || searchUrl.equals("")) {
             log.info("开始取消无货源的跟卖ASIN");
             cancelUnavailableFollowedAsin();
+            checkWinPurchaseButton();
             return;
         }
 
         log.info("开始搜索关键词：" + searchUrl);
-        if (driverEngine == null) {
-            driverEngine = new DebugChromeDriverEngine();
-        }
         if (searchUrl.startsWith("FetchByCategory")) {
             String[] split = searchUrl.split(",");
             var marketplaceId = split[1];
@@ -133,13 +133,37 @@ public class SelectAmazonProductScheduler {
         log.info("待取消的跟卖ASIN数量：" + toBeCanceledAsins.size());
         for (var amazonSelectionHasFollow : toBeCanceledAsins) {
             inventorySubmitFeedService.submit(amazonSelectionHasFollow);
+            amazonSelectionHasFollow.setHasFollowSell(false);
+            amazonSelectionHasFollowService.save(amazonSelectionHasFollow);
             Thread.sleep(2000);
+        }
+    }
+
+    public void checkWinPurchaseButton() throws InterruptedException {
+        // 检查已跟卖的产品是否赢得购买按钮
+        var authId = new BigInteger("1653288093023318018");
+        var hasFollowed = amazonSelectionHasFollowService.getAllHasFollowed(authId);
+        log.info("已跟卖的ASIN数量：" + hasFollowed.size());
+        for (var amazonSelectionHasFollow : hasFollowed) {
+            var selection = amazonSelectionService.getById(amazonSelectionHasFollow.getAmazonSelectionId());
+            var url = selection.getUrl();
+            driverEngine.getDriver().get(url);
+            Thread.sleep(1000);
+            var merchantInfoDiv = driverEngine.getDriver().findElement(By.id("merchant-info"));
+            var merchantInfo = merchantInfoDiv.getText();
+            if (merchantInfo.contains("Heng Official")) {
+                log.info("ASIN：" + selection.getAsin() + "已赢得购买按钮");
+                amazonSelectionHasFollow.setWinPurchaseButton(true);
+            } else {
+                log.info("ASIN：" + selection.getAsin() + "未赢得购买按钮");
+                amazonSelectionHasFollow.setWinPurchaseButton(false);
+            }
+            amazonSelectionHasFollowService.save(amazonSelectionHasFollow);
         }
     }
 
     private void fetchBestSeller(String url) throws InterruptedException, MalformedURLException {
         saveSubCategories(url);
-//        fetchBestSellerCategoryAsins(url);
     }
 
     public void saveSubCategories(String parentCategoryUrl) throws InterruptedException, MalformedURLException {
@@ -244,8 +268,6 @@ public class SelectAmazonProductScheduler {
                     amazonCategory.setTraversalStatus(TraversalStatus.Pending);
                     amazonCategoryService.save(amazonCategory);
                 }
-//
-
                 saveSubCategories(link);
             }
         }
@@ -268,26 +290,33 @@ public class SelectAmazonProductScheduler {
         driverEngine.getDriver().executeScript("window.scrollTo(0, 0)");
         Thread.sleep(500);
 
-        driverEngine.getDriver().executeScript("window.scrollBy(0, 5000)");
-        Thread.sleep(500);
-        for (var i = 0; i < 8; i++) {
+//        driverEngine.getDriver().executeScript("window.scrollBy(0, 5000)");
+//        Thread.sleep(500);
+        for (var i = 0; i < 18; i++) {
             driverEngine.getDriver().executeScript("window.scrollBy(0, 500)");
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         }
 
-        var dataClientDiv = driverEngine.getExecutor().getByClassName("p13n-desktop-grid");
-        var jsonDataListStr = dataClientDiv.getAttribute("data-client-recs-list");
-        var array = JSONArray.parseArray(jsonDataListStr);
+//        var dataClientDiv = driverEngine.getExecutor().getByClassName("p13n-desktop-grid");
+//        var jsonDataListStr = dataClientDiv.getAttribute("data-client-recs-list");
+//        var array = JSONArray.parseArray(jsonDataListStr);
+
+        var array = driverEngine.getExecutor().listByClassName("p13n-sc-uncoverable-faceout");
+
 
         List<String> urlList = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
-            log.info("正在处理第" + (i + 1) + "个商品，共" + array.size() + "个商品");
+            log.info("正在处理第" + pageNum * (i + 1) + "个商品，共" + pageNum * array.size() + "个商品");
             var item = array.get(i);
             var url = "";
             var asin = "";
             WebElement asinCardDiv = null;
             try {
-                asin = ((JSONObject) item).getString("id");
+                asin =item.getAttribute("id");
+                if(asin==null||asin.equals("")){
+                    log.info("div没有id，跳过.");
+                    continue;
+                }
 
                 var one = amazonSelectionService.getOneByMarketplaceIdAndAsin(marketplaceId, asin);
                 if (one != null) {
@@ -295,8 +324,8 @@ public class SelectAmazonProductScheduler {
                     continue;
                 }
 
-                asinCardDiv = driverEngine.getExecutor().getById(asin);
-                var a = driverEngine.getExecutor().getByRelativeXpath(asinCardDiv, ".//a[@class='a-link-normal']");
+//                asinCardDiv = driverEngine.getExecutor().getById(asin);
+                var a = driverEngine.getExecutor().getByRelativeXpath(item, ".//a[@class='a-link-normal']");
                 url = a.getAttribute("href");
             } catch (Exception ex) {
                 log.error("获取Asin卡片失败，跳过.");
@@ -311,8 +340,8 @@ public class SelectAmazonProductScheduler {
                     log.info("此商品价格大于38新币，跳过.");
                     continue;
                 }
-                if (priceNum < 6) {
-                    log.info("此商品价格小于8新币，跳过.");
+                if (priceNum < 10) {
+                    log.info("此商品价格小于10新币，跳过.");
                     continue;
                 }
             } catch (Exception ex) {
@@ -337,7 +366,7 @@ public class SelectAmazonProductScheduler {
 
         for (int i = 0; i < urlList.size(); i++) {
             var url = urlList.get(i);
-            log.info("开始去产品页拉取第" + (i + 1) + "个商品，共" + urlList.size() + "个商品");
+            log.info("开始去产品页拉取第" + pageNum + "页的第" + (i + 1) + "个商品，本页共" + urlList.size() + "个商品");
             fetchOneAsin(url, pageUrl);
             Thread.sleep(2000);
         }
@@ -405,7 +434,7 @@ public class SelectAmazonProductScheduler {
             var priceNum = Double.parseDouble(priceFormat);
             if (priceNum > 38) {
                 log.info("此商品价格大于38新币，跳过.");
-                selection.setPrice(priceNum+"");
+                selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);
                 selection.setHasSupplier(false);
@@ -414,9 +443,9 @@ public class SelectAmazonProductScheduler {
             }
 
             var html = driverEngine.getDriver().getPageSource();
-            if (html.contains("There are no customer ratings")) {
+            if (html.contains("There are no customer ratings") || html.contains("No customer reviews")) {
                 log.info("此商品没有评论，跳过.");
-                selection.setPrice(priceNum+"");
+                selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);
                 selection.setHasSupplier(false);
@@ -425,7 +454,7 @@ public class SelectAmazonProductScheduler {
             }
             if (html.contains("There are 0 reviews and 0 ratings from")) {
                 log.info("此商品没有来自该国家的评论，跳过.");
-                selection.setPrice(priceNum+"");
+                selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);
                 selection.setHasSupplier(false);
@@ -468,6 +497,14 @@ public class SelectAmazonProductScheduler {
                     searchKey = categoryName;
                 }
             }
+            String picUrl = "";
+            try{
+                var picDiv = driverEngine.getExecutor().getById("imgTagWrapperId");
+                var picImg= driverEngine.getExecutor().getByRelativeXpath(picDiv,"//img");
+                picUrl = picImg.getAttribute("src");
+            }catch (Exception ex){
+                log.info("获取Asin图片失败");
+            }
 
             selection.setCategoryId(categoryId);
             selection.setGatherEntrance(entrance);
@@ -476,10 +513,11 @@ public class SelectAmazonProductScheduler {
             selection.setConfirmSell(false);
             selection.setConfirmSupplier(false);
             selection.setHasSupplier(false);
+            selection.setPicUrl(picUrl);
             amazonSelectionService.save(selection);
             Thread.sleep(1000);
         } catch (Exception exx) {
-            log.info(getExecutorName(url) + " 抓取fetchOneAsin过程出错.");
+            log.info("抓取fetchOneAsin过程出错.");
             log.info(exx.getMessage());
         }
     }

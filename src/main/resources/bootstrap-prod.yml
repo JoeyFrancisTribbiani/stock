@@ -19,12 +19,17 @@ spring:
         shared-configs[1]:
           data-id: wimoor-commom-ext
           refresh: true
+
+  data:
+    redis:
+      password: 123456
+      port: 6379
+      host: 192.168.50.238
   cache:
     type:
-      simple
+      redis
     cache-names:
       amazoncategory
-
   redis:
     redisson:
       config: |
@@ -69,6 +74,7 @@ spring:
       poolName: stockHikariCP
       connectionTimeout: 10000
   jpa:
+    open-in-view: true
     stock:
       show-sql: false
       generate-ddl: false
@@ -89,11 +95,6 @@ spring:
           dialect: org.hibernate.dialect.MySQLDialect
           enable_lazy_load_no_trans: true
       open-in-view: true
-  data:
-    redis:
-      password: 123456
-      port: 6379
-      host: 192.168.50.238
 
 xxl:
   job:

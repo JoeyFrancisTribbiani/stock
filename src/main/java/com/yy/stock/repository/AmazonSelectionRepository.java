@@ -10,4 +10,7 @@ import java.util.List;
 public interface AmazonSelectionRepository extends JpaRepository<AmazonSelection, BigInteger>, JpaSpecificationExecutor<AmazonSelection> {
     List<AmazonSelection> findAllByMarketplaceIdAndAsin(String marketplaceId, String asin);
     AmazonSelection findByMarketplaceIdAndAsin(String marketplaceId, String asin);
+
+    List<AmazonSelection> findAllByMarketplaceIdAndIdIn(String marketplaceId, List<BigInteger> selectionIds);
+    List<AmazonSelection> findAllByIdIn(List<BigInteger> selectionIds);
 }
