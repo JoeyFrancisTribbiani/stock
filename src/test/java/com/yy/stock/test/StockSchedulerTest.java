@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.amazon.api.InventorySubmitFeedService;
 import com.yy.stock.adaptor.amazon.api.PriceSubmitFeedService;
 import com.yy.stock.adaptor.amazon.service.OrdersReportService;
+import com.yy.stock.bot.amazonbot.engine.fetcher.AmazonFetcherEngine;
 import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.util.VisibleStockThreadPoolTaskExecutor;
@@ -57,6 +58,19 @@ class StockSchedulerTest {
     private PriceSubmitFeedService priceSubmitFeedService;
     @Test
     void testSchedule() throws InterruptedException {
+    }
+
+    @Test
+    void testBuddy() throws InterruptedException {
+        var fethcer = new AmazonFetcherEngine();
+        var html = fethcer.fetch("https://www.amazon.sg/sp?marketplaceID=A19VAU5U5O7RUS&seller=A2JCL5BQO3UZK7&isAmazonFulfilled=1&ref_=dp_merchant_link&asin=B07YSVJ16T");
+        System.out.println(html);
+    }
+    @Test
+    void testFollow() throws InterruptedException {
+        var fethcer = new AmazonFetcherEngine();
+        var html = fethcer.fetch("https://www.amazon.sg/gp/bestsellers/automotive/ref=zg_bs_nav_0");
+        System.out.println(html);
     }
 
     @Test

@@ -1,15 +1,13 @@
 package com.yy.stock.bot.engine.rester;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.yy.stock.bot.engine.PluggableEngine;
-import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.bot.engine.driver.MyCookie;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-public abstract class ResterEngine implements PluggableEngine {
+public abstract class ResterEngine  {
     protected RestTemplate restTemplate;
     protected HttpHeaders savedHeaders;
 
@@ -29,6 +27,7 @@ public abstract class ResterEngine implements PluggableEngine {
     protected abstract void initBotHeaders();
 
     public abstract String getStringResponse(String url);
+    public abstract String getGzipStringResponse(String url) ;
 
     public void updateCookie(MyCookie[] cookies) {
         StringBuilder builder = new StringBuilder();
@@ -56,8 +55,5 @@ public abstract class ResterEngine implements PluggableEngine {
         return response.getBody();
     }
 
-    @Override
-    public void plugIn(CoreEngine plugBaseEngine) {
 
-    }
 }

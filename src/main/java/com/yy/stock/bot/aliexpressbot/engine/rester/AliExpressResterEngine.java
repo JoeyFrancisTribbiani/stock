@@ -59,4 +59,9 @@ public class AliExpressResterEngine extends ResterEngine {
             return "";
         }
     }
+
+    @Override
+    public String getGzipStringResponse(String url) {
+        return null;
+    }
 }

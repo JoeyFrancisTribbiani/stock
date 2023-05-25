@@ -50,12 +50,8 @@ public class AmazonSelection {
     private Boolean hasSupplier;
     @Column(name = "pic_url")
     private String picUrl;
-//    @Column(name = "follow_sell_switch")
-//    private Boolean followSellSwitch;
-//    @Column(name = "has_follow_sell")
-//    private Boolean hasFollowSell;
-//    @OneToMany
-//    @JoinColumn(name = "selection_id")
-//    @JsonIgnoreProperties(value = {"amazonSelection"}, allowSetters = true)
-//    private List<AmazonSelectionHasFollow> amazonSelectionHasFollows;
+    @Column(name = "seller_id")
+    private String sellerId;
+    @Column(name = "parent_url")
+    private String parentUrl;
 }

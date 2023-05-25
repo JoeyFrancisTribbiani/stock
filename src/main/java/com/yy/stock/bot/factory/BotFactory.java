@@ -3,6 +3,9 @@ package com.yy.stock.bot.factory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yy.stock.adaptor.seleniumgrid.model.GridStatusResponseModel;
 import com.yy.stock.bot.Bot;
+import com.yy.stock.bot.amazonbot.AmazonBot;
+import com.yy.stock.bot.amazonbot.engine.core.AmazonCoreEngine;
+import com.yy.stock.bot.amazonbot.singaporebot.AmazonSgpCoreEngine;
 import com.yy.stock.bot.engine.core.BotStatus;
 import com.yy.stock.bot.engine.core.CoreEngine;
 import com.yy.stock.entity.BuyerAccount;
@@ -30,9 +33,11 @@ public class BotFactory {
     //a:因为这个配置是在bootstrap-prod.yml中，而不是application.yml中
     public String statusUrl;
     private List<Bot> runningBotPool;
+    private List<AmazonBot> runningAmazonBotPool;
 
     public BotFactory() {
         runningBotPool = new ArrayList<>();
+        runningAmazonBotPool =new ArrayList<>();
     }
 
     public Bot getRegisterBot(Platform platform) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, MalformedURLException, JsonProcessingException {
@@ -66,6 +71,22 @@ public class BotFactory {
         var coreEngine = (CoreEngine) clazz.getConstructor().newInstance();
         var bot = new Bot(coreEngine, buyerAccount);
         runningBotPool.add(bot);
+        return bot;
+    }
+
+    public AmazonBot getAmazonBot(String url) throws MalformedURLException, JsonProcessingException {
+        for (AmazonBot bot : runningAmazonBotPool) {
+            var urlName = bot.getCoreEngine().getFetcherEngine().getBotNameFromFetchingUrl(url);
+            if (bot.getBotName().equals(urlName)) {
+                return bot;
+            }
+        }
+        AmazonCoreEngine coreEngine = null;
+        if (url.contains("amazon.sg")) {
+            coreEngine = new AmazonSgpCoreEngine();
+        }
+        var bot= new AmazonBot(coreEngine);
+        runningAmazonBotPool.add(bot);
         return bot;
     }
 

@@ -294,4 +294,13 @@ public class InstructionExecutor {
         return track;
     }
 
+    public WebElement getByCssSelector(String className) {
+        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
+                .until(d -> d.findElement(By.cssSelector(className)));
+    }
+    public List<WebElement> listByCssSelector(String className) {
+        return new WebDriverWait(driver, Duration.ofSeconds(WAIT_SECONDS))
+                .until(d -> d.findElements(By.cssSelector(className)));
+    }
+
 }

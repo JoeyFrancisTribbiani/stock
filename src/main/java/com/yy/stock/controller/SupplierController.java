@@ -89,6 +89,11 @@ public class SupplierController {
         var profit = BusinessBot.caculateProfit(vo);
         return Result.success(profit);
     }
+    @PostMapping("/findSupplierPrice")
+    public Result<BigDecimal> findSupplierPriceAction(@RequestBody StockStatusListVo vo) throws JsonProcessingException {
+        var price = BusinessBot.caculateProfit(vo);
+        return Result.success(price);
+    }
     @PostMapping("/bindSku")
     public Result<StockStatusListVo> bindSkuAction(@RequestBody StockStatusListVo vo) throws JsonProcessingException {
         var supplier = supplierService.getBySku(new BigInteger(vo.getAmazonAuthId()), vo.getMarketplaceid(), vo.getSku());

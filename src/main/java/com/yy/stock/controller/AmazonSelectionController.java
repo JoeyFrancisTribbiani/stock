@@ -1,9 +1,12 @@
 package com.yy.stock.controller;
 
 import com.yy.stock.adaptor.amazon.api.PriceSubmitFeedService;
+import com.yy.stock.bot.engine.core.BotStatus;
+import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.result.Result;
 import com.yy.stock.entity.AmazonSelection;
 import com.yy.stock.entity.AmazonSelectionHasFollow;
+import com.yy.stock.entity.AmazonSeller;
 import com.yy.stock.service.AmazonSelectionHasFollowService;
 import com.yy.stock.service.AmazonSelectionService;
 import com.yy.stock.vo.AmazonSelectionQueryVO;
@@ -14,8 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -27,7 +34,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/amazonSelection")
 public class AmazonSelectionController {
-
+    @Autowired
+    private BotFactory botFactory;
     @Autowired
     private AmazonSelectionService amazonSelectionService;
     @Autowired
@@ -135,4 +143,13 @@ public class AmazonSelectionController {
         return Result.success(vo.getAsin());
     }
 
+    @PostMapping("/fetch")
+    public Result<String> fetch(@Valid @RequestBody AmazonSeller seller) throws DatatypeConfigurationException, ParserConfigurationException, IOException, MessagingException, InterruptedException {
+        var amazonBot = botFactory.getAmazonBot(seller.getHomePageUrl());
+        if(amazonBot.getBotStatus()== BotStatus.fetching){
+            return Result.success("");
+        }
+        amazonBot.fetch(seller.getHomePageUrl());
+        return Result.success("成功运行抓取任务");
+    }
 }

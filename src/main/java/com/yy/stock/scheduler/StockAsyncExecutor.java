@@ -86,7 +86,6 @@ public class StockAsyncExecutor {
             }
             log.info(getExecutorName(orderToStock) + "bot下单失败,ex:" + ex.getMessage());
         }
-
     }
 
 

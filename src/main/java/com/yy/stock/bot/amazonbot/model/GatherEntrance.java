@@ -5,4 +5,5 @@ public enum GatherEntrance {
     BestSeller,
     Search,
     Category,
+    Buddy
 }

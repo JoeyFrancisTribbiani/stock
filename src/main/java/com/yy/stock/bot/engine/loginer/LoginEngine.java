@@ -21,7 +21,7 @@ public abstract class LoginEngine implements PluggableEngine {
     protected InstructionExecutor instructionExecutor;
     protected FetcherEngine fetcherEngine;
 
-    protected boolean isLogined() throws InterruptedException, IOException {
+    protected boolean isLogined() throws InterruptedException, IOException{
 //        var html = resterEngine.getStringResponse(coreEngine.urls.testLogin);
 //        if (testLoginedHtml(html)) {
 //            return true;

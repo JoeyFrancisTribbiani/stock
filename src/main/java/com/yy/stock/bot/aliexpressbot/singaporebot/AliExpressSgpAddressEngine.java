@@ -2,9 +2,9 @@ package com.yy.stock.bot.aliexpressbot.singaporebot;
 
 import com.yy.stock.bot.engine.stocker.AddressEngine;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +54,22 @@ public class AliExpressSgpAddressEngine extends AddressEngine {
         cepInput.sendKeys(stockRequest.getAddress().getPostalCode());
         Thread.sleep(1000);
         var cepSelectButton = driverEngine.getExecutor().getByClassName("postcode-option-item-content");
-        cepSelectButton.click();
+//        var html = driverEngine.getDriver().getPageSource();
+//        var doc = Jsoup.parse(html);
+        var listBoxUl = driverEngine.getExecutor().getByRelativeXpath(cepSelectButton, "./../../../..");
+        var listBoxLis = listBoxUl.findElements(By.tagName("li"));
+        var longestTextLi = listBoxLis.get(0);
+        var longestText = longestTextLi.getText();
+        for(var listBoxLi : listBoxLis){
+            var listBoxLiText = listBoxLi.getText();
+            var textLength = listBoxLiText.length();
+            if(textLength > longestText.length()){
+                longestText = listBoxLiText;
+                longestTextLi = listBoxLi;
+            }
+        }
+        longestTextLi.click();
+//        cepSelectButton.click();
         Thread.sleep(3000);
 
         var bairrorInput = driverEngine.getExecutor().getByXpath("//*[@id=\"halo-wrapper-root\"]/div/div/form/div[3]/div[2]/div[2]/div[2]/div/div/span/input");

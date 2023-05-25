@@ -34,7 +34,9 @@ public abstract class StockEngine implements PluggableEngine {
         this.addressEngine.stockRequest = stockRequest;
         log.info(coreEngine.getBotName() + "开始下单操作.");
 
-        var supplier = stockRequest.getSupplier();
+        var supplierId = stockRequest.getSupplier().getId();
+        var supplier = coreEngine.getSupplierService().getById(supplierId);
+
         if (!supplier.getAvailable()) {
             log.info(coreEngine.getBotName() + "供应商开关未打开.");
             throw new SupplierUnavailableException();

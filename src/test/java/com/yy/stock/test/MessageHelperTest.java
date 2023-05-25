@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 class MessageHelperTest {
+
     public static byte[] unGZip(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream)) {

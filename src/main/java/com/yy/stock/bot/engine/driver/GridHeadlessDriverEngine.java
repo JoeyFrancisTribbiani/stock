@@ -24,13 +24,13 @@ import java.util.Map;
 
 @Slf4j
 @Getter
-public class GridDriverEngine {
+public class GridHeadlessDriverEngine {
     private CdpRemoteWebDriver driver;
     private InstructionExecutor executor;
 
     private GridDriverEngineConfig gridDriverEngineConfig;
 
-    public GridDriverEngine()  {
+    public GridHeadlessDriverEngine()  {
         gridDriverEngineConfig = MySpringUtil.getBean(GridDriverEngineConfig.class);
         this.driver = initChromeDriver();
     }
@@ -111,9 +111,6 @@ public class GridDriverEngine {
     }
 
     public InstructionExecutor getExecutor() {
-        if(this.driver == null) {
-            this.driver = initChromeDriver();
-        }
         if (executor == null) {
             executor = new InstructionExecutor(this.driver);
         }
@@ -122,14 +119,9 @@ public class GridDriverEngine {
 
     public void byebye() {
         if (this.driver != null) {
-            try {
-                this.driver.close();
-                this.driver.quit();
-            }catch (Exception e) {
-                log.error("Driver close error", e);
-            }finally {
-                this.driver = null;
-            }
+            this.driver.close();
+            this.driver.quit();
+            this.driver = null;
             log.info("Driver now close, byebye");
         }
     }
@@ -137,6 +129,10 @@ public class GridDriverEngine {
     private CdpRemoteWebDriver initChromeDriver()  {
         log.info("开始初始化remoteChromeDriver");
         ChromeOptions options = new ChromeOptions();
+
+        options.addArguments("--headless");//无头浏览
+        options.addArguments("blink-settings=imagesEnabled=false");//禁用图片
+
         options.addArguments("disable-infobars");
         options.addArguments("--disable-popup-blocking"); // 禁用阻止弹出窗口
         options.addArguments("no-sandbox");//禁用沙盒

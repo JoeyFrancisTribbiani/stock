@@ -24,6 +24,7 @@ import com.yy.stock.entity.BuyerAccount;
 import com.yy.stock.entity.EmailAccount;
 import com.yy.stock.service.BuyerAccountService;
 import com.yy.stock.service.StockStatusService;
+import com.yy.stock.service.SupplierService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -54,8 +55,10 @@ public abstract class CoreEngine {
     protected FetcherEngine fetcherEngine;
     protected BuyerAccount buyerAccount;
     protected BuyerAccountService buyerAccountService;
+    public SupplierService supplierService;
     protected StockStatusService stockStatusService;
     protected BotStatus botStatus = BotStatus.idle;
+    private int stockErrorCount = 0;
 
     // bot状态
     // region
@@ -99,6 +102,7 @@ public abstract class CoreEngine {
     public void init(BuyerAccount buyerAccount) throws MalformedURLException, JsonProcessingException {
         this.buyerAccount = buyerAccount;
         this.buyerAccountService = SpringUtil.getBean(BuyerAccountService.class);
+        this.supplierService = SpringUtil.getBean(SupplierService.class);
         this.stockStatusService = SpringUtil.getBean(StockStatusService.class);
         this.driverEngine = new GridDriverEngine();
         assemble();
@@ -186,8 +190,14 @@ public abstract class CoreEngine {
 
         try {
             stockEngine.stock(stockRequest);
-        }catch (Exception ex){
-            log.debug("stock error",ex);
+        } catch (Exception ex) {
+            if(stockErrorCount++ > 3){
+                stockErrorCount = 0;
+                byebye();
+                throw ex;
+            }
+            stockErrorCount++;
+            log.debug("stock error", ex);
             throw ex;
         }
 
@@ -268,13 +278,11 @@ public abstract class CoreEngine {
     }
 
     public void assemble() {
-        resterEngine.plugIn(this);
         loginEngine.plugIn(this);
         stockEngine.plugIn(this);
         trackEngine.plugIn(this);
         fetcherEngine.plugIn(this);
         addressEngine.plugIn(this);
-        resterEngine.plugIn(this);
     }
 
     public abstract void solveLoginCaptcha() throws InterruptedException;
