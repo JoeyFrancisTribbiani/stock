@@ -5,7 +5,7 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import com.yy.stock.adaptor.amazon.api.InventorySubmitFeedService;
 import com.yy.stock.bot.amazonbot.model.GatherEntrance;
 import com.yy.stock.bot.amazonbot.model.TraversalStatus;
-import com.yy.stock.bot.engine.driver.DebugChromeDriverEngine;
+import com.yy.stock.bot.engine.driver.GridDriverEngine;
 import com.yy.stock.bot.factory.BotFactory;
 import com.yy.stock.common.util.RedissonDistributedLocker;
 import com.yy.stock.entity.AmazonCategory;
@@ -18,6 +18,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class SelectAmazonProductScheduler {
-    public DebugChromeDriverEngine driverEngine;
+//    public DebugChromeDriverEngine driverEngine;
+    public GridDriverEngine driverEngine;
     @Autowired
     protected BotFactory botFactory;
     @Autowired
@@ -70,7 +72,10 @@ public class SelectAmazonProductScheduler {
         } catch (org.openqa.selenium.remote.UnreachableBrowserException ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
             driverEngine = null;
-        } catch (Exception ex) {
+        }catch(NoSuchSessionException e){
+            driverEngine = new GridDriverEngine();
+            log.info("选品任务过程中报错,e:" + e.getMessage());
+        }catch (Exception ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
         } finally {
             isBusy = false;
@@ -84,7 +89,8 @@ public class SelectAmazonProductScheduler {
         // searchUrl示例3：""
 
         if (driverEngine == null) {
-            driverEngine = new DebugChromeDriverEngine();
+            driverEngine = new GridDriverEngine();
+//            driverEngine = new DebugChromeDriverEngine();
         }
 
         // 如果为空则不是采集任务，而是取消无货源的跟卖ASIN
@@ -336,8 +342,8 @@ public class SelectAmazonProductScheduler {
                 var priceDiv = driverEngine.getExecutor().getByRelativeXpath(asinCardDiv, ".//span[@class='a-size-base a-color-price']");
                 var price = priceDiv.getText().replace("S$", "");
                 var priceNum = Double.parseDouble(price);
-                if (priceNum > 38) {
-                    log.info("此商品价格大于38新币，跳过.");
+                if (priceNum > 60) {
+                    log.info("此商品价格大于60新币，跳过.");
                     continue;
                 }
                 if (priceNum < 10) {
@@ -432,8 +438,8 @@ public class SelectAmazonProductScheduler {
             var price = priceSpan.getText();
             var priceFormat = price.replace("S$", "").replace("\n", ".");
             var priceNum = Double.parseDouble(priceFormat);
-            if (priceNum > 38) {
-                log.info("此商品价格大于38新币，跳过.");
+            if (priceNum > 60) {
+                log.info("此商品价格大于60新币，跳过.");
                 selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);

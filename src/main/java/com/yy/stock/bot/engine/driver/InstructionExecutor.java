@@ -50,6 +50,28 @@ public class InstructionExecutor {
         return browserName + browserVersion + "-" + osName;
     }
 
+    public void aliQuantityType(WebElement field, String text) throws InterruptedException {
+        if (!field.getAttribute("value").equals("")) {
+            var os = getBrowserInfo();
+            if (os != null) {
+                log.info("浏览器代理操作系统信息: {}", os);
+                os = os.toLowerCase();
+                if (os.contains("mac")) {
+                    field.sendKeys(Keys.COMMAND, "a");
+                    log.info("发送按键内容: {}", "Keys.COMMAND + a");
+                } else {
+                    field.sendKeys(Keys.CONTROL, "a");
+                    log.info("发送按键内容: {}", "Keys.CONTROL + a");
+                }
+            } else {
+                field.sendKeys(Keys.CONTROL, "a");
+            }
+            Thread.sleep(2000);
+            field.sendKeys(text);
+            Thread.sleep(2000);
+            log.info("发送按键内容: {}", text);
+        }
+    }
     public void clearAndType(WebElement field, String text) throws InterruptedException {
         field.clear();
         field.click();
@@ -77,6 +99,17 @@ public class InstructionExecutor {
         field.clear();
         field.click();
         field.sendKeys(text);
+    }
+    public void quantityAdd(WebElement field, Integer quantity) throws InterruptedException {
+        //默认是1
+        if(quantity.equals(1)){
+            return;
+        }
+        var clickCount = quantity - 1;
+        for (int i = 0; i < clickCount; i++) {
+            field.click();
+            Thread.sleep(3000);
+        }
     }
 
     public void waitForUrl(String url, int seconds) {

@@ -12,8 +12,8 @@ public abstract class AliExpressCoreEngine extends CoreEngine {
         var bigSlidingDiv = driverEngine.getExecutor().getByClassName("nc-lang-cnt").getSize();
         var bigSlidingX = bigSlidingDiv.getWidth();
         var slidingDistance = bigSlidingX - smallSliding.getWidth();
-        var xs = new int[]{99, 87, 125, 66};
-        var ys = new int[]{0, 0, 0, 0};
+        var xs = new int[]{30,69, 87, 25,40,40,20,20,26,20};
+        var ys = new int[]{0, 0, 0, 0, 0, 0, 0,0, 0,0};
         driverEngine.getExecutor().dragAndDropBy(capButton, xs, ys);
         Thread.sleep(1000);
         driverEngine.getExecutor().switchToDefaultContent();

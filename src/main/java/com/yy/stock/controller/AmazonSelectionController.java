@@ -97,9 +97,13 @@ public class AmazonSelectionController {
         var sameAsin = amazonSelectionService.getOneByMarketplaceIdAndAsin(vo.getMarketplaceId(), vo.getAsin());
         sameAsin.setConfirmSupplier(vo.getConfirmSupplier());
         sameAsin.setHasSupplier(vo.getHasSupplier());
+        sameAsin.setHasFavorite(vo.getHasFavorite());
         amazonSelectionService.save(sameAsin);
+        if (vo.getAmazonAuthId() == null & vo.getFollowSellSwitch()) {
+            return Result.failed("authId为空，请先选择店铺！");
+        }
         if (vo.getAmazonAuthId() == null) {
-            return Result.success(vo.getAsin());
+            return Result.success(sameAsin.getAsin());
         }
 
         var hasFollowSell = amazonSelectionHasFollowService.getBySelectionId(vo.getAmazonAuthId(), sameAsin.getId());
@@ -108,7 +112,7 @@ public class AmazonSelectionController {
             hasFollowSell.setAmazonAuthId(vo.getAmazonAuthId());
             hasFollowSell.setAmazonSelectionId(sameAsin.getId());
             hasFollowSell.setHasFollowSell(false);
-            hasFollowSell.setFollowSellSwitch(false);
+            hasFollowSell.setFollowSellSwitch(vo.getFollowSellSwitch());
             hasFollowSell.setSetPrice("");
             hasFollowSell.setSku(vo.getSku());
         } else {

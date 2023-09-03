@@ -48,6 +48,7 @@ public class AmazonFetcherEngine {
     private GridDriverEngine driverEngine;
     private String fetchingUrl;
     private boolean busy;
+    private int count;
 
     public AmazonFetcherEngine() {
         this.amazonSelectionService = MySpringUtil.getBean(AmazonSelectionService.class);
@@ -69,6 +70,7 @@ public class AmazonFetcherEngine {
 
     public void fetch(String url) throws InterruptedException {
         busy = true;
+        count =0;
         String searchKey;
         if (url == null || url.equals("")) {
             return ;
@@ -85,8 +87,10 @@ public class AmazonFetcherEngine {
             byebye();
         } catch (Exception ex) {
             log.info("选品任务过程中报错,ex:" + ex.getMessage());
+            byebye();
         } finally {
             busy = false;
+            count =0;
         }
     }
 
@@ -356,8 +360,8 @@ public class AmazonFetcherEngine {
                 var priceDiv = driverEngine.getExecutor().getByRelativeXpath(asinCardDiv, ".//span[@class='a-size-base a-color-price']");
                 var price = priceDiv.getText().replace("S$", "");
                 var priceNum = Double.parseDouble(price);
-                if (priceNum > 38) {
-                    log.info("此商品价格大于38新币，跳过.");
+                if (priceNum > 60) {
+                    log.info("此商品价格大于60新币，跳过.");
                     continue;
                 }
                 if (priceNum < 10) {
@@ -425,6 +429,8 @@ public class AmazonFetcherEngine {
     }
 
     public void fetchOneAsin(String link, String parentUrl) {
+        count++;
+        log.info("开始拉取第{}个asin...",count);
         var marketplaceId = getMarketplaceIdFromUrl(link);
         GatherEntrance entrance = getEntranceFromUrl(parentUrl);
         var sellerId = "";
@@ -455,8 +461,8 @@ public class AmazonFetcherEngine {
             var price = priceSpan.getText();
             var priceFormat = price.replace("S$", "").replace("\n", ".");
             var priceNum = Double.parseDouble(priceFormat);
-            if (priceNum > 38) {
-                log.info("此商品价格大于38新币，跳过.");
+            if (priceNum > 60) {
+                log.info("此商品价格大于60新币，跳过.");
                 selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);
@@ -557,6 +563,7 @@ public class AmazonFetcherEngine {
     }
 
     private void fetchFollowBuddyAsins(String buddyHomeUrl) throws InterruptedException, MalformedURLException {
+        var count = 0;
         var marketplaceId = getMarketplaceIdFromUrl(buddyHomeUrl);
         var sellerId = getSellerIdFromUrl(buddyHomeUrl);
 
@@ -609,10 +616,16 @@ public class AmazonFetcherEngine {
         doc = Jsoup.parse(html);
         var resultInfoBar = doc.getElementsByClass("s-desktop-toolbar");
         var resultInfoBarText = resultInfoBar.text();
-        var resultInfoBarTextArr = resultInfoBarText.split(" ");
-        var totalProductNum = resultInfoBarTextArr[2];
-        seller.setLastProductNum(Integer.parseInt(totalProductNum));
+        try{
+            var resultInfoBarTextArr = resultInfoBarText.split(" ");
+            var totalProductNum = resultInfoBarTextArr[2];
+            var num = Integer.parseInt(totalProductNum);
+            seller.setLastProductNum(num);
+        }catch (Exception ex){
+            seller.setLastProductNum(66);
+        }
 
+        amazonSellerService.save(seller);
         fetchBuddyPageByPage(sellerStoreFrontUrl);
 
         seller.setLastFetchTime(new Date());
@@ -632,9 +645,10 @@ public class AmazonFetcherEngine {
 
         var asinCardList = doc.getElementsByClass("s-asin");
         for (int i = 0; i < asinCardList.size(); i++) {
-            var asinCard = asinCardList.get(i);
+            var asinCard = asinCardList.get(i).getElementsByClass("s-list-col-right").get(0);
             var a = asinCard.getElementsByTag("a").get(0);
             var url = "https://" + host + a.attr("href");
+            url = url.split("/ref=")[0];
             fetchOneAsin(url, sellerStoreFrontUrl);
             Thread.sleep(1000);
         }

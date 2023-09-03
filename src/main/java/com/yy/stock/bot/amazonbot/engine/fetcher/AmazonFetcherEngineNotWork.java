@@ -506,8 +506,8 @@ public class AmazonFetcherEngineNotWork {
             var price = priceSpan.text();
             var priceFormat = price.replace("S$", "").replace("\n", ".");
             var priceNum = Double.parseDouble(priceFormat);
-            if (priceNum > 38) {
-                log.info("此商品价格大于38新币，跳过.");
+            if (priceNum > 60) {
+                log.info("此商品价格大于60新币，跳过.");
                 selection.setPrice(priceNum + "");
                 selection.setConfirmSell(true);
                 selection.setConfirmSupplier(true);

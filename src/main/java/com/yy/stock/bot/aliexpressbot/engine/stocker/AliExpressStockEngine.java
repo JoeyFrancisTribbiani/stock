@@ -99,7 +99,7 @@ public abstract class AliExpressStockEngine extends StockEngine {
                 }
             }
             WebElement amountInput = driverEngine.getExecutor().getByClassName("comet-input-number-input");
-            driverEngine.getExecutor().clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
+            driverEngine.getExecutor().aliQuantityType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
             Thread.sleep(2333);
 
             var buyNowButtonDiv = driverEngine.getExecutor().getByClassName("comet-btn-primary");
@@ -139,7 +139,7 @@ public abstract class AliExpressStockEngine extends StockEngine {
 
             WebElement amountDiv = driverEngine.getExecutor().getByClassName("product-quantity");
             var amountInput = driverEngine.getExecutor().getByRelativeXpath(amountDiv, ".//input");
-            driverEngine.getExecutor().clearAndType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
+            driverEngine.getExecutor().aliQuantityType(amountInput, stockRequest.getOrderInfo().getQuantity().toString());
             Thread.sleep(2333);
 
             var buyNowButtonDiv = driverEngine.getExecutor().getByClassName("product-action");

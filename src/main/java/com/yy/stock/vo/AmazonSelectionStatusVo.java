@@ -21,7 +21,6 @@ public class AmazonSelectionStatusVo extends AmazonSelection {
     private BigInteger amazonAuthId;
 
     private Boolean hasFollowSell;
-
     private Boolean followSellSwitch;
     private Boolean winPurchaseButton;
     private String setPrice;

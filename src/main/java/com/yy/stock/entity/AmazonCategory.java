@@ -18,6 +18,7 @@ import java.util.List;
 @Table(name = "amazon_category")
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class AmazonCategory implements Serializable {
+    private static final long serialVersionUID = 6853039122244547543L;
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

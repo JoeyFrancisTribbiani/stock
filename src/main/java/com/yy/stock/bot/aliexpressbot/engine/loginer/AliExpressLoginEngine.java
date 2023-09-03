@@ -299,11 +299,16 @@ public class AliExpressLoginEngine extends LoginEngine {
         instructionExecutor.clearAndType(email_input, coreEngine.getBuyerAccount().getEmail());
         Thread.sleep((long) (Math.random() * 3000));
 
+        // 点击一下，将弹出来的框搞掉，避免遮挡密码框
+        WebElement loginButton = instructionExecutor.getByXpath(coreEngine.xpaths.getLoginButton());
+        loginButton.click();
+        Thread.sleep(2000);
+
         WebElement password_input = instructionExecutor.getByXpath(coreEngine.xpaths.getPasswordInput());
         instructionExecutor.clearAndType(password_input, coreEngine.getBuyerAccount().getPassword());
         Thread.sleep((long) (Math.random() * 3000));
 
-        WebElement loginButton = instructionExecutor.getByXpath(coreEngine.xpaths.getLoginButton());
+//        WebElement loginButton = instructionExecutor.getByXpath(coreEngine.xpaths.getLoginButton());
         loginButton.click();
         Thread.sleep(2000);
 

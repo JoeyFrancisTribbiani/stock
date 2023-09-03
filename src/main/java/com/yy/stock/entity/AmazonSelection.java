@@ -54,4 +54,6 @@ public class AmazonSelection {
     private String sellerId;
     @Column(name = "parent_url")
     private String parentUrl;
+    @Column(name = "has_favorite")
+    private Boolean hasFavorite;
 }
