@@ -36,6 +36,9 @@ public class GridDriverEngine {
     }
 
     public CdpRemoteWebDriver getDriver() {
+        if(this.driver==null){
+            initChromeDriver();
+        }
         return this.driver;
     }
 
@@ -131,6 +134,9 @@ public class GridDriverEngine {
                 this.driver = null;
             }
             log.info("Driver now close, byebye");
+        }
+        else{
+            initChromeDriver();
         }
     }
 

@@ -298,7 +298,6 @@ public class AmazonFetcherEngine {
     }
 
     public void fetchBestSellerCategoryAsins(String parentCategoryUrl) throws InterruptedException {
-
         fetchBestSellerOnePageAsins(parentCategoryUrl);
     }
 
@@ -574,6 +573,7 @@ public class AmazonFetcherEngine {
             seller.setSellerId(sellerId);
             seller.setFollowSeller(true);
             seller.setHomePageUrl(buddyHomeUrl);
+            seller.setLastProductNum(0);
         }
 
         driverEngine.getDriver().get(buddyHomeUrl);
@@ -612,27 +612,29 @@ public class AmazonFetcherEngine {
 //        driverEngine.setCookie(cookies);
 //        driverEngine.getDriver().get(sellerStoreFrontUrl);
 
-        html = driverEngine.getDriver().getPageSource();
-        doc = Jsoup.parse(html);
-        var resultInfoBar = doc.getElementsByClass("s-desktop-toolbar");
-        var resultInfoBarText = resultInfoBar.text();
-        try{
-            var resultInfoBarTextArr = resultInfoBarText.split(" ");
-            var totalProductNum = resultInfoBarTextArr[2];
-            var num = Integer.parseInt(totalProductNum);
-            seller.setLastProductNum(num);
-        }catch (Exception ex){
-            seller.setLastProductNum(66);
-        }
+        // ******************************  去掉此逻辑，setLastProductNum改为记录上次爬取的asin条数，下次爬取从该记录开始 ********************
+//        html = driverEngine.getDriver().getPageSource();
+//        doc = Jsoup.parse(html);
+//        var resultInfoBar = doc.getElementsByClass("s-desktop-toolbar");
+//        var resultInfoBarText = resultInfoBar.text();
+//        try{
+//            var resultInfoBarTextArr = resultInfoBarText.split(" ");
+//            var totalProductNum = resultInfoBarTextArr[2];
+//            var num = Integer.parseInt(totalProductNum);
+//            seller.setLastProductNum(num);
+//        }catch (Exception ex){
+//            seller.setLastProductNum(66);
+//        }
+        // ******************************************************************************************************
 
         amazonSellerService.save(seller);
-        fetchBuddyPageByPage(sellerStoreFrontUrl);
+        fetchBuddyPageByPage(seller,sellerStoreFrontUrl);
 
         seller.setLastFetchTime(new Date());
         amazonSellerService.save(seller);
     }
 
-    private void fetchBuddyPageByPage(String sellerStoreFrontUrl) throws MalformedURLException, InterruptedException {
+    private void fetchBuddyPageByPage(AmazonSeller seller, String sellerStoreFrontUrl) throws MalformedURLException, InterruptedException {
         Document doc;
         String html;
 //        html =resterEngine.getStringResponse(sellerStoreFrontUrl);
@@ -644,12 +646,19 @@ public class AmazonFetcherEngine {
         var host = myUrl.getHost();
 
         var asinCardList = doc.getElementsByClass("s-asin");
+        var lastCount = seller.getLastProductNum();
         for (int i = 0; i < asinCardList.size(); i++) {
+            if(count < lastCount){
+                count++;
+                continue;
+            }
             var asinCard = asinCardList.get(i).getElementsByClass("s-list-col-right").get(0);
             var a = asinCard.getElementsByTag("a").get(0);
             var url = "https://" + host + a.attr("href");
             url = url.split("/ref=")[0];
             fetchOneAsin(url, sellerStoreFrontUrl);
+            seller.setLastProductNum(count);
+            amazonSellerService.save(seller);
             Thread.sleep(1000);
         }
 
@@ -657,7 +666,7 @@ public class AmazonFetcherEngine {
         var tag = nextPageBtn.get(0).tagName();
         if (tag.equals("a")) {
             var nextPageUrl = "https://" + host + nextPageBtn.get(0).attr("href");
-            fetchBuddyPageByPage(nextPageUrl);
+            fetchBuddyPageByPage(seller,nextPageUrl);
         }
     }
 

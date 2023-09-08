@@ -15,8 +15,8 @@ public class BusinessBot {
         var amazonSoldPrice = supplierVo.getChangeprice();
         var amazonSellCommission = amazonSoldPrice.multiply(AMAZON_SELL_COMMISSION_RATE);
 
-        var supplierPrice = new BigDecimal(supplier.getPrice());
-        var supplierShippingFee = new BigDecimal(supplier.getMinShipFee());
+        var supplierPrice = new BigDecimal(supplier.getPrice()  == null?"0":supplier.getPrice());
+        var supplierShippingFee = new BigDecimal(supplier.getMinShipFee() == null?"0":supplier.getMinShipFee());
         supplierPrice = supplierPrice.add(supplierShippingFee);
 
         var amazonSellTax = getAmazonSellTax(marketplaceId);
